@@ -1,0 +1,568 @@
+﻿<html>
+    <head>
+        <meta charset="utf-8">
+        <title id="pageTitle"></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./ress/css/fabric.min.css">
+        <link rel="stylesheet" href="./ress/css/fabric.components.min.css">
+        <link id="layoutstyle" href="./ress/css/layout.css" rel="stylesheet">
+		<link href="./ress/css/formio.full.min.css" rel="stylesheet">
+		<script src="./scripts/vendor/formio.full.min.js"></script>
+        <script src="./scripts/vendor/jquery-1.10.2.min.js"></script>
+        <script src="./scripts/vendor/adal.min.js"></script>
+        <script src="./scripts/lang-form.json.js"></script>
+        <script src="./scripts/lang-layout.json.js"></script>
+        <script src="./scripts/lang.js"></script>
+        <script src="./scripts/tz.js"></script>
+        <script src="./scripts/theme.js"></script>
+        <script src="./scripts/main.js"></script>
+        <script src="./scripts/auth.js"></script>
+        <script src="./scripts/defimp.js"></script>
+    </head>
+    <body>
+        <div id="appTitlePrint" class="header-title">
+            <p class="app-menu-brand-print">Formviewer for MS Azure and Office 365</p>
+        </div>
+	    <div class="header-border">
+            <div class="header-wrapper">
+                <div class="header-common header-left">
+                    <div class="header-common app-header app-menu rsp-lar-visible">
+                        <button type="button" class="header-common app-menu-button appl-button" onclick="openAppLauncher(this)"/>
+                    </div>
+                    <div class="header-common app-header header-hidden-element hiddensmcommands">
+                        <button type="button" class="header-common app-menu-button app-menu-button-right" onclick="hideCommands()">
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--x" aria-hidden="true"></i></span>
+                        </button>
+                    </div>
+                    <div id="mainLogo" class="header-common app-header main-logo visiblesmcommands" style="display: none" onmousedown="return false">
+                        <img class="logo-background" src="./ress/png/mainlogo.png" />
+                    </div>
+                    <div id="sideLogo" class="header-common app-header visiblesmcommands" style="display: none" onmousedown="return false">
+                        <img src="./ress/png/sidelogo.png" />
+                    </div>
+                    <div id="appTitle" class="header-common app-header rsp-lar-visible" style="display: none">
+                        <p class="app-menu-brand">Formviewer for MS Azure and Office 365</p>
+                    </div>
+                </div>
+                <div class="header-common header-center"></div>
+                <div class="header-common header-right">
+                    <div id="customizationLogo" class="header-common app-header visiblesmcommands" style="display: none" onmousedown="return false">
+                        <img class="client-logo" src="./" />
+                    </div>
+                    <div id="environmentcontainerl" class="header-common app-header rsp-visible">
+                        <button type="button" class="header-common app-menu-button app-menu-button-right environment-button environments-trigger" onclick="showEnvironmentDropdown(this)">
+                            <div class="environment-wrapper">
+                                <span lang-tran="Environment" class="environment-text environment-head">Environment</span>
+                                <span class="environment-text environment-current">Tenant 1 (default)</span>
+                            </div>
+                            <svg class="environment-glyph" viewBox="0 0 16 16">
+                                <path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path>
+                            </svg>
+                        </button>
+                        <div class="header-common environment-dropdown header-hidden-element">
+                            <ul class="environment-dropdown-list">
+                                <li>
+                                    <button disabled class="environment-option active-option">
+                                        <div class="header-common environment-option-item">
+                                            <div class="header-common environment-option-label">Tenant 1 (default)</div>
+                                        </div>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="environment-option">
+                                        <div class="header-common environment-option-item">
+                                            <div class="header-common environment-option-label">Tenant 2</div>
+                                        </div>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="environment-option">
+                                        <div class="header-common environment-option-item">
+                                            <div class="header-common environment-option-label">Tenant 3</div>
+                                        </div>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="header-common app-header rsp-hidden visiblesmcommands">
+                        <button id="ellipsisButton" type="button" class="header-common app-menu-button app-menu-button-right" onclick="showCommands()">
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--ellipsis" aria-hidden="true"></i></span>
+                        </button>
+                    </div>
+                    <div class="header-common app-header rsp-med-visible hiddensmcommands">
+                        <button type="button" class="header-common app-menu-button app-menu-button-right appl-button" onclick="openAppLauncher(this)"/>
+                    </div>
+                    <div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
+                        <button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)">
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--bell" aria-hidden="true"></i></span>
+                        </button>
+                    </div>
+                    <div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
+                        <button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)">
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--gear" aria-hidden="true"></i></span>
+                        </button>
+                    </div>
+                    <div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
+                        <button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)">
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--question" aria-hidden="true"></i></span>
+                        </button>
+                    </div>
+                    <div id="accountsCommandWrapperL" class="header-common app-header rsp-visible">
+                        <button id="accountsCommand" type="button" class="header-common app-menu-button app-menu-button-right app-menu-button-right-menu account-trigger" onclick="openUserMenu(this)">
+                            <div class="app-menu-button-right-menu-wrapper">
+                                <div class="app-menu-button-right-menu-left">
+                                    <span class="username">James H. Smith</span>
+                                </div>
+                                <div class="header-common app-header app-menu-button-right-menu-right">
+                                    <div class="app-menu-button-right-menu-right-image-wrapper">
+                                        <span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52"></span>
+                                    </div>
+                                    <div class="app-menu-button-right-menu-right-user-image-wrapper">
+                                        <img class="app-menu-button-right-menu-right-user-image userphoto"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands">
+                        <button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)">
+                            <span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52 rsp"></span>
+                            <div class="app-menu-button-right-menu-right-user-image-wrapper">
+                                <img class="app-menu-button-right-menu-right-user-image userphoto"/>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <div id="userMenuOverlay" class="header-hidden-element">
+                    <button id="transparentbutton" type="button" class="overlaybutton header-hidden-element" tabindex="-1" onclick="closeUserMenu();"></button>
+                    <div class="user-settings-wrapper header-hidden-element">
+                        <div class="user-settings-container">
+                            <button type="button" class="header-common user-settings-close" onclick="closeUserMenu()">
+                                <span><i class="ms-Icon ms-Icon--x ms-icon-font-size-16" aria-hidden="true"></i></span>
+                            </button>
+                            <div id="settingsWrapper" class="header-common user-settings-overlay header-hidden-element">
+                                <div class="user-settings-section">
+                                    <div class="header-common user-settings-header">
+                                        <span lang-tran="Settings">Settings</span>
+                                    </div>
+                                </div>
+                                <div class="header-common user-settings-body">
+                                    <div class="user-settings-panel">
+                                        <div>
+                                            <div>
+                                                <div>
+                                                    <div id="themeCardWrapper" style="display: none">
+                                                        <div id="themeCard" class="header-common user-settings-card collapsed-card">
+                                                            <div class="header-common user-settings-card-header">
+                                                                <div class="header-common user-settings-card-header-label">
+                                                                    <span lang-tran="Theme">Theme</span>
+                                                                </div>
+                                                                <div class="header-common user-settings-card-header-sublabel">
+                                                                    <div>
+                                                                        <span lang-tran="Choose your favorite theme.">Choose your favorite theme.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-value">
+                                                                <div>
+                                                                    <div id="themeValue" class="user-settings-card-value-content">
+                                                                        <a tabindex="0" title="Selected theme: Cosmo">
+                                                                            <div class="current-theme-image-wrapper" title="Selected theme: Cosmo" style="background-color: #005aa1">
+                                                                                <img class="current-theme-image"/>
+                                                                            </div>
+                                                                        </a>
+                                                                        <span class="current-theme-setting">Cosmo</span>
+                                                                    </div>
+                                                                    <div class="header-common user-settings-card-combo-wrapper">
+                                                                        <div role="region">
+                                                                            <div class="theme-list-wrapper">
+                                                                                <div class="theme-list-container">
+                                                                                    <div class="theme-list-scroller-wrappper">
+                                                                                        <div id="themeList">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-footer">
+                                                                <a id="saveTheme" class="header-common user-settings-button emphasized">
+                                                                    <span lang-tran="Save">Save</span>
+                                                                </a>
+                                                                <a id="cancelTheme" class="header-common user-settings-button">
+                                                                    <span lang-tran="Cancel">Cancel</span>
+                                                                </a>
+                                                            </div>
+                                                            <div>
+                                                                <div class="header-common user-settings-card-collapse-area">
+                                                                    <a id="collapseTheme" class="user-settings-card-collapse-button">
+                                                                        <span class="ms-Icon ms-Icon--chevronUp"></span>
+                                                                    </a>
+                                                                    <div class="user-settings-card-expand-button">
+                                                                        <span class="ms-Icon ms-Icon--chevronDown"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div id="LTZCard" class="header-common user-settings-card collapsed-card">
+                                                            <div class="header-common user-settings-card-header">
+                                                                <div class="header-common user-settings-card-header-label">
+                                                                    <span id="languageAndTimeZone" lang-tran="Language">Language</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-value">
+                                                                <div>
+                                                                    <div id="languageValue" class="user-settings-card-value-content">
+                                                                        <span id="languageName1">English (Internatioanl)&lrm;</span>
+                                                                    </div>
+                                                                    <div class="header-common user-settings-card-combo-wrapper">
+                                                                        <div id="languageWrapper" class="user-settings-card-combo-item">
+                                                                            <span id="Language" lang-tran="Language" style="display: none">Language</span>
+                                                                            <div class="user-settings-card-picker-container">
+                                                                                <button class="user-settings-card-picker-button" onclick="chooseLanguage()">
+                                                                                    <div class="user-settings-card-picker-button-text-wrapper">
+                                                                                        <span class="user-settings-card-picker-button-text"></span>
+                                                                                        <div>
+                                                                                            <span id="languageName2">English (Internatioanl)&lrm;</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="user-settings-card-picker-button-arrow-wrapper">
+                                                                                        <span class="user-settings-card-picker-button-arrow ms-Icon ms-Icon--caretDown"></span>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div id="timeZoneWrapper" class="user-settings-card-combo-item" style="display: none">
+                                                                            <span id="Time Zone" lang-tran="Current time zone">Current time zone</span>
+                                                                            <div class="user-settings-card-picker-container">
+                                                                                <button class="user-settings-card-picker-button" onclick="chooseTimeZone()">
+                                                                                    <div class="user-settings-card-picker-button-text-wrapper">
+                                                                                        <span class="user-settings-card-picker-button-text"></span>
+                                                                                        <div>
+                                                                                            <span id="timeZoneName">(UTC) Coordinated Universal Time</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="user-settings-card-picker-button-arrow-wrapper">
+                                                                                        <span class="user-settings-card-picker-button-arrow ms-Icon ms-Icon--caretDown"></span>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-footer">
+                                                                <a id="saveLTZ" class="header-common user-settings-button emphasized">
+                                                                    <span lang-tran="Save">Save</span>
+                                                                </a>
+                                                                <a id="cancelLTZ" class="header-common user-settings-button">
+                                                                    <span lang-tran="Cancel">Cancel</span>
+                                                                </a>
+                                                            </div>
+                                                            <div>
+                                                                <div class="header-common user-settings-card-collapse-area">
+                                                                    <a id="collapseLTZ" class="user-settings-card-collapse-button">
+                                                                        <span class="ms-Icon ms-Icon--chevronUp"></span>
+                                                                    </a>
+                                                                    <div class="user-settings-card-expand-button">
+                                                                        <span class="ms-Icon ms-Icon--chevronDown"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="phraseAppCardWrapper" style="display: none">
+                                                        <div id="phraseAppCard" class="header-common user-settings-card collapsed-card">
+                                                            <div class="header-common user-settings-card-header">
+                                                                <div class="header-common user-settings-card-header-label">
+                                                                    <span lang-tran="PhraseApp">PhraseApp</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-value">
+                                                                <div>
+                                                                    <div id="phraseAppValue" class="user-settings-card-value-content">
+                                                                        <span id="phraseAppSwitched" lang-tran="Off">Off</span>
+                                                                    </div>
+                                                                    <div class="header-common user-settings-card-combo-wrapper">
+                                                                        <button type="button" class="user-settings-card-checkbox" onclick="changePhraseAppSelection()">
+                                                                            <span id="phraseAppCardCheckBox" class="ms-Icon ms-Icon--blank user-settings-card-checkbox-box"></span>
+                                                                            <span class="user-settings-card-checkbox-label" lang-tran="On">On</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-footer">
+                                                                <a id="savePhraseApp" class="header-common user-settings-button emphasized">
+                                                                    <span lang-tran="Save">Save</span>
+                                                                </a>
+                                                                <a id="cancelPhraseApp" class="header-common user-settings-button">
+                                                                    <span lang-tran="Cancel">Cancel</span>
+                                                                </a>
+                                                            </div>
+                                                            <div>
+                                                                <div class="header-common user-settings-card-collapse-area">
+                                                                    <a id="collapsePhraseApp" class="user-settings-card-collapse-button">
+                                                                        <span class="ms-Icon ms-Icon--chevronUp"></span>
+                                                                    </a>
+                                                                    <div class="user-settings-card-expand-button">
+                                                                        <span class="ms-Icon ms-Icon--chevronDown"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="helpWrapper" class="header-common user-settings-overlay header-hidden-element">
+                                <div class="user-settings-section">
+                                    <div class="header-common user-settings-header">
+                                        <span lang-tran="Help">Help</span>
+                                    </div>
+                                </div>
+                                <div class="header-common user-settings-body">
+                                    <div class="user-help-panel">
+                                        <div>
+                                            <div>
+                                                <div id="divHelp">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="notificationsWrapper" class="header-common user-settings-overlay header-hidden-element">
+                                <div class="notifications-section">
+                                    <div class="header-common user-settings-header">
+                                        <span lang-tran="Notifications">Notifications</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="accountsWrapper" class="header-common user-settings-overlay header-hidden-element account-wrapper">
+                                <div class="user-settings-section">
+                                    <div class="header-common user-settings-header">
+                                        <span lang-tran="My accounts">My accounts</span>
+                                    </div>
+                                    <div>
+                                        <div class="header-common user-settings-info">
+                                            <div class="user-settings-photo-wrapper">
+                                                <span class="user-settings-photo-placeholder ms-Icon ms-Icon--person ms-icon-font-size-52"></span>
+                                                <div class="user-settings-photo-container">
+                                                    <img class="user-settings-photo-image userphoto"/>
+                                                </div>
+                                            </div>
+                                            <div class="user-settings-details">
+                                                <span class="user-settings-name username">James H. Smith</span>
+                                                <span class="user-settings-email useremail">j.s@risktech.io</span>
+                                            </div>
+                                        </div>
+                                        <div id="usersettingslinklist" class="header-common user-settings-linklist"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="accountsWrapperSmall" class="header-common user-settings-small-wrapper header-hidden-element account-wrapper">
+                        <div id="environmentcontainers" class="header-common">
+                            <div class="header-common">
+                                <button class="header-common user-settings-small-menu-item environments-trigger" onclick="showUserSettingsSmallMenuDropdown(this)">
+                                    <div class="user-settings-small-menu-item-wrapper">
+                                        <div class="user-settings-small-menu-item-content" lang-tran="Environments">Environments</div>
+                                        <div class="user user-settings-small-menu-item-glyphwrapper">
+                                            <svg class="user user-settings-small-menu-item-glyph" focusable="false" viewBox="0 0 16 16">
+                                                <path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="header-common user-settings-small-menu-dropdown header-hidden-element">
+                                <ul class="user-settings-small-menu-dropdown-list">
+                                    <li>
+                                        <button disabled class="user-settings-small-menu-dropdown-option active-option">
+                                            <div class="user-settings-small-menu-dropdown-option-item">
+                                                <div class="user-settings-small-menu-dropdown-option-label">Tenant 1 (default)</div>
+                                            </div>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="user-settings-small-menu-dropdown-option">
+                                            <div class="user-settings-small-menu-dropdown-option-item">
+                                                <div class="user-settings-small-menu-dropdown-option-label">Tenant 2</div>
+                                            </div>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="user-settings-small-menu-dropdown-option">
+                                            <div class="user-settings-small-menu-dropdown-option-item">
+                                                <div class="user-settings-small-menu-dropdown-option-label">Tenant 3</div>
+                                            </div>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="header-common user-settings-small-menu-info">
+                            <div class="user-settings-small-menu-user-details">
+                                <div class="username">James H. Smith</div>
+                                <div class="useremail">j.s@risktech.io</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="headerRenderIndicator" class="indicator"></div>
+        </div>
+        <div class="overlay">
+            <div class="spinner center">
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+                <div class="spinner-blade"></div>
+            </div>
+        </div>
+		<div class="content-wrapper">
+            <div class="container body-content">
+		        <div id='formio'></div>
+            </div>
+            <div id="renderIndicator" class="rendered btn" />
+            <div id="feedbackInserted" class="feedback-inserted">
+                <a id="feedbackContainer" class="feedback-container" onclick="showFeedbackDialog();" href="javascript:void(0)" data-clicking="custom">
+                    <div class="feedback-button">
+                        <span class="feedback-icon"><i class="ms-Icon ms-Icon--Chat" aria-hidden="true"></i></span>
+                        <span lang-tran="Feedback">Feedback</span>
+                    </div>
+                </a>
+            </div>
+		</div>
+        <div id="applauncher" class="app-launcher-wrapper">
+            <div class="app-launcher-content">
+                <div class="app-launcher-header">
+                    <a id="officeHomeLink" href="https://portal.office.com/" class="app-launcher-button office" target="_blank">
+                        <svg class="app-launcher-button-glyph" focusable="false" viewBox="0 0 16 16">
+                            <g>
+                                <polygon points="10.066596 16.003531 1.5 12.8404802 10.066596 13.9889688 10.066596 2.48525422 4.39946326 3.85967512 4.39946326 11.6919915 1.5 12.8216525 1.5 3.21953388 10.066596 1.42108547e-14 14.8299999 1.35559321 14.8299999 14.6479378"></polygon>
+                            </g>
+                        </svg>
+                        <span>Office.com</span>
+                    </a>
+                    <a id="allAppsLink" href="https://account.activedirectory.windowsazure.com/r#/applications" class="app-launcher-button azure" target="_blank">
+                        <svg class="app-launcher-button-glyph" focusable="false" viewBox="0 0 16 16">
+                            <g>
+                                <polygon points="3.65 14.2 16 14.2 9.35 2.67 7.32 8.24 11.21 12.86 3.65 14.2"></polygon>
+                                <polygon points="8.82 1.8 4.07 5.78 0 12.83 3.67 12.83 3.67 12.84 8.82 1.8"></polygon>
+                            </g>
+                        </svg>
+                        <span>All Apps</span>
+                    </a>
+                </div>
+                <div>
+                    <h2>My apps</h2>
+                </div>
+            </div>
+        </div>
+        <div id="languages" class="languages-wrapper">
+            <div class="ltz-container">
+                <div class="ltz-content">
+                    <div class="ltz-scroller-container">
+                        <div class="ltz-scroller-content">
+                            <div id="langarr">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="timeZones" class="time-zones-wrapper">
+            <div class="ltz-container">
+                <div class="ltz-content">
+                    <div class="ltz-scroller-container">
+                        <div class="ltz-scroller-content">
+                            <div id="tzarr">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="feedbackOverlayBackground" class="feedback-overlay-background" style="display:none;">
+            <div id="feedbackMainContainer" class="feedback-main-container">
+                <form class="feedback-main-content-holder">
+                    <div id="feedbackLeftFormContainer" class="feedback-form-container">
+                        <div lang-tran="Feedback Question" class="feedback-question-left-text feedback-text-align-left feedback-line-height feedback-font-subtitle">
+                            What kind of feedback do you have?
+                        </div>
+                        <div class="feedback-column-separatordiv">
+                            <div id="feedbackOverallAnchorsContainer">
+                                <button type="button" id="feedbackOverallSmileAnchor" class="feedback-overall-anchor feedback-text-align-left" onclick="showFeedbackFields('Title Smile');">
+                                    <div id="feedbackOverallSmileImage" class="feedback-overall-image">
+                                        <svg viewBox="0 0 72 72" width="24px" focusable="false" >
+                                            <path class="path-anchor-first" d="M36 1C16.7 1 1 16.7 1 36s15.7 35 35 35c19.3 0 35-15.7 35-35S55.3 1 36 1Z"></path>
+                                            <path class="path-anchor-second" d="M36 1C16.7 1 1 16.7 1 36s15.7 35 35 35c19.3 0 35-15.7 35-35S55.3 1 36 1ZM49.3 18.3c2.3 0 4.2 2.7 4.2 6 0 3.3-1.9 6-4.2 6 -2.3 0-4.2-2.7-4.2-6C45.1 21 47 18.3 49.3 18.3ZM22.9 18.3c2.3 0 4.2 2.7 4.2 6 0 3.3-1.9 6-4.2 6 -2.3 0-4.2-2.7-4.2-6C18.7 21 20.6 18.3 22.9 18.3ZM36 58.6c-8.5 0-16-4.1-20.9-10.4l3.5-3.6c3.5 4.5 9.9 7.6 17.4 7.6 7.4 0 13.9-3.1 17.4-7.6l3.6 3.6C52.1 54.4 44.4 58.6 36 58.6Z"></path>
+                                        </svg>
+                                    </div>
+                                    <div lang-tran="Feedback Like" id="feedbackOverallSmileText" class="feedback-overall-text feedback-font-subtitle feedback-line-height">
+                                        I Like Something
+                                    </div>
+                                </button>
+                                <button type="button" id="feedbackOverallFrownAnchor" class="feedback-overall-anchor feedback-text-align-left" onclick="showFeedbackFields('Title Frown');">
+                                    <div id="feedbackOverallFrownImage" class="feedback-overall-image">
+                                        <svg viewBox="0 0 72 72" width="24px" focusable="false">
+                                            <path class="path-anchor-first" d="M36 1C16.7 1 1 16.7 1 36s15.7 35 35 35c19.3 0 35-15.7 35-35S55.3 1 36 1Z"></path>
+                                            <path class="path-anchor-second" d="M36 1C16.7 1 1 16.7 1 36s15.7 35 35 35c19.3 0 35-15.7 35-35S55.3 1 36 1ZM49.3 18.3c2.3 0 4.2 2.7 4.2 6 0 3.3-1.9 6-4.2 6 -2.3 0-4.2-2.7-4.2-6C45.1 21 47 18.3 49.3 18.3ZM22.9 18.3c2.3 0 4.2 2.7 4.2 6 0 3.3-1.9 6-4.2 6 -2.3 0-4.2-2.7-4.2-6C18.7 21 20.6 18.3 22.9 18.3ZM52.8 57.9c-3.3-4.4-9.6-7.3-16.7-7.3 -7.2 0-13.4 3-16.7 7.3l-3.4-3.4c4.7-6.1 11.9-10 20.1-10 8.2 0 15.5 4 20.2 10L52.8 57.9Z" fill="#fff"></path>
+                                        </svg>
+                                    </div>
+                                    <div lang-tran="Feedback Dont Like" id="feedbackOverallFrownText" class="feedback-overall-text feedback-font-subtitle feedback-line-height">
+                                        I Don't Like Something
+                                    </div>
+                                </button>
+                                <button type="button" id="feedbackOverallIdeaAnchor" class="feedback-overall-anchor feedback-text-align-left" onclick="showFeedbackFields('Title Idea');">
+                                    <div id="feedbackOverallIdeaImage" class="feedback-overall-image">
+                                        <svg fill="black" viewBox="0 0 72 72" width="24px" focusable="false">
+                                            <path class="path-anchor-first" d="M42.3 62H29.2c-1.1 0-2 0.9-2 2s1.9 2 3 2h11.1c1.1 0 3-0.9 3-2S43.4 62 42.3 62ZM36 1.1C25 1.1 14.8 7 14.8 20.6c0 2.2 0.8 4.4 0.7 4.1 1.2 2.9 2.7 5.6 6.3 10.9 4.2 6.3 4.7 7.6 4.8 11.1v1.3c0 1.3 1 3 2.7 3h13.5c1.7 0 2.8-1.7 2.8-3v-1.5c0.1-3.5 0.1-4.7 4.2-10.9 3.6-5.4 5.7-8.4 6.8-11 0 0 0.6-1.6 0.6-4.1C57.2 6.9 47 1.1 36 1.1Z"></path>
+                                            <path class="path-anchor-second" d="M42.3 62H29.2c-1.1 0-2 0.9-2 2s1.9 2 3 2h11.1c1.1 0 3-0.9 3-2S43.4 62 42.3 62ZM36 1.1C25 1.1 14.8 7 14.8 20.6c0 2.2 0.8 4.4 0.7 4.1 1.2 2.9 2.7 5.6 6.3 10.9 4.2 6.3 4.7 7.6 4.8 11.1v1.3c0 1.3 1 3 2.7 3h13.5c1.7 0 2.8-1.7 2.8-3v-1.5c0.1-3.5 0.1-4.7 4.2-10.9 3.6-5.4 5.7-8.4 6.8-11 0 0 0.6-1.6 0.6-4.1C57.2 6.9 47 1.1 36 1.1ZM31.9 11.9c-3.2 0-5.6 4.2-5.5 6.2 0.2 4-4.4 3.8-4.4 0.6 0-5.3 2.8-10.3 8.5-10.9C34.6 7.3 34.6 11.9 31.9 11.9ZM43.6 55h-15c-1.1 0-2 0.9-2 2v1c0 1.1 0.9 2 2 2h15c1.1 0 2-0.9 2-2v-1C45.6 55.9 44.7 55 43.6 55ZM39.1 68h-6c-0.8 0-1.5 0.7-1.5 1.5s1.2 1.5 2 1.5h5c0.8 0 2-0.7 2-1.5S39.9 68 39.1 68Z"></path>
+                                        </svg>
+                                    </div>
+                                    <div lang-tran="Feedback Suggestion" id="feedbackOverallIdeaText" class="feedback-overall-text feedback-font-subtitle feedback-line-height">
+                                        I Have a Suggestion
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="feedbackMiddleFormContainer" class="feedback-form-container">
+                        <div id="feedbackBasicFormContainer" class="feedback-basic-form-container">
+                            <label for="feedbackBasicFormComment" id="feedbackBasicFormQuestionMiddleText" class="feedback-font-subtitle feedback-line-height feedback-text-align-left feedback-form-question-middle-text"></label>
+                            <textarea lang-tran-placeholder="Feedback Comment" placeholder="Please type in your comment" maxlength="1000" id="feedbackBasicFormComment" class="feedback-font-text feedback-form-comment feedback-text-input feedback-form-control"></textarea>
+                            <div class="feedback-form-bottom-container">
+                                <div class="feedback-form-screenshot-container">
+                                    <input type="checkbox" value="unchecked" id="feedbackBasicFormScreenshotCheckbox" class="feedback-basic-form-screenshot-checkbox">
+                                    <label lang-tran="Include screenshot" for="feedbackBasicFormScreenshotCheckbox" class="feedback-font-text feedback-text-align-left feedback-line-height feedback-form-screenshot-label">Include screenshot</label>
+                                </div>
+                                <div class="feedback-form-submit-button-container">
+                                    <button lang-tran="Submit" id="feedbackBasicFormSubmitButton" class="feedback-font-text feedback-submit-button">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

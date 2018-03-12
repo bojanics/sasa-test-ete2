@@ -1,0 +1,248 @@
+.indicator {
+    text-align: right;
+}
+
+.header-border {
+    background-color: white;
+}
+
+.header-wrapper {
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+}
+
+.app-menu-brand {
+    color: #333333;
+    font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.app-menu-button {
+    color: #333333;
+}
+
+.app-menu-button:focus {
+    background-color: transparent;
+}
+
+.app-menu-button:hover {
+    background-color: transparent;
+    color: #333333;
+    outline: 1px solid #ddd;
+    outline-offset: -2px;
+}
+
+.appl-button {
+    background-image: url('../../gif/appl/appl-readable.gif') !important;
+}
+
+.appl-button:hover, .appl-button:active {
+    outline: 1px solid #ddd !important;
+    outline-offset: -2px;
+}
+
+.app-menu-button:active {
+	background-color: transparent;
+}
+
+.appl-button:hover {
+    outline: none;
+}
+
+.environment-button.opened {
+    background-color: transparent;
+    outline: 1px solid #ddd;
+    outline-offset: -2px;
+}
+
+.environment-text {
+    color: #333333;
+}
+
+.environment-option {
+    background-color: transparent;
+    border-bottom-color: transparent;
+    color: #333333;
+}
+
+.environment-option:hover, .environment-option:active {
+    color: white;
+    background-color: #4582ec;
+}
+
+.environment-option.active-option {
+    color: #333333;
+    background-color: transparent;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.user-settings-small-menu-dropdown-option.active-option {
+    color: #333333;
+    background-color: transparent;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.user-settings-wrapper.first-item {
+    border-color: #dddddd;
+}
+
+.app-launcher-wrapper {
+    background-color: white;
+}
+
+.app-launcher-button {
+    background-color: white;
+    color: #333333 !important;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+}
+
+.feedback-form-control {
+    display: block;
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: #333333;
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.feedback-main-container {
+    background-color: #f7f7f7;
+}
+
+.feedback-submit-button {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #4582ec;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 16px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #ffffff;
+    background-color: #4582ec;
+}
+
+.feedback-submit-button:hover {
+    background-color: #1863e6;
+    border-color: #175fdd;
+}
+
+.feedback-button {
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #dddddd;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 16px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    user-select: none; 
+    font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333333;
+    background-color: #ffffff;
+}
+
+.feedback-overall-anchor {
+    color: #333333;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+}
+
+.path-anchor-first  {
+    fill: #ffffff;
+    stroke: #ffffff;
+}
+
+.path-anchor-second {
+    fill: #333333;
+    stroke: #ffffff;
+}
+
+.feedback-overall-anchor:hover {
+    color: #ffffff;
+    background-color: #1863e6;
+    border-color: #175fdd;
+}
+
+.feedback-overall-anchor:hover > div > svg > .path-anchor-first {
+    fill: #1863e6;
+    stroke: #1863e6;
+}
+
+.feedback-overall-anchor:hover > div > svg > .path-anchor-second {
+    fill: #ffffff;
+    stroke: #1863e6; 
+}
+
+.feedback-overall-anchor-active {
+    color: #ffffff;
+    background-color: #4582ec;
+    border-color: #4582ec;
+}
+
+.feedback-overall-anchor-active > div > svg > .path-anchor-first {
+    fill: #4582ec;
+    stroke: #4582ec;
+}
+
+.feedback-overall-anchor-active > div > svg > .path-anchor-second {
+    fill: #ffffff;
+    stroke: #4582ec;
+}
+
+.feedback-overall-anchor-active:hover > div > svg > .path-anchor-first {
+    fill: #1863e6;
+    stroke: #1863e6;
+}
+
+.feedback-overall-anchor-active:hover > div > svg > .path-anchor-second {
+    fill: #ffffff;
+    stroke: #1863e6;
+}
+
+/**
+ * LOGO BACKGROUND (legibility issues)
+ */
+
+.logo-background {
+    background-color: #333333;
+}
+
+.client-logo {
+    background-color: #333333;
+}
+
+/**
+ * PRINT LAYOUT
+ */
+ 
+@media print {
+    .header-wrapper {
+        border-right: 1px solid #dddddd;
+    }
+}

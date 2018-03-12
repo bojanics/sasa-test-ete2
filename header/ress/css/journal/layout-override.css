@@ -1,0 +1,208 @@
+.indicator {
+    text-align: right;
+}
+
+.header-border {
+    background-color: #eb6864;
+}
+
+.header-wrapper {
+	border-top: 1px solid #e53c37;
+	border-left: 1px solid #e53c37;
+	border-bottom: 1px solid #e53c37;
+}
+
+.app-menu-brand {
+    font-family: "News Cycle", "Arial Narrow Bold", sans-serif;
+}
+
+.app-menu-button:focus {
+    background-color: transparent;
+}
+
+.app-menu-button:hover {
+    background-color: #e74b47;
+}
+
+.app-menu-button:active {
+	background-color: transparent;
+}
+
+.appl-button {
+    background-image: url('../../gif/appl/appl-journal.gif') !important;
+}
+
+.environment-button.opened {
+    background-color: #e74b47;
+}
+
+.environment-option {
+    background-color: transparent;
+    border-bottom-color: #e5e5e5;
+    color: #333333;
+}
+
+.environment-option:hover, .environment-option:active {
+    color: white;
+    background-color: #eb6864;
+}
+
+.environment-option.active-option {
+    color: white;
+    background-color: #e74b47;
+}
+
+.user-settings-small-menu-dropdown-option.active-option {
+    color: white;
+    background-color: #e74b47;
+}
+
+
+.user-settings-wrapper.first-item {
+    border-color: #e53c37;
+}
+
+.app-launcher-wrapper {
+    background-color: #e74b47;
+}
+
+.app-launcher-button {
+    background-color: #999999;
+    border-radius: 4px;
+}
+
+.feedback-form-control {
+    display: block;
+    font-size: 15px;
+    line-height: 1.42857143;
+    color: #777777;
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.feedback-main-container {
+    background-color: #f5f5f5;
+}
+
+.feedback-submit-button {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #eb6864;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: #ffffff;
+    background-color: #eb6864;
+}
+
+.feedback-submit-button:hover {
+    background-color: #e53c37;
+    border-color: #e4332e;
+}
+
+.feedback-button {
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #999999;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    user-select: none;
+    color: #ffffff;
+    background-color: #999999;
+}
+
+.feedback-overall-anchor {
+    color: #ffffff;
+    background-color: #999999;
+    border: 1px solid #999999;
+    border-radius: 4px;
+}
+
+.path-anchor-first  {
+    fill: #999999;
+    stroke: #999999;
+}
+
+.path-anchor-second {
+    fill: #ffffff;
+    stroke: #999999;
+}
+
+.feedback-overall-anchor:hover {
+    color: #ffffff;
+    background-color: #e53c37;
+    border-color: #e4332e;
+}
+
+.feedback-overall-anchor:hover > div > svg > .path-anchor-first {
+    fill: #e53c37;
+    stroke: #e53c37;
+}
+
+.feedback-overall-anchor:hover > div > svg > .path-anchor-second {
+    fill: white;
+    stroke: #e53c37; 
+}
+
+.feedback-overall-anchor-active {
+    color: #ffffff;
+    background-color: #eb6864;
+    border-color: #eb6864;
+}
+
+.feedback-overall-anchor-active > div > svg > .path-anchor-first {
+    fill: #eb6864;
+    stroke: #eb6864;
+}
+
+.feedback-overall-anchor-active > div > svg > .path-anchor-second {
+    stroke: #eb6864;
+}
+
+.feedback-overall-anchor-active:hover > div > svg > .path-anchor-first {
+    fill: #e53c37;
+    stroke: #e53c37;
+}
+
+.feedback-overall-anchor-active:hover > div > svg > .path-anchor-second {
+    fill: white;
+    stroke: #e53c37;
+}
+
+/**
+ * PRINT LAYOUT
+ */
+ 
+@media print {
+    .header-wrapper {
+        border-right: 1px solid #e53c37;
+    }
+}

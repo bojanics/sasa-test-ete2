@@ -99,6 +99,14 @@ var currentUser = {
         
         if (!ADAL.getCachedUser()) {
             console.log('handling signin...');
+            var ailc = storageObj.getItem('adal_init_login_cnt');
+            if (ailc) {
+               ailc = parseInt(ailc)+1;
+            } else {
+               ailc = 1;
+            }
+            storageObj.setItem('adal_init_login_cnt',ailc);
+            alert('ailc='+ailc);
             ADAL.login();
             return;
         }
@@ -267,8 +275,23 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
                msg+='\n\nError details:\n'+error;
             }
             var dologin = false;
+            var aelc = null;
             if (errcode=='login_required' || errcode=='interaction_required' || errcode=='account_selection_required' || errcode=='consent_required' || errcode=='access_denied') {
                dologin = true;
+            }
+            if (dologin) {
+               var storageObj = isIEBrowser() ? localStorage : sessionStorage;               
+               aelc = storageObj.getItem('adal_error_login_cnt#'+resource);
+               if (aelc) {
+                  aelc = parseInt(aelc)+1;
+               } else {
+                  aelc = 1;
+               }
+               storageObj.setItem('adal_error_login_cnt#'+resource,aelc);
+               console.log('aelc#'+resource+'='+aelc+', msg='+msg);
+            }
+            
+            if (dologin && aelc<2) {
                msg='You will be redirected to the login page.\n\n'+msg;
             } else if (errcode=='Token Renewal Failed') {
                msg='Please try again latter.\n\n'+msg;
@@ -280,6 +303,8 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
                   msgpart='The application is trying to use invalid resource';
                } else if (errcode=='unsupported_response_type') {
                   msgpart='The application authentication setting must be adjusted to support implicit flow';
+               } else if (errcode=='interaction_required') {
+                  msgpart='Administrative action is required';
                } else {
                   msgpart = 'Unknown error happened';
                }
@@ -291,8 +316,12 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
             }
             console.log(msg);
             if (dologin) {
-               alert('dologin='+msg);
-               ADAL.login();
+               if (aelc<2) {
+                  ADAL.login();
+               } else {
+                  alert(msg);
+               }
+               return;
             } 
             //if (errcode=='interaction_required' && resource!=ADAL.config.clientId) {
             //   ADAL.acquireTokenRedirect(resource, null, null);               

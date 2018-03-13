@@ -291,6 +291,7 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
             }
             console.log(msg);
             if (dologin) {
+               alert(msg);
                ADAL.login();
             } 
             //if (errcode=='interaction_required' && resource!=ADAL.config.clientId) {

@@ -26,6 +26,9 @@ body {
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }
 
 .header-border {
@@ -567,8 +570,14 @@ body {
     }
 }
 
+@media (min-width: 1300px) {
+    .rsp-med-small-visible {
+        display: none !important;
+    }
+}
+
 .visiblecommand {
-    display: inline-block !important;
+    display: table-cell !important;
 }
 
 .overlaybutton {
@@ -1166,6 +1175,17 @@ body {
     text-transform: none;
 }
 
+.user-settings-small-menu-link:hover {
+    color: black !important;
+    text-decoration: none !important;
+}
+
+.user-settings-small-menu-link:focus {
+    color: black !important;
+    text-decoration: none !important;
+    outline: none !important;
+}
+
 .user-settings-small-menu-item-content {
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -1291,6 +1311,7 @@ body {
     color: black;
     font-size: 14px;
     line-height: 1;
+    border-bottom: 1px solid #eaeaea;
 }
 
 .user-settings-small-menu-user-details {

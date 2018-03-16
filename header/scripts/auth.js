@@ -8,6 +8,12 @@ var themePropertyExtensionExists = false;
 var languagePropertyExtension;
 var timeZonePropertyExtension;
 var ADAL = null;  
+var storageObj = isIEBrowser() ? localStorage : sessionStorage;
+var adalErrorReported = false;
+
+const ADAL_RECURSION_COUNT = 'adal_recursion_count';
+const ADAL_EXPIRATION_FOR_RECURSION = 'adal_expiration_for_recursion';
+const ADAL_LAST_INIT = 'adal_last_init';
 
 // output ADAL logs to the console
 Logging = {
@@ -30,7 +36,6 @@ var currentUser = {
     var adal_clientId = null;
     var query = window.location.search.substring(1);
     var qs = '{}';
-    var storageObj = isIEBrowser() ? localStorage : sessionStorage;
     if (query!=null && query!='') {
         qs = parse_query_string(query);
         adal_clientId = qs['client'];
@@ -83,7 +88,6 @@ var currentUser = {
                 popUp: false
             });   
          }
-          
        
         // doing ADAL logic
         console.log('iscallback='+isCallback);
@@ -96,19 +100,15 @@ var currentUser = {
             window.location = ADAL._getItem(ADAL.CONSTANTS.STORAGE.LOGIN_REQUEST);
             return;
         }	
-        
+
         if (!ADAL.getCachedUser()) {
-            console.log('handling signin...');
-            var ailc = storageObj.getItem('adal_init_login_cnt');
-            if (ailc) {
-               ailc = parseInt(ailc)+1;
-            } else {
-               ailc = 1;
-            }
-            storageObj.setItem('adal_init_login_cnt',ailc);
-            alert('ailc='+ailc);
+            console.log('Redirect to login-page...');
             ADAL.login();
             return;
+        } else {
+           if (!isIfrm) {
+               writeADALInitTime();
+           }
         }
     }    
 })();
@@ -201,6 +201,9 @@ function fillUserInfo() {
             currentUser.uid = signeduser.profile.upn;
             $('.useremail').html(signeduser.profile.upn);
             $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://delve.office.com/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://portal.office.com/account/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
+            $('#myProfileSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://delve.office.com/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My profile">My profile</a></div>');
+            $('#myAccountSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://portal.office.com/account/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My account">My account</a></div>');
+            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
         } else if (signeduser.profile.idp === "live.com") {
             // For personal accounts
             currentUser.member = false;
@@ -208,6 +211,9 @@ function fillUserInfo() {
             currentUser.uid = signeduser.profile.email;
             $('.useremail').html(signeduser.profile.email);
             $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://account.microsoft.com/profile/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://account.microsoft.com/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
+            $('#myProfileSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://account.microsoft.com/profile/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My profile">My profile</a></div>');
+            $('#myAccountSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://account.microsoft.com/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My account">My account</a></div>');
+            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
             $("#officeHomeLink").attr("href", "https://www.office.com/login?IdentityProvider=live.com&login_hint=" + signeduser.profile.email.replace("@", "%40"));
         } else {
             // For work or school accounts which are guests
@@ -216,6 +222,9 @@ function fillUserInfo() {
             currentUser.uid = signeduser.profile.email;
             $('.useremail').html(signeduser.profile.email);
             $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://delve.office.com/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://portal.office.com/account/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
+            $('#myProfileSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://delve.office.com/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My profile">My profile</a></div>');
+            $('#myAccountSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://portal.office.com/account/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My account">My account</a></div>');
+            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
         }
         
         $("#allAppsLink").attr("href", "https://account.activedirectory.windowsazure.com/r?tenantId=" + ADAL.config.tenant + "#/applications");
@@ -265,67 +274,162 @@ function parse_string(str,del) {
     return query_string;
 }
 
-function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjsondata, fetchLTZ, justCheck, callbackfunc2, callbackParam1, callbackParam2) {
+function addtwonumbersnoadal(token,url,formdata) {
+   var settings = {
+     "crossDomain": true,     
+     "url": url,
+     "timeout":30000,
+     "method": "POST",
+     "headers": {
+       "content-type": "application/json",
+       "authorization": "Bearer "+token,
+       "cache-control": "no-cache"
+     },
+     "data": JSON.stringify(formdata),
+     "dataType": 'json',
+     "contentType": 'application/json'                          
+   }
+
+   $.ajax(settings).done(function (data,textStatus,request) {
+      //document.getElementById('mymessage').innerHTML='Calculation successfully performed!';
+      //console.log('data='+JSON.stringify(data));
+      //console.log('formdata='+JSON.stringify(formdata));
+      var datamerged = $.extend(formdata.data,data.data);
+      var datamergedstring = JSON.stringify(datamerged);
+      console.log('datamerged='+datamergedstring);
+      var initjson = JSON.parse('{"data":'+datamergedstring+'}');
+      
+      form.submission = initjson;      
+   }).fail(function (err, textStatus, errorThrown) {
+      //document.getElementById('mymessage').innerHTML='Failed to calculate two numbers!';
+      console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+", url="+url+",formdata="+(formdata!=null ? JSON.stringify(formdata) : null));
+      alert("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+", url="+url+",formdata="+(formdata!=null ? JSON.stringify(formdata) : null));
+   });
+}
+
+
+function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjsondata, additionalConfiguration, adalerrorcallback) {
     ADAL.acquireToken(resource, function (error, token, errcode) {
         // Handle ADAL Error
         if (error || errcode || !token) {
-           var msg = '';
+            var msg = '';
             if (error || errcode) {
-               msg+='Error '+(errcode!=null ? '"'+errcode+'"' : '')+' occured when acquiring token for the resource "'+resource+'" for calling function "'+getFunctionName(callbackfunc)+'" with ajax url "'+ajaxurl+'"'+(ajaxjsondata!=null ? ' and JSON data '+JSON.stringify(ajaxjsondata) : '')+'.';
+               msg+='Error '+(errcode!=null ? '"'+errcode+'"' : '')+' occured when acquiring token for the resource "'+resource+'" for calling function "'+getFunctionName(callbackfunc)+'" with ajax url "'+ajaxurl+'".';
                msg+='\n\nError details:\n'+error;
             }
+            
             var dologin = false;
             var aelc = null;
-            if (errcode=='login_required' || errcode=='interaction_required' || errcode=='account_selection_required' || errcode=='consent_required' || errcode=='access_denied') {
+            // ADAL login attempt will happen only in the case of the following error codes/errors
+            if (errcode=='login_required' || errcode=='account_selection_required' || errcode=='consent_required' || errcode=='access_denied' || (errcode=='interaction_required' && error && error.indexOf('AADSTS16000')>-1)) {
                dologin = true;
             }
-            if (dologin) {
-               var storageObj = isIEBrowser() ? localStorage : sessionStorage;               
-               aelc = storageObj.getItem('adal_error_login_cnt#'+resource);
-               if (aelc) {
-                  aelc = parseInt(aelc)+1;
-               } else {
-                  aelc = 1;
-               }
-               storageObj.setItem('adal_error_login_cnt#'+resource,aelc);
-               console.log('aelc#'+resource+'='+aelc+', msg='+msg);
-            }
             
-            if (dologin && aelc<2) {
-               msg='You will be redirected to the login page.\n\n'+msg;
-            } else if (errcode=='Token Renewal Failed') {
-               msg='Please try again latter.\n\n'+msg;
+            if (dologin) {
+               aelc = readRecursionInfo(resource,errcode);
+            }
+            // ADAL login attempt will not happen if the recursion is detected
+            if (dologin && aelc==0) {
+               var msgpart = '';
+               if (errcode=='interaction_required') {
+                  msgpart ='Multiple user identities are available for the current context. Please sign-out from non-desired account(s) and sign-in into the wanted one.\n';
+               } else if (error && error.indexOf('AADSTS50058')>-1) {
+                  msgpart ='It might be that session cookie has expired (or deleted due to the log-out from another browser window) or some unexpected error happened.\n';
+               } else {
+                  msgpart ='Some unexpected error happened.\n';
+               }
+               msgpart+='You will be redirected to the login page in order to try to solve this issue.\n\n';
+               msg = msgpart + msg;
+            } else if (errcode=='Token Renewal Failed') {               
+               var msgpart = 'Please try again latter.\n'
+               msgpart+='If it occures many times in a row, you may try to close the browser and open the page again (maybe the session data is missing for some reason).\n\n';
+               msg=msgpart+msg;
             } else {
                var msgpart = '';
+               var specmsg = '\nYou may try to close the browser and open the page again.\n';
+               if (error && error.indexOf('AADSTS50058')>-1) {
+                  specmsg+='It seems either the session cookie has expired (or deleted due to the log-out from another browser window) or some unexpected error happened';
+               } else {               
+                  specmsg+='The token can\'t be acquired until the user consents, or if not possible, until administrator fixes the problem with App registration';
+               }
                if (errcode=='resource is required') {
-                  msgpart='The application is not providing resource to ADAL call';
+                  msgpart='The application is not providing resource to ADAL call. The application developers should fix the code';
                } else if (errcode=='invalid_resource') {
-                  msgpart='The application is trying to use invalid resource';
+                  msgpart='The application is trying to use invalid resource "'+resource+'". The resource, if it exists, has not been configured in the tenant';
                } else if (errcode=='unsupported_response_type') {
                   msgpart='The application authentication setting must be adjusted to support implicit flow';
                } else if (errcode=='interaction_required') {
-                  msgpart='Administrative action is required';
+                  if (dologin) {
+                     msgpart='Detected possible ADAL login recursion after redirecting you to the login-page in order to sign-out from non-desired account(s) and sign-in into the wanted one. Wait for 1 minute or close the browser and then try to access the page again. If you don\'t know how to sign-out\n';
+                  } else {
+                     msgpart='It might be that App registration settings are incorrect - administrative action is required.';
+                     msgpart+=specmsg;
+                  }
+               } else if (dologin) {
+                  msgpart='Detected possible ADAL login recursion after redirecting you to the login-page in order to try to solve the problem.\n';
+                  msgpart+=specmsg;
+               } else if (errcode=='invalid_request' || errcode=='unsupported_response_type') {
+                  msgpart='This is a development error';
+               } else if (errcode=='server_error' || errcode=='temporarily_unavailable') {
+                  var msgpart = 'Please try again latter.\n'
+                  msgpart+='A server-side error happened. If it occures many times in a row';
                } else {
                   msgpart = 'Unknown error happened';
                }
-               msgpart+=' - please contact the support and send the screenshot of this dialog.\n\n'
+               msgpart+=' - please contact the support and send the screenshot(s) of the full content of this dialog.\n\n'
                msg=msgpart+msg;
             }
             if (!token) {
                msg = 'Token is not acquired!\n\n'+msg;
             }
+
             console.log(msg);
             if (dologin) {
-               if (aelc<2) {
-                  ADAL.login();
+               // Only if ADAL login is not in progress we will handle login attempt
+               if (!ADAL.loginInProgress()) {
+                  if (aelc==0) {
+                     // here we check if adal error is reported...in the case it is we don't want to do another login because this means there were several requests failing and                     
+                     if (!adalErrorReported) {
+                        // user is being notified about ADAL error
+                        aelc = aelc+1;
+                        alert(msg);
+                        writeRecursionInfo(resource,errcode,aelc);
+                        ADAL.login();
+                     }
+                  } else {
+                     if (!adalErrorReported) {
+                        // user is being notified about ADAL error
+                        alert(msg);
+                        adalErrorReported=true;
+                     }
+                     // we wait for some time before resetting adal error, otherwise if this happens during initial application startup we would get several MSG alerts in a row
+                     window.setTimeout(function() {
+                        console.log('reseting error reported indicator (resource='+resource+', errcode='+errcode+')');
+                        adalErrorReported = false;
+                     }, 1500);
+                     // also, adal recursion info is reseted because user already has warned
+                     window.setTimeout(function() {
+                        resetRecursionInfo(resource,errcode);
+                     }, 15000);
+                  }
                } else {
-                  alert(msg);
+                  console.log('Doing nothing since ADAL login operation is in progress');
                }
-               return;
-            } 
-            //if (errcode=='interaction_required' && resource!=ADAL.config.clientId) {
-            //   ADAL.acquireTokenRedirect(resource, null, null);               
-            //}
+            } else {
+               if (!adalErrorReported) {
+                  // user is being notified about ADAL error
+                  alert(msg);
+                  adalErrorReported=true;
+               }
+               // we wait for some time before resetting adal error, otherwise if this happens during initial application startup we would get several MSG alerts in a row
+               window.setTimeout(function() {
+                  console.log('reseting error reported indicator (resource='+resource+', errcode='+errcode+')');
+                  adalErrorReported = false;
+               }, 1500);
+            }
+            if (typeof adalerrorcallback !== 'undefined') {
+                adalerrorcallback();
+            }
             return;
         } else {
             console.log('Token for the resource "'+resource+'" is valid. Now executing function "'+getFunctionName(callbackfunc)+'" with ajax url "'+ajaxurl+'"'+(ajaxjsondata!=null ? ' and JSON data '+JSON.stringify(ajaxjsondata) : '')+'.');
@@ -334,9 +438,55 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
            var noaurlmsg = 'The function "'+getFunctionName(callbackfunc)+'" will not be called because URL is not provided!';
            console.log(noaurlmsg);
         } else {
-           callbackfunc(token, ajaxurl, ajaxjsondata, fetchLTZ, justCheck, callbackfunc2, callbackParam1, callbackParam2);
+           callbackfunc(token, ajaxurl, ajaxjsondata, additionalConfiguration);
         }
     });
+}
+
+function readRecursionInfo(resource,errcode) {
+   // read the recursion count for given resource and error code
+   var r_cnt = storageObj.getItem(ADAL_RECURSION_COUNT+resource+errcode);
+   if (r_cnt) {
+      r_cnt = parseInt(r_cnt);
+      if (r_cnt>0) {
+         try {
+            // in the case recursion count is >0, determine if the recursion "blocking" is expired or not - if expired, reset recursion info
+            var exp = parseInt(storageObj.getItem(ADAL_EXPIRATION_FOR_RECURSION+resource+errcode));
+            var li = parseInt(storageObj.getItem(ADAL_LAST_INIT));
+            var ct = new Date().getTime();
+            console.log('Recursion info for resource='+resource+', errcode='+errcode+': recursion count='+r_cnt+', recursion block expires='+exp+', ADAL last inited='+li+', current time='+ct);
+            if (ct>exp && ct>li+60000) {
+               r_cnt=0;
+               console.log('ADAL recursion blocking expired for resource='+resource+', errcode='+errcode);
+               resetRecursionInfo(resource,errcode);
+            } else {
+               console.log('ADAL recursion will be blocked for resource='+resource+', errcode='+errcode);
+            }
+         } catch (e) {}
+      }
+   } else {
+      r_cnt = 0;
+   }
+   return r_cnt;
+}
+
+function writeADALInitTime() {
+   var ait = new Date().getTime();
+   console.log('Writting adal init time to '+ait);
+   storageObj.setItem(ADAL_LAST_INIT,ait);
+}
+
+function writeRecursionInfo(resource,errcode,aelc) {   
+   var exp_time = new Date().getTime()+60000;
+   console.log('Writting adal error recursion info for resource='+resource+', errcode='+errcode+', value='+aelc+', exp='+exp_time);
+   storageObj.setItem(ADAL_RECURSION_COUNT+resource+errcode,aelc);
+   storageObj.setItem(ADAL_EXPIRATION_FOR_RECURSION+resource+errcode,exp_time);
+}
+
+function resetRecursionInfo(resource,errcode) {
+   console.log('Reseting adal error recursion info for resource='+resource+', errcode='+errcode);
+   storageObj.setItem(ADAL_RECURSION_COUNT+resource+errcode,0);
+   storageObj.setItem(ADAL_EXPIRATION_FOR_RECURSION+resource+errcode,0);
 }
 
 function getFunctionName(funct) {
@@ -351,7 +501,9 @@ function getFunctionName(funct) {
 }
 
 function getmailboxsettingsdata(url) {
+    console.log('gmsd');
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com",getdatanoadalmailboxsettings,url);
+    //executeAjaxRequestWithAdalLogic("acd83d15a-220e-4023-97ad-729ff900d685",addtwonumbersnoadal,"https://sasa-test-forlc.azurewebsites.net/Add",{"sasa":"sss"});
 }
 
 function getdatanoadalmailboxsettings(token,url) {
@@ -392,7 +544,9 @@ function getdatanoadalmailboxsettings(token,url) {
 }
 
 function getSupportedTimeZones() {
+    console.log('gstz');
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getDataOnAdalSupportedTimeZones, 'https://graph.microsoft.com/beta/me/outlook/supportedTimeZones');
+    //executeAjaxRequestWithAdalLogic("acd83d15a-220e-4023-97ad-729ff900d685",addtwonumbersnoadal,"https://sasa-test-forlc.azurewebsites.net/Add",{"sasa":"sss"});
 }
 
 function getDataOnAdalSupportedTimeZones(token, url) {
@@ -448,7 +602,9 @@ function patchdatanoadal(token, url, payload) {
 }
 
 function getuserphotometadata() {
+   console.log('uphmd');
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com",getdatanoadalphotometadata,"https://graph.microsoft.com/beta/me/photo");
+    //executeAjaxRequestWithAdalLogic("acd83d15a-220e-4023-97ad-729ff900d685",addtwonumbersnoadal,"https://sasa-test-forlc.azurewebsites.net/Add",{"sasa":"sss"});
 }
 
 function getdatanoadalphotometadata(token,url) {
@@ -479,6 +635,7 @@ function getdatanoadalphotometadata(token,url) {
 }
 
 function getuserphoto() {
+    console.log('guph');
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com",getdatanoadalphoto,"https://graph.microsoft.com/beta/me/photo/$value");
 }
 
@@ -600,7 +757,24 @@ function postuserpropertyextensiononadal(token, url, payload) {
 }
 
 function getUserPropertyExtensions(fetchLTZ) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, fetchLTZ, false);
+   console.log('gupex');
+    var additionalConfiguration = {
+        fetchLTZ: fetchLTZ,
+        justCheck: false
+    };    
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, additionalConfiguration,
+    //executeAjaxRequestWithAdalLogic("acd83d15a-220e-4023-97ad-729ff900d685",getdatanoadaluserpropertyextensions,"https://sasa-test-forlc.azurewebsites.net/Add",{"sasa":"sss"}, additionalConfiguration,
+        (fetchLTZ ? function() {
+            userPropertyExtensionExists = false;
+            userPropertyExtensionsAvailable = false;
+            setupStyle(false);
+            applyTranslation();
+        } : function() {
+            userPropertyExtensionExists = false;
+        userPropertyExtensionsAvailable = false;
+            setupStyle(false);
+        })
+    );
 }
 
 /**
@@ -609,15 +783,14 @@ function getUserPropertyExtensions(fetchLTZ) {
  * @param {string} token Security token which is passed in the request header of the API call
  * @param {string} url URL of the API function which is called to retrieve the open property extensions
  * @param {object} payload Payload which should be sent in the request. This is not used in this function.
- * @param {boolean} fetchLTZ Specifies if the function should update the GUI with language and time zone data (true) or
- * just update global variables with language and time zone settins.
- * @param {boolean} justCheck If the value is true the function just updates the global varioables with a current open
- * property extension values
- * @param {function} callbackfunc A function which will be called after a success response from the API has been received.
- * @param {any} callbackParam1 The first parameter which will be passed to the callback function.
- * @param {any} callbackParam2 The second parameter which will be passed to the callback function.
+ * @param {object} configuration Wrapps in additional needed specifically in this function. Structure:
+ *     {boolean} fetchLTZ Specifies if the function should update the GUI with language and time zone data (true) or just update global variables with language and time zone settins.
+ *     {boolean} justCheck If the value is true the function just updates the global varioables with a current open property extension values
+ *     {function} callbackfunc A function which will be called after a success response from the API has been received.
+ *     {any} callbackParam1 The first parameter which will be passed to the callback function.
+ *     {any} callbackParam2 The second parameter which will be passed to the callback function.
  */
-function getdatanoadaluserpropertyextensions(token, url, payload, fetchLTZ, justCheck, callbackfunc, callbackParam1, callbackParam2) {
+function getdatanoadaluserpropertyextensions(token, url, payload, configuration) {
     var settings = {
         "crossDomain": true,
         "url": url,
@@ -640,7 +813,7 @@ function getdatanoadaluserpropertyextensions(token, url, payload, fetchLTZ, just
             for (var i = 0; i < data.extensions.length; i++) {
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].language) {
                     languagePropertyExtensionExists = true;
-                    if (fetchLTZ && !justCheck) {
+                    if (configuration.fetchLTZ && !configuration.justCheck) {
                         languageSelector.selectedLanguage = data.extensions[i].language;
                     
                         // Translate the page
@@ -655,7 +828,7 @@ function getdatanoadaluserpropertyextensions(token, url, payload, fetchLTZ, just
                 
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].timeZone) {
                     timeZonePropertyExtensionExists = true;
-                    if (fetchLTZ && !justCheck) {
+                    if (configuration.fetchLTZ && !configuration.justCheck) {
                         setInitialTimeZone(data.extensions[i].timeZone);
                         console.log("Current user's time zone alias: " + data.extensions[i].timeZone);
                     } else {
@@ -665,7 +838,7 @@ function getdatanoadaluserpropertyextensions(token, url, payload, fetchLTZ, just
                 }
                 
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].theme) {
-                    if (!justCheck) {
+                    if (!configuration.justCheck) {
                         setupTheme(data.extensions[i].theme);
                     }
                     
@@ -680,31 +853,31 @@ function getdatanoadaluserpropertyextensions(token, url, payload, fetchLTZ, just
                 }
             }
             
-            if (!languagePropertyExtensionExists && fetchLTZ && !justCheck) {
+            if (!languagePropertyExtensionExists && configuration.fetchLTZ && !configuration.justCheck) {
                 applyTranslation();
             }
             
-            if (!themePropertyExtensionExists && !justCheck) {
+            if (!themePropertyExtensionExists && !configuration.justCheck) {
                 setupStyle(false);
             }
-        } else if (!justCheck) {
+        } else if (!configuration.justCheck) {
             setupStyle(false);
-            if (fetchLTZ) {
+            if (configuration.fetchLTZ) {
                 applyTranslation();
             }
         }
         
-        if (typeof callbackfunc !== 'undefined') {
-            callbackfunc(callbackParam1, callbackParam2);
+        if (typeof configuration.callbackfunc !== 'undefined') {
+            configuration.callbackfunc(configuration.callbackParam1, configuration.callbackParam2);
         }
         
         console.log('Data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
     }).fail(function (err, textStatus, errorThrown) {
         userPropertyExtensionExists = false;
         userPropertyExtensionsAvailable = false;
-        if (!justCheck) {
+        if (!configuration.justCheck) {
             setupStyle(false);
-            if (fetchLTZ) {
+            if (configuration.fetchLTZ) {
                 applyTranslation();
             }
         }
@@ -720,8 +893,14 @@ function getdatanoadaluserpropertyextensions(token, url, payload, fetchLTZ, just
  * @param {string} timeZone Alias of a new user's time zone. It should be null if the time zone hasn't been changed.
  */
 function updateLanguageTimeZonePropertyExtensions(language, timeZone) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, true, true,
-        updateLanguageTimeZonePropertyExtensionsCallback, language, timeZone);
+    var additionalConfiguration = {
+        fetchLTZ: true,
+        justCheck: true,
+        callbackfunc: updateLanguageTimeZonePropertyExtensionsCallback,
+        callbackParam1: language,
+        callbackParam2: timeZone
+    };
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, additionalConfiguration);
 }
 
 function updateLanguageTimeZonePropertyExtensionsCallback(language, timeZone) {
@@ -769,8 +948,13 @@ function updateLanguageTimeZonePropertyExtensionsCallback(language, timeZone) {
 }
 
 function updateThemePropertyExtension(theme) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, true, true,
-        updateThemePropertyExtensionCallback, theme);
+    var additionalConfiguration = {
+        fetchLTZ: true,
+        justCheck: true,
+        callbackfunc: updateThemePropertyExtensionCallback,
+        callbackParam1: theme
+    };
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, additionalConfiguration);
 }
 
 function updateThemePropertyExtensionCallback(theme) {

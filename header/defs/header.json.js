@@ -1,5 +1,5 @@
 var headerObj = {
-    "use outlook settings": false,
+    "use outlook settings": true,
     "use user property extensions": true,
     "app launcher": true,
     "environment": true,
@@ -10,10 +10,11 @@ var headerObj = {
     "theme settings": true,
     "feedback": false,
     "maximize": false,
-    "mailbox photo": false,
+    "mailbox photo": true,
     "themes": "./defs/themes.json.js",
     "phraseapp": false,
     "phraseapp project id": "",
     "phraseapp prefix": "[[__",
-    "phraseapp suffix": "__]]"
+    "phraseapp suffix": "__]]",
+    "form width percent": ""
 };

@@ -141,6 +141,7 @@ function setupApp()
             {
                 form.language = lang;
             };
+            window.formioForm = form;
             
             form.ready.then(function()
             {
@@ -354,6 +355,28 @@ function setupLayout()
         window.resizeTo(screen.availWidth, screen.availHeight);
     }
     
+    // Check if we should change form width
+    var formWidthPercentUrl = checkForUrlParameter("form width percent");
+    if (formWidthPercentUrl)
+    {
+        if (!isNaN(formWidthPercentUrl) && 0.1 < formWidthPercentUrl && formWidthPercentUrl <= 100)
+        {
+            $(".body-content").css("width", formWidthPercentUrl + "%");
+        }
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("form width percent"))
+    {
+        if (!isNaN(formObj.properties["form width percent"]) && 0.1 < formObj.properties["form width percent"] && formObj.properties["form width percent"] <= 100)
+        {
+            $(".body-content").css("width", formObj.properties["form width percent"] + "%");
+        }
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("form width percent") && !isNaN(headerObj["form width percent"])
+        && 0.1 < headerObj["form width percent"] && headerObj["form width percent"] <= 100)
+    {
+        $(".body-content").css("width", headerObj["form width percent"] + "%");
+    }
+    
     // Check if we should hide the environments dropdown
     var hasEnvironments = true;
     var hasEnvironmentsUrl = checkForUrlParameter("environment");
@@ -555,6 +578,32 @@ function setupLayout()
         }
     }
     
+    // Check if we have to few commands in the header that we don't need ellipsis button on small screens any more
+    if (missingHeaderElements == 3 || (missingHeaderElements == 2 && (!hasAccount || appLauncherDisabled))
+        || (missingHeaderElements == 1 && !hasAccount && appLauncherDisabled))
+    {
+        $("#ellipsisButtonWrapper").hide();
+        if (!appLauncherDisabled)
+        {
+            $("#applButtonSmallWrapper").removeClass("hiddensmcommands").removeClass("rsp-med-visible").addClass("rsp-med-small-visible");
+        }
+        
+        if (hasNotifications)
+        {
+            $("#notificationsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
+        }
+        
+        if (hasSettings)
+        {
+            $("#settingsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
+        }
+        
+        if (hasHelp)
+        {
+            $("#helpCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
+        }
+    }
+    
     // Check if we should show theme selection option in the settings menu
     var hasThemeSettings = false;
     var hasThemeSettingsUrl = checkForUrlParameter("theme settings");
@@ -734,26 +783,26 @@ function setupLayout()
     
     if (matchMedia)
     {
-        const mediaQuery = matchMedia("(min-width: 883px)");
-        mediaQuery.addListener(function (mq)
+        const mediaMaximizedQuery = matchMedia("(min-width: 883px)");
+        mediaMaximizedQuery.addListener(function (mq)
         {
             if (mq.matches)
             {
                 hideCommands();
-                
-                // This is a fix for a bug which occurs when we open a menu in
-                // the minimum size and than resize the window to maximum size
-                // in WebKit browsers
-                if ($.browser.webkit)
-                {
-                    $(".header-wrapper").hide();
-                    setTimeout(function()
-                    {
-                        $(".header-wrapper").show();
-                    }, 0);
-                }
             }
         });
+        
+        const mediaMinimizedQuery = matchMedia("(max-width: 882px)");
+        mediaMinimizedQuery.addListener(function (mq)
+        {
+            if (mq.matches)
+            {
+                closeAppLauncher();
+                hideEnvironmentDropdown();
+                closeUserMenu();
+            }
+        });
+        
     }
 }
 

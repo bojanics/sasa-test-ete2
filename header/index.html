@@ -85,12 +85,12 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="header-common app-header rsp-hidden visiblesmcommands">
+                    <div id="ellipsisButtonWrapper" class="header-common app-header rsp-hidden visiblesmcommands">
                         <button id="ellipsisButton" type="button" class="header-common app-menu-button app-menu-button-right" onclick="showCommands()">
                             <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--ellipsis" aria-hidden="true"></i></span>
                         </button>
                     </div>
-                    <div class="header-common app-header rsp-med-visible hiddensmcommands">
+                    <div id="applButtonSmallWrapper" class="header-common app-header rsp-med-visible hiddensmcommands">
                         <button type="button" class="header-common app-menu-button app-menu-button-right appl-button" onclick="openAppLauncher(this)"/>
                     </div>
                     <div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
@@ -416,6 +416,9 @@
                                 <div class="useremail">j.s@risktech.io</div>
                             </div>
                         </div>
+                        <div id="myProfileSmallWrapper" class="header-common"></div>
+                        <div id="myAccountSmallWrapper" class="header-common"></div>
+                        <div id="signOutSmallWrapper" class="header-common"></div>
                     </div>
                 </div>
             </div>
@@ -438,7 +441,7 @@
             </div>
         </div>
 		<div class="content-wrapper">
-            <div class="container body-content">
+            <div class="body-content">
 		        <div id='formio'></div>
             </div>
             <div id="renderIndicator" class="rendered btn" />

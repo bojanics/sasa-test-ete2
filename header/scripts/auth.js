@@ -36,10 +36,14 @@ var currentUser = {
     var adal_clientId = null;
     var query = window.location.search.substring(1);
     var qs = '{}';
+    var offline = false;
     if (query!=null && query!='') {
-        qs = parse_query_string(query);
+        qs = parse_query_string(query);        
+        if (qs['offline'] && qs['offline']=='true') {
+            offline = true;
+        }
         adal_clientId = qs['client'];
-        if (adal_clientId==null) {
+        if (adal_clientId==null && !offline) {
            var token = qs['token'];
            if (token) {
                try {
@@ -58,7 +62,7 @@ var currentUser = {
             adal_tenant = qs['tenant'];
         }
         storageObj.setItem('adal_clientId',adal_clientId);
-        storageObj.setItem('adal_tenant',adal_tenant);        
+        storageObj.setItem('adal_tenant',adal_tenant);
     } else {
        adal_tenant = storageObj.getItem('adal_tenant');
        adal_clientId = storageObj.getItem('adal_clientId');
@@ -69,12 +73,13 @@ var currentUser = {
     
     var isIfrm = isIframe();
     var isCallback = isADALCallback();
-    console.log('isIframe: '+isIfrm+', isADALInitialized: '+isSignedInUser()+', isCallback='+isCallback+', query string: '+query);
+    console.log('isIframe: '+isIfrm+', isADALInitialized: '+isSignedInUser()+', isCallback='+isCallback+', offline='+offline+', query string: '+query);
     
     // check and use ADAL if we have signed in user or we need to initialize it
     // NOTE: ADAL should be used if this is running inside iFrame (it means it is refreshing the ID token), or if we already have signed-in user, 
     // or we are in process of initialization (callback), or if we have the query parameter 'client' or query parameter 'token'
-    var shouldUseADAL = isIfrm || isSignedInUser() || isCallback || adal_clientId!=null;
+    //var shouldUseADAL = isIfrm || isSignedInUser() || isCallback || adal_clientId!=null;
+    var shouldUseADAL = !offline && (isIfrm || isSignedInUser() || isCallback || adal_clientId!=null);
     console.log('should use ADAL: '+shouldUseADAL);
     if (shouldUseADAL) {
          if (ADAL==null) {
@@ -85,6 +90,7 @@ var currentUser = {
                 redirectUri: [window.location.protocol, '//', window.location.host, window.location.pathname].join(''), // THE CDN URI
                 cacheLocation: isIEBrowser() ? 'localStorage' : 'sessionStorage', // enable this for IE, as sessionStorage does not work for localhost.
                 //endpoints: endpoints,
+                postLogoutRedirectUri: 'https://www.office.com/?ref=logout', 
                 popUp: false
             });   
          }
@@ -200,20 +206,20 @@ function fillUserInfo() {
             currentUser.personal = false;
             currentUser.uid = signeduser.profile.upn;
             $('.useremail').html(signeduser.profile.upn);
-            $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://delve.office.com/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://portal.office.com/account/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
+            $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://delve.office.com/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://portal.office.com/account/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="javascript:void(0);" onclick="ADAL.logOut();"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
             $('#myProfileSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://delve.office.com/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My profile">My profile</a></div>');
             $('#myAccountSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://portal.office.com/account/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My account">My account</a></div>');
-            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
+            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="javascript:void(0);" onclick="ADAL.logOut();" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
         } else if (signeduser.profile.idp === "live.com") {
             // For personal accounts
             currentUser.member = false;
             currentUser.personal = true;
             currentUser.uid = signeduser.profile.email;
             $('.useremail').html(signeduser.profile.email);
-            $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://account.microsoft.com/profile/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://account.microsoft.com/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
+            $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://account.microsoft.com/profile/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://account.microsoft.com/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="javascript:void(0);" onclick="ADAL.logOut();"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
             $('#myProfileSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://account.microsoft.com/profile/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My profile">My profile</a></div>');
             $('#myAccountSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://account.microsoft.com/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My account">My account</a></div>');
-            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
+            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="javascript:void(0);" onclick="ADAL.logOut();" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
             $("#officeHomeLink").attr("href", "https://www.office.com/login?IdentityProvider=live.com&login_hint=" + signeduser.profile.email.replace("@", "%40"));
         } else {
             // For work or school accounts which are guests
@@ -221,10 +227,10 @@ function fillUserInfo() {
             currentUser.personal = false;
             currentUser.uid = signeduser.profile.email;
             $('.useremail').html(signeduser.profile.email);
-            $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://delve.office.com/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://portal.office.com/account/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
+            $('#usersettingslinklist').append('<div><div class="user-settings-link-wrapper"><a id="myProfileLink" class="user-settings-link" role="link" href="https://delve.office.com/"><span class="user-settings-link-label" lang-tran="My profile">My profile</span></a></div><div class="user-settings-link-wrapper"><a id="myAccountLink" class="user-settings-link" role="link" href="https://portal.office.com/account/"><span class="user-settings-link-label" lang-tran="My account">My account</span></a></div><div class="user-settings-link-wrapper"><a id="signOutLink" class="user-settings-link" role="link" href="javascript:void(0);" onclick="ADAL.logOut();"><span class="user-settings-link-label" lang-tran="Sign out">Sign out</span></a></div></div>');
             $('#myProfileSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://delve.office.com/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My profile">My profile</a></div>');
             $('#myAccountSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://portal.office.com/account/" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="My account">My account</a></div>');
-            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="https://login.microsoftonline.com/' + ADAL.config.tenant + '/oauth2/logout" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
+            $('#signOutSmallWrapper').append('<div class="user-settings-small-menu-item"><a href="javascript:void(0);" onclick="ADAL.logOut();" class="header-common user-settings-small-menu-item-wrapper user-settings-small-menu-link" lang-tran="Sign out">Sign out</a></div>');
         }
         
         $("#allAppsLink").attr("href", "https://account.activedirectory.windowsazure.com/r?tenantId=" + ADAL.config.tenant + "#/applications");

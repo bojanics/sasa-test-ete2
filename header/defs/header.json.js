@@ -16,5 +16,7 @@ var headerObj = {
     "phraseapp project id": "",
     "phraseapp prefix": "[[__",
     "phraseapp suffix": "__]]",
-    "form width percent": ""
+    "form width percent": "",
+    "processtext": "",
+    "elearningtext": ""
 };

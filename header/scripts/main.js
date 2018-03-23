@@ -70,7 +70,9 @@ function setupApp()
                                 && comp.component.properties.hasOwnProperty("processimagelink") ? comp.component.properties.processimagelink : formObj.properties.processimagelink));
                             $('#processlink').attr('href', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
                                 && comp.component.properties.hasOwnProperty("processlink") ? comp.component.properties.processlink : formObj.properties.processlink));
-                            $('#bussinesplabel').html('Bussines process: ');
+                            var processText = getProcessText();
+                            $('#bussinesplabel').html(processText);
+                            $('#bussinesplabel').attr("lang-tran", processText).attr("lang-form", "true");
                         }
                         
                         if(((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
@@ -86,7 +88,9 @@ function setupApp()
                                 && comp.component.properties.hasOwnProperty("elearningimagelink") ? comp.component.properties.elearningimagelink : formObj.properties.elearningimagelink));
                             $('#elearninglink').attr('href', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
                                 && comp.component.properties.hasOwnProperty("elearninglink") ? comp.component.properties.elearninglink : formObj.properties.elearninglink));
-                            $('#elearninglabel').html('E-Learning: ');
+                            var eLearningText = getELearningText();
+                            $('#elearninglabel').html(eLearningText);
+                            $('#elearninglabel').attr("lang-tran", eLearningText).attr("lang-form", "true");
                         }
                     };
                 })(this));
@@ -823,6 +827,52 @@ function checkForUrlParameter(parameterName)
 }
 
 /**
+ * Returns configured process text
+ */
+function getProcessText()
+{
+    var processText = "Click the gear icon below to see the business process...";
+    var processTextUrl = checkForUrlParameter("processtext");
+    if (processTextUrl)
+    {
+        processText = processTextUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["processtext"])
+    {
+        processText = formObj.properties["processtext"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["processtext"])
+    {
+        processText = headerObj["processtext"];
+    }
+    
+    return processText;
+}
+
+/**
+ * Returns configured e-learning text
+ */
+function getELearningText()
+{
+    var eLearningText = "Click the learning icon below to visit the e-learning module...";
+    var eLearningTextUrl = checkForUrlParameter("elearningtext");
+    if (eLearningTextUrl)
+    {
+        eLearningText = eLearningTextUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["elearningtext"])
+    {
+        eLearningText = formObj.properties["elearningtext"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["elearningtext"])
+    {
+        eLearningText = headerObj["elearningtext"];
+    }
+    
+    return eLearningText;
+}
+
+/**
  * Sets default form level help content. Used when no form element has focus
  */
 function setDefaultHelpContent()
@@ -842,7 +892,9 @@ function setDefaultHelpContent()
         $('#divHelp').append(vprocess);
         $('#processimagelink').attr('src', formObj.properties.processimagelink);
         $('#processlink').attr('href', formObj.properties.processlink);
-        $('#bussinesplabel').html('Bussines process: ');
+        var processText = getProcessText();
+        $('#bussinesplabel').html(processText);
+        $('#bussinesplabel').attr("lang-tran", processText).attr("lang-form", "true");
     }
     
     if(formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearningimagelink")
@@ -852,7 +904,9 @@ function setDefaultHelpContent()
         $('#divHelp').append(velearning);
         $('#elearningimagelink').attr('src', formObj.properties.elearningimagelink);
         $('#elearninglink').attr('href', formObj.properties.elearninglink);
-        $('#elearninglabel').html('E-Learning: ');
+        var eLearningText = getELearningText();
+        $('#elearninglabel').html(eLearningText);
+        $('#elearninglabel').attr("lang-tran", eLearningText).attr("lang-form", "true");
     }
 }
 

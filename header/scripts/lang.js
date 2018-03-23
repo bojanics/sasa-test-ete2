@@ -131,11 +131,11 @@ function resetBodyTranslation()
                 && langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran")] !== undefined)
             {
                 $this.html(langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran")]);
-            } else if ($this.attr("lang-tran") !== undefined && langObj.i18n.resources.hasOwnProperty(languageSelector.selectedLanguage)
-                && langObj.i18n.resources[languageSelector.selectedLanguage].translation[$this.attr("lang-tran")] !== undefined)
+            } else if ($this.attr("lang-tran") !== undefined && langObj.i18n.resources.hasOwnProperty(languageSelector.selectedLanguage.split(/-(.+)/)[0])
+                && langObj.i18n.resources[languageSelector.selectedLanguage.split(/-(.+)/)[0]].translation[$this.attr("lang-tran")] !== undefined)
             {
                 // This case may occur when we need to populate help menu with some texts defined in the form
-                $this.html(langObj.i18n.resources[languageSelector.selectedLanguage].translation[$this.attr("lang-tran")]);
+                $this.html(langObj.i18n.resources[languageSelector.selectedLanguage.split(/-(.+)/)[0]].translation[$this.attr("lang-tran")]);
             }
             
             if ($this.attr("lang-tran-placeholder") !== undefined && langLayoutObj.hasOwnProperty(languageSelector.selectedLanguage)

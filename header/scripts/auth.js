@@ -7,8 +7,13 @@ var timeZonePropertyExtensionExists = false;
 var themePropertyExtensionExists = false;
 var languagePropertyExtension;
 var timeZonePropertyExtension;
-var ADAL = null;  
-var storageObj = isIEBrowser() ? localStorage : sessionStorage;
+var ADAL = null; 
+var storageObj = null;
+// we do try/catch here because Edge can't access the storage when used locally
+try { 
+   storageObj = isIEBrowser() ? localStorage : sessionStorage;
+} catch (e) {
+}
 var adalErrorReported = false;
 
 const ADAL_RECURSION_COUNT = 'adal_recursion_count';
@@ -61,11 +66,13 @@ var currentUser = {
         } else {
             adal_tenant = qs['tenant'];
         }
-        storageObj.setItem('adal_clientId',adal_clientId);
-        storageObj.setItem('adal_tenant',adal_tenant);
+        // must check if the storageObj is defined (in Edge when opening file locally it won't be defined)
+        if (storageObj) storageObj.setItem('adal_clientId',adal_clientId);
+        if (storageObj)storageObj.setItem('adal_tenant',adal_tenant);
     } else {
-       adal_tenant = storageObj.getItem('adal_tenant');
-       adal_clientId = storageObj.getItem('adal_clientId');
+       // must check if the storageObj is defined (in Edge when opening file locally it won't be defined)
+       if (storageObj) adal_tenant = storageObj.getItem('adal_tenant');
+       if (storageObj) adal_clientId = storageObj.getItem('adal_clientId');
     }
     if (adal_tenant==null) {
        adal_tenant = 'common';

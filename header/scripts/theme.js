@@ -18,11 +18,25 @@ themesMap['bluemeanie'] =
     color: '#005aa1'
 };
 
+themesMap['builder'] =
+{
+    path: './ress/css/builder',
+    name: 'Builder',
+    color: '#be0000'
+};
+
 themesMap['cerulean'] =
 {
     path: './ress/css/cerulean',
     name: 'Cerulean',
     color: '#033c73'
+};
+
+themesMap['city'] =
+{
+    path: "./ress/css/city",
+    name: "City",
+    color: "#2e5dad"
 };
 
 themesMap['constru'] =
@@ -74,6 +88,27 @@ themesMap['greenie'] =
     color: '#336666'
 };
 
+themesMap['healthy'] =
+{
+    path: './ress/css/healthy',
+    name: 'Healthy',
+    color: '#d9e3ee'
+};
+
+themesMap['industry'] =
+{
+    path: './ress/css/industry',
+    name: 'Industry',
+    color: '#e3e6e9'
+};
+
+themesMap['italy'] =
+{
+    path: './ress/css/italy',
+    name: 'Italy',
+    color: '#e2001a'
+};
+
 themesMap['journal'] =
 {
     path: './ress/css/journal',
@@ -86,6 +121,13 @@ themesMap['lumen'] =
     path: './ress/css/lumen',
     name: 'Lumen',
     color: '#ffffff'
+};
+
+themesMap['package'] =
+{
+    path: './ress/css/package',
+    name: 'Package',
+    color: '#006E44'
 };
 
 themesMap['paper'] =
@@ -137,11 +179,25 @@ themesMap['superhero'] =
     color: '#df691a'
 };
 
+themesMap['tires'] =
+{
+    path: './ress/css/tires',
+    name: 'Tires',
+    color: '#ffa500'
+};
+
 themesMap['united'] =
 {
     path: './ress/css/united',
     name: 'United',
     color: '#772953'
+};
+
+themesMap['Vienna'] =
+{
+    path: './ress/css/vienna',
+    name: 'Vienna',
+    color: '#f0f0f0;'
 };
 
 themesMap['yeti'] =
@@ -157,13 +213,17 @@ themesMap['yeti'] =
 var themeSelector =
 {
     currentTheme: 'cosmo',
-    selectedTheme: 'cosmo'
+    selectedTheme: 'cosmo',
+    overridden: false,
+    configuredTheme: '',
+    changedTheme: ''
 };
 
 function setupTheme(theme) {
     if (themesMap[theme]) {
         themeSelector.selectedTheme = theme;
         themeSelector.currentTheme = theme;
+        themeSelector.overridden = true;
         setupStyle(true);
     }
 }
@@ -181,17 +241,9 @@ function setupStyle(overrideBrandTheme)
     bootswatchStyleDE.onload = showContentOnStyleApply();
     if (!overrideBrandTheme)
     {
-        // We should check first if the theme is configured in the form object
-        if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties")
-            && formObj.properties.hasOwnProperty("bootswatchtheme") && themesMap.hasOwnProperty(formObj.properies["bootswatchtheme"]))
+        if (themesMap.hasOwnProperty(appConfiguration.bootswatchtheme))
         {
-            themeSelector.currentTheme = formObj.properies["bootswatchtheme"];
-            themeSelector.selectedTheme = themeSelector.currentTheme;
-        }
-        else if (typeof brandObj !== 'undefined' && brandObj != null && brandObj.hasOwnProperty("bootswatchtheme")
-            && themesMap.hasOwnProperty(brandObj["bootswatchtheme"]))
-        {
-            themeSelector.currentTheme = brandObj["bootswatchtheme"];
+            themeSelector.currentTheme = appConfiguration.bootswatchtheme;
             themeSelector.selectedTheme = themeSelector.currentTheme;
         }
     }
@@ -207,6 +259,15 @@ function setupStyle(overrideBrandTheme)
     headerStyleDE.rel = "stylesheet";
     headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
     layoutStyleNode.parentNode.insertBefore(headerStyleDE, layoutStyleNode.nextSibling);
+}
+
+/**
+ * Resets page style
+ */
+function resetStyle()
+{
+    $("#bodystyle").remove();
+    $("#themelayoutstyle").remove();
 }
 
 /**
@@ -226,6 +287,14 @@ function setupThemeMenu()
             + '<img class="theme-image"/></div></a>';
         $('#themeList').append(languageItem);
     });
+}
+
+/**
+ * Clears theme menu
+ */
+function resetThemeMenu()
+{
+    $('#themeList').empty();
 }
 
 /**
@@ -278,7 +347,7 @@ function applyTheme()
     document.getElementById('bodystyle').onload = showContentOnStyleApply();
     
     // Update user's property extensions
-    if (isUseUserPropertyExtensions() && userPropertyExtensionsAvailable  && isSignedInUser()) {
+    if (appConfiguration.useUserPropertyExtensions && userPropertyExtensionsAvailable  && isSignedInUser()) {
         updateThemePropertyExtension(themeSelector.currentTheme);
     }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<html>
     <head>
         <meta charset="utf-8">
         <title id="pageTitle"></title>
@@ -7,9 +7,13 @@
         <link rel="stylesheet" href="./ress/css/fabric.components.min.css">
         <link id="layoutstyle" href="./ress/css/layout.css" rel="stylesheet">
 		<link href="./ress/css/formio.full.min.css" rel="stylesheet">
+		<!--###PLATFORM.CSS###-->
+		<!--###CORDOVA.JS###-->
 		<script src="./scripts/vendor/formio.full.min.js"></script>
         <script src="./scripts/vendor/jquery-1.10.2.min.js"></script>
-        <script src="./scripts/vendor/adal.js"></script>
+        <script type="text/javascript" src="./scripts/vendor/html2canvas.min.js"></script>
+        <script type="text/javascript" src="./scripts/vendor/jquery.plugin.html2canvas.js"></script> 
+        <script src="./scripts/vendor/adal.min.js"></script>
         <script src="./scripts/lang-form.json.js"></script>
         <script src="./scripts/lang-layout.json.js"></script>
         <script src="./scripts/lang.js"></script>
@@ -17,7 +21,9 @@
         <script src="./scripts/theme.js"></script>
         <script src="./scripts/main.js"></script>
         <script src="./scripts/auth.js"></script>
+		<script src="./scripts/auth_spec.js"></script>
         <script src="./scripts/defimp.js"></script>
+		<meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src *;img-src * data:;">
     </head>
     <body>
         <div id="appTitlePrint" class="header-title">
@@ -45,7 +51,7 @@
                     </div>
                 </div>
                 <div class="header-common header-center"></div>
-                <div class="header-common header-right">
+                <div id="headerRight" class="header-common header-right">
                     <div id="customizationLogo" class="header-common app-header visiblesmcommands" style="display: none" onmousedown="return false">
                         <img class="client-logo" src="./" />
                     </div>
@@ -371,6 +377,7 @@
                         </div>
                     </div>
                     <div id="accountsWrapperSmall" class="header-common user-settings-small-wrapper header-hidden-element account-wrapper">
+                        <div id="environmentcontainersplchld" style="display: none;"></div>
                         <div id="environmentcontainers" class="header-common">
                             <div class="header-common">
                                 <button class="header-common user-settings-small-menu-item environments-trigger" onclick="showUserSettingsSmallMenuDropdown(this)">
@@ -410,15 +417,17 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="header-common user-settings-small-menu-info">
-                            <div class="user-settings-small-menu-user-details">
-                                <div class="username">James H. Smith</div>
-                                <div class="useremail">j.s@risktech.io</div>
+                        <div id="hide-account-info">
+                            <div class="header-common user-settings-small-menu-info">
+                                <div class="user-settings-small-menu-user-details">
+                                    <div class="username">James H. Smith</div>
+                                    <div class="useremail">j.s@risktech.io</div>
+                                </div>
                             </div>
+                            <div id="myProfileSmallWrapper" class="header-common"></div>
+                            <div id="myAccountSmallWrapper" class="header-common"></div>
+                            <div id="signOutSmallWrapper" class="header-common"></div>
                         </div>
-                        <div id="myProfileSmallWrapper" class="header-common"></div>
-                        <div id="myAccountSmallWrapper" class="header-common"></div>
-                        <div id="signOutSmallWrapper" class="header-common"></div>
                     </div>
                 </div>
             </div>
@@ -506,7 +515,7 @@
         </div>
         <div id="feedbackOverlayBackground" class="feedback-overlay-background" style="display:none;">
             <div id="feedbackMainContainer" class="feedback-main-container">
-                <form class="feedback-main-content-holder">
+                <form class="feedback-main-content-holder" id="myForm">
                     <div id="feedbackLeftFormContainer" class="feedback-form-container">
                         <div lang-tran="Feedback Question" class="feedback-question-left-text feedback-text-align-left feedback-line-height feedback-font-subtitle">
                             What kind of feedback do you have?
@@ -551,15 +560,20 @@
                     </div>
                     <div id="feedbackMiddleFormContainer" class="feedback-form-container">
                         <div id="feedbackBasicFormContainer" class="feedback-basic-form-container">
-                            <label for="feedbackBasicFormComment" id="feedbackBasicFormQuestionMiddleText" class="feedback-font-subtitle feedback-line-height feedback-text-align-left feedback-form-question-middle-text"></label>
-                            <textarea lang-tran-placeholder="Feedback Comment" placeholder="Please type in your comment" maxlength="1000" id="feedbackBasicFormComment" class="feedback-font-text feedback-form-comment feedback-text-input feedback-form-control"></textarea>
+                            <div>
+                                <input type="hidden" name="feedbacktype" id="feedbacktype" value=""/>
+                                <label for="feedbackBasicFormComment" id="feedbackBasicFormQuestionMiddleText" class="feedback-font-subtitle feedback-line-height feedback-text-align-left feedback-form-question-middle-text"></label>
+                                <textarea lang-tran-placeholder="Feedback Comment" placeholder="Please type in your comment" maxlength="1000" id="feedbackBasicFormComment" name="feedbackBasicFormComment" class="feedback-font-text feedback-form-comment feedback-text-input feedback-form-control"></textarea>
+                                <span id="validity_message" class="error" lang-tran='Error message'>This field is required</span>
+                            </div>
                             <div class="feedback-form-bottom-container">
                                 <div class="feedback-form-screenshot-container">
-                                    <input type="checkbox" value="unchecked" id="feedbackBasicFormScreenshotCheckbox" class="feedback-basic-form-screenshot-checkbox">
+                                    <input type="checkbox" value="unchecked" name="feedbackBasicFormScreenshotCheckbox" id="feedbackBasicFormScreenshotCheckbox" class="feedback-basic-form-screenshot-checkbox">
                                     <label lang-tran="Include screenshot" for="feedbackBasicFormScreenshotCheckbox" class="feedback-font-text feedback-text-align-left feedback-line-height feedback-form-screenshot-label">Include screenshot</label>
+                                    <input type="hidden" name="img_val" id="img_val" value=""/>
                                 </div>
                                 <div class="feedback-form-submit-button-container">
-                                    <button lang-tran="Submit" id="feedbackBasicFormSubmitButton" class="feedback-font-text feedback-submit-button">Submit</button>
+                                    <button type="submit" lang-tran="Submit" id="feedbackBasicFormSubmitButton" class="feedback-font-text feedback-submit-button">Submit</button>
                                 </div>
                             </div>
                         </div>

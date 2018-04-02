@@ -241,6 +241,27 @@ a.bg-primary:focus {
 .btn-primary {
     background-color: #003366 !important;
     border-color: #003366 !important;
+    color: #ffff !important;
+}
+
+.btn-info {
+    color: #ffff !important;
+}
+
+.btn-danger {
+    color: #ffff !important; 
+}
+
+.btn-success {
+    color: #ffff !important; 
+}
+
+.btn-warning {
+    color: #ffff !important; 
+}
+
+.btn-default {
+    color: #333 !important; 
 }
 
 .btn-primary:hover {

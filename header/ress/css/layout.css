@@ -2110,6 +2110,25 @@ body {
     margin-right: 6px;
 }
 
+.error {
+    display: none;
+    margin-left: 10px;
+}
+
+.error_show {
+    color: red;
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+textarea.invalid {
+    border: 2px solid red;
+}
+
+textarea.valid {
+    border: 2px solid green;
+}
+
 /**
  * LANGUAGE AND TIME ZONE SELECTOR
  */

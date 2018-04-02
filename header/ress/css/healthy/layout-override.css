@@ -3,7 +3,7 @@
 }
 
 .header-border {
-    background-color: #bce4fa;
+    background-color: #d9e3ee;
 }
 
 .header-wrapper {
@@ -18,7 +18,7 @@
 }
 
 .app-menu-button {
-    color: rgb(3, 66, 109);
+    color: #03326c;
 }
 
 .app-menu-button:focus {
@@ -26,7 +26,7 @@
 }
 
 .app-menu-button:hover {
-    color: #0078B4;
+    color: #ffff;
     background-color: transparent;
 }
 
@@ -35,11 +35,11 @@
 }
 
 .appl-button {
-    background-image: url('../../gif/appl/appl-first.gif') !important;
+    background-image: url('../../gif/appl/appl-healthy.gif') !important;
 }
 
 .environment-button.opened {
-    background-color: #bce4fa;
+    background-color: #d9e3ee;
     border-top: 1px solid rgb(3, 66, 109);
 }
 
@@ -59,7 +59,8 @@
     background-color: rgb(3, 66, 109);
 }
 
-.environment-text {
+.environment-text 
+{
     color: rgb(3, 66, 109);
 }
 
@@ -74,7 +75,7 @@
 }
 
 .app-launcher-wrapper {
-    background-color: #bce4fa;
+    background-color: #d9e3ee;
 }
 
 .app-launcher-content > div > h2 {
@@ -184,24 +185,24 @@
 }
 
 .feedback-overall-anchor:hover {
-    color: #ffffff;
-    background-color: rgb( 3, 66, 109);
+    color: rgb( 3, 66, 109);
+    background-color: #d9e3ee;
 }
 
 .feedback-overall-anchor:hover > div > svg > .path-anchor-first {
-    fill: rgb( 3, 66, 109);
+    fill: #fffff;
     stroke: rgb( 3, 66, 109);
 }
 
 .feedback-overall-anchor:hover > div > svg > .path-anchor-second {
-    fill: white;
+    fill: rgb( 3, 66, 109);
     stroke: rgb( 3, 66, 109);
 }
 
 .feedback-overall-anchor-active {
-    color: rgb( 3, 66, 109);
-    background-color: #bce4fa;
-    border-color: #bce4fa;
+    color: rgb(255,255,255);
+    background-color: rgb( 3, 66, 109);
+    border-color: rgb( 3, 66, 109);
 }
 
 .feedback-overall-anchor-active > div > svg > .path-anchor-first {
@@ -222,6 +223,18 @@
 .feedback-overall-anchor-active:hover > div > svg > .path-anchor-second {
     fill: white;
     stroke: rgb( 3, 66, 109);
+}
+
+/**
+ * LOGO BACKGROUND (legibility issues)
+ */
+
+.logo-background {
+    background-color: #03326c;
+}
+
+.client-logo {
+    background-color: #03326c;
 }
 
 /**

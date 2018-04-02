@@ -1,0 +1,218 @@
+.indicator {
+    text-align: right;
+}
+
+.header-border {
+    background-color: #ffa500;
+}
+
+.header-wrapper {
+	border-top: 1px solid #ffa500;
+	border-left: 1px solid #ffa500;
+	border-bottom: 1px solid #ffa500;
+}
+
+.app-menu-brand {
+    font-family: "Ubuntu", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #000000;
+}
+
+.app-menu-button {
+    color: #000000;
+}
+
+.app-menu-button:focus {
+    background-color: transparent;
+}
+
+.app-menu-button:hover {
+    background-color: #b27300;
+}
+
+.app-menu-button:active {
+	background-color: transparent;
+}
+
+.appl-button {
+    background-image: url('../../gif/appl/appl-tires.gif') !important;
+}
+
+.environment-button.opened {
+    background-color: #b27300;
+}
+
+.environment-text {
+    color: #000000;
+}
+
+.environment-option {
+    background-color: white;
+    border-bottom-color: #e5e5e5;
+    color: #000000;
+}
+
+.environment-option:hover, .environment-option:active {
+    background-color: #eaeaea;
+}
+
+.environment-option.active-option {
+    color: #000000;
+    background-color: #b27300;
+}
+
+.user-settings-small-menu-dropdown-option.active-option {
+    color: #000000;
+    background-color: #b27300;
+}
+
+
+.user-settings-wrapper.first-item {
+    border-color: #511c39;
+}
+
+.app-launcher-wrapper {
+    background-color: #b27300;
+}
+
+.app-launcher-button {
+    background-color: #ffa500;
+    border-radius: 4px;
+    color: #000000!important;
+}
+
+.app-launcher-content > div > h2 {
+    color: #000000;
+}
+
+.feedback-form-control {
+    display: block;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333333;
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.feedback-submit-button {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #e95420;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: #ffffff;
+    background-color: #e95420;
+}
+
+.feedback-submit-button:hover {
+    background-color: #c34113;
+    border-color: #b93e12;
+}
+
+.feedback-button {
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #aea79f;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    user-select: none;
+    color: #ffffff;
+    background-color: #aea79f;
+    border-radius: 4px;
+}
+
+.feedback-overall-anchor {
+    color: #000000;
+    background-color: #aea79f;
+    border: 1px solid #aea79f;
+    border-radius: 4px;
+}
+
+.path-anchor-first  {
+    fill: #000000;
+    stroke: #000000;
+}
+
+.path-anchor-second {
+    fill: #ffffff;
+    stroke: #aea79f;
+}
+
+.feedback-overall-anchor:hover {
+    color: #000000;
+    background-color: #b27300;
+    border-color: #b27300;
+}
+
+.feedback-overall-anchor:hover > div > svg > .path-anchor-first {
+    fill: #b27300;
+    stroke: #b27300;
+}
+
+.feedback-overall-anchor:hover > div > svg > .path-anchor-second {
+    fill: #000000;
+    stroke: #b27300; 
+}
+
+.feedback-overall-anchor-active {
+    color: #000000;
+    background-color: #ffa500;
+    border-color: #ffa500;
+}
+
+.feedback-overall-anchor-active > div > svg > .path-anchor-first {
+    fill: #ffa500;
+    stroke: #ffa500;
+}
+
+.feedback-overall-anchor-active > div > svg > .path-anchor-second {
+    stroke: #ffa500;
+    fill: #000000;
+}
+
+.feedback-overall-anchor-active:hover > div > svg > .path-anchor-first {
+    fill: #b27300;
+    stroke: #b27300;
+}
+
+.feedback-overall-anchor-active:hover > div > svg > .path-anchor-second {
+    fill: #000000;
+    stroke: #b27300;
+}
+
+/**
+ * PRINT LAYOUT
+ */
+ 
+@media print {
+    .header-wrapper {
+        border-right: 1px solid #ffa500;
+    }
+}

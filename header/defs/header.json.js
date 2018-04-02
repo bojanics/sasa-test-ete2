@@ -1,5 +1,5 @@
 var headerObj = {
-    "use outlook settings": true,
+    "use outlook settings": false,
     "use user property extensions": true,
     "app launcher": true,
     "environment": true,
@@ -9,8 +9,9 @@ var headerObj = {
     "account": true,
     "theme settings": true,
     "feedback": false,
+    "feedbackurl": "",
     "maximize": false,
-    "mailbox photo": true,
+    "mailbox photo": false,
     "themes": "./defs/themes.json.js",
     "phraseapp": false,
     "phraseapp project id": "",

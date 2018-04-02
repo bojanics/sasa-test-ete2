@@ -3,22 +3,17 @@
 }
 
 .header-border {
-    background-color: #bce4fa;
+    background-color: #be0000; 
 }
 
 .header-wrapper {
-	border-top: 1px solid #bce4fa;
-	border-left: 1px solid #bce4fa;
-	border-bottom: 1px solid #bce4fa;
+	border-top: 1px solid #e53c37;
+	border-left: 1px solid #e53c37;
+	border-bottom: 1px solid #e53c37;
 }
 
 .app-menu-brand {
-    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: rgb(3, 66, 109);
-}
-
-.app-menu-button {
-    color: rgb(3, 66, 109);
+    font-family: "News Cycle", "Arial Narrow Bold", sans-serif;
 }
 
 .app-menu-button:focus {
@@ -26,8 +21,7 @@
 }
 
 .app-menu-button:hover {
-    color: #0078B4;
-    background-color: transparent;
+    background-color: #e74b47;
 }
 
 .app-menu-button:active {
@@ -35,71 +29,57 @@
 }
 
 .appl-button {
-    background-image: url('../../gif/appl/appl-first.gif') !important;
+    background-image: url('../../gif/appl/appl-builder.gif') !important;
 }
 
 .environment-button.opened {
-    background-color: #bce4fa;
-    border-top: 1px solid rgb(3, 66, 109);
+    background-color: #e74b47;
 }
 
 .environment-option {
     background-color: transparent;
     border-bottom-color: #e5e5e5;
-    color: #666666;
+    color: #333333;
 }
 
 .environment-option:hover, .environment-option:active {
-    color: #141414;
-    background-color: #eeeeee;
+    color: white;
+    background-color: #eb6864;
 }
 
 .environment-option.active-option {
     color: white;
-    background-color: rgb(3, 66, 109);
-}
-
-.environment-text {
-    color: rgb(3, 66, 109);
+    background-color: #e74b47;
 }
 
 .user-settings-small-menu-dropdown-option.active-option {
     color: white;
-    background-color: rgb(3, 66, 109);
+    background-color: #e74b47;
 }
 
 
 .user-settings-wrapper.first-item {
-    border-color: #2196f3;
+    border-color: #e53c37;
 }
 
 .app-launcher-wrapper {
-    background-color: #bce4fa;
-}
-
-.app-launcher-content > div > h2 {
-    color: rgb(3, 66, 109);
+    background-color: #e74b47;
 }
 
 .app-launcher-button {
-    background-color: white;
-    color: #444444 !important;
-    border-radius: 3px;
-}
-
-.feedback-overlay-background {
-    color: rgb(3, 66, 109);
+    background-color: #999999;
+    border-radius: 4px;
 }
 
 .feedback-form-control {
     display: block;
-    font-size: 13px;
-    line-height: 1.846;
-    color: #666666;
-    background-color: transparent;
+    font-size: 15px;
+    line-height: 1.42857143;
+    color: #777777;
+    background-color: #ffffff;
     background-image: none;
-    border: 1px solid transparent;
-    border-radius: 3px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
@@ -117,30 +97,27 @@
     font-weight: normal;
     text-align: center;
     vertical-align: middle;
+    -ms-touch-action: manipulation;
     touch-action: manipulation;
     cursor: pointer;
     background-image: none;
-    border: none;
+    border: 1px solid #eb6864;
     white-space: nowrap;
-    padding: 6px 16px;
-    font-size: 13px;
-    line-height: 1.846;
-    border-radius: 3px;
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
-    text-transform: uppercase;
-    -webkit-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-    -webkit-transition: all 0.4s;
-    -o-transition: all 0.4s;
-    transition: all 0.4s;
     color: #ffffff;
-    background-color: #2196f3;
-    position: relative;
+    background-color: #eb6864;
 }
 
 .feedback-submit-button:hover {
-    background-color: #0d87e9;
-    border-color: rgba(0, 0, 0, 0);
+    background-color: #e53c37;
+    border-color: #e4332e;
 }
 
 .feedback-button {
@@ -151,77 +128,73 @@
     touch-action: manipulation;
     cursor: pointer;
     background-image: none;
+    border: 1px solid #999999;
     white-space: nowrap;
-    padding: 6px 16px;
-    font-size: 13px;
-    line-height: 1.846;
-    border-radius: 3px;
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 1.42857143;
+    border-radius: 4px;
     user-select: none;
-    text-transform: uppercase;
-    border: none;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-    transition: all 0.4s;
-    color: #444444;
-    background-color: #ffffff;
+    color: #ffffff;
+    background-color: #999999;
 }
 
 .feedback-overall-anchor {
-    color: rgb( 3, 66, 109);
-    background-color: #ffffff;
-    border: none;
-    border-radius: 3px;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    background-color: #999999;
+    border: 1px solid #999999;
+    border-radius: 4px;
 }
 
 .path-anchor-first  {
-    fill: #ffffff;
-    stroke: #ffffff;
+    fill: #999999;
+    stroke: #999999;
 }
 
 .path-anchor-second {
-    fill: rgb( 3, 66, 109);
-    stroke: #ffffff;
+    fill: #ffffff;
+    stroke: #999999;
 }
 
 .feedback-overall-anchor:hover {
     color: #ffffff;
-    background-color: rgb( 3, 66, 109);
+    background-color: #be0000;
+    border-color: #e4332e;
 }
 
 .feedback-overall-anchor:hover > div > svg > .path-anchor-first {
-    fill: rgb( 3, 66, 109);
-    stroke: rgb( 3, 66, 109);
+    fill: #be0000;
+    stroke: #be0000;
 }
 
 .feedback-overall-anchor:hover > div > svg > .path-anchor-second {
     fill: white;
-    stroke: rgb( 3, 66, 109);
+    stroke: #be0000;
 }
 
 .feedback-overall-anchor-active {
-    color: rgb( 3, 66, 109);
-    background-color: #bce4fa;
-    border-color: #bce4fa;
+    color: #ffffff;
+    background-color: #eb6864;
+    border-color: #eb6864;
 }
 
 .feedback-overall-anchor-active > div > svg > .path-anchor-first {
-    fill: rgb( 3, 66, 109);
-    stroke: rgb( 3, 66, 109);
+    fill: #eb6864;
+    stroke: #eb6864;
 }
 
 .feedback-overall-anchor-active > div > svg > .path-anchor-second {
-    fill: #ffffff;
-    stroke: rgb( 3, 66, 109);
+    stroke: #eb6864;
 }
 
 .feedback-overall-anchor-active:hover > div > svg > .path-anchor-first {
-    fill: rgb( 3, 66, 109);
-    stroke: rgb( 3, 66, 109);
+    fill: #be0000;
+    stroke: #be0000;
 }
 
 .feedback-overall-anchor-active:hover > div > svg > .path-anchor-second {
     fill: white;
-    stroke: rgb( 3, 66, 109);
+    stroke: #be0000;
 }
 
 /**
@@ -230,6 +203,6 @@
  
 @media print {
     .header-wrapper {
-        border-right: 1px solid #bce4fa;
+        border-right: 1px solid #e53c37;
     }
 }

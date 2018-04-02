@@ -11,10 +11,23 @@ commandIdWrapperIdMap['accountsCommandSmall'] = 'accountsWrapperSmall';
 var hiddenWrappers = [];
 var firstMenuItem = 'notdefined';
 
+var userSignedIn = $.Deferred();
+function setupApp() {
+    if (window.cordova) {
+        adalSignIn();
+    } else {
+        userSignedIn.resolve();
+    }
+
+    $.when(userSignedIn).then(function () {
+        _setupAppInternal();
+    });
+}
+
 /**
  * Sets up the header and layout elements including a form
  */
-function setupApp()
+function _setupAppInternal()
 {                
     // if this code runs in iFrame it means it is used from ADAL in the background...in that case we don't want to execute our APP logic
     if (!isIframe())
@@ -26,95 +39,7 @@ function setupApp()
         
         // Initializing the form
         setupLayout();
-        var hooksObj =
-        {
-            input: function(input)
-            {
-                this.addEventListener(input, 'focus', (function(comp)
-                {
-                    return function()
-                    {
-                        $('#divHelp').empty();
-                        if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("formhelp"))
-                        {
-                            var vhelpform = '<div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="formHelp"></span></div></div></div>';
-                            $('#divHelp').append(vhelpform);
-                            $('#formHelp').html(comp.component.properties.formhelp).attr("lang-tran", comp.component.properties.formhelp).attr("lang-form", "true").translate();
-                        }
-                        else if (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("formhelp"))
-                        {
-                            var vhelpform = '<div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="formHelp"></span></div></div></div>';
-                            $('#divHelp').append(vhelpform);
-                            $('#formHelp').html(formObj.properties.formhelp).attr("lang-tran", formObj.properties.formhelp).attr("lang-form", "true").translate();
-                        }
-                        
-                        if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("fieldhelp"))
-                        {
-                            var vhelpfield = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="fieldHelp"></span></div></div></div>';
-                            $('#divHelp').append(vhelpfield);
-                            $('#fieldHelp').html(comp.component.properties.fieldhelp).attr("lang-tran", comp.component.properties.fieldhelp).attr("lang-form", "true").translate();
-                        }
-                        
-                        if(((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("processimagelink"))
-                            || (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("processimagelink")))
-                                && ((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("processlink"))
-                            || (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("processlink"))))
-                        {
-                            var vprocess = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="bussinesplabel"></span></div></div></div><div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="processlink"><img class="help-photo-container" id="processimagelink"></a></div></div></div>';
-                            $('#divHelp').append(vprocess);
-                            $('#processimagelink').attr('src', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("processimagelink") ? comp.component.properties.processimagelink : formObj.properties.processimagelink));
-                            $('#processlink').attr('href', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("processlink") ? comp.component.properties.processlink : formObj.properties.processlink));
-                            var processText = getProcessText();
-                            $('#bussinesplabel').html(processText);
-                            $('#bussinesplabel').attr("lang-tran", processText).attr("lang-form", "true");
-                        }
-                        
-                        if(((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("elearningimagelink"))
-                            || (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearningimagelink")))
-                                && ((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("elearninglink"))
-                            || (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearninglink"))))
-                        {
-                            var velearning = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="elearninglabel"></span></div></div></div><div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="elearninglink"><img class="help-photo-container" id="elearningimagelink"></a></div></div></div>';
-                            $('#divHelp').append(velearning);
-                            $('#elearningimagelink').attr('src', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("elearningimagelink") ? comp.component.properties.elearningimagelink : formObj.properties.elearningimagelink));
-                            $('#elearninglink').attr('href', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
-                                && comp.component.properties.hasOwnProperty("elearninglink") ? comp.component.properties.elearninglink : formObj.properties.elearninglink));
-                            var eLearningText = getELearningText();
-                            $('#elearninglabel').html(eLearningText);
-                            $('#elearninglabel').attr("lang-tran", eLearningText).attr("lang-form", "true");
-                        }
-                    };
-                })(this));
-                
-                this.addEventListener(input, 'blur', (function(comp)
-                {
-                    return function()
-                    {
-                        setDefaultHelpContent();
-                    };
-                })(this));
-            }
-        };
-        
-        var formDisplay = checkForUrlParameter("display");
-        if (formDisplay)
-        {
-            formObj["display"] = formDisplay;
-        }
-        else if (typeof appObj !== 'undefined' && appObj !== null && appObj.hasOwnProperty("display") && appObj["display"])
-        {
-            formObj["display"] = appObj["display"];
-        }
-        
+        var hooksObj = createHooksObj();
         langObj.hooks = hooksObj;
         Formio.createForm(document.getElementById('formio'), formObj, langObj)
         .then(function(form)
@@ -152,12 +77,12 @@ function setupApp()
                 // Sets up form level defined help content
                 setDefaultHelpContent();
                 
-                if (isUseOutlookMailSettings() && isSignedInUser())
+                if (appConfiguration.useOutlookSettings && isSignedInUser())
                 {
                     // Find out user's mailbox settings
                     getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings');
                     getSupportedTimeZones();
-                    if (isUseUserPropertyExtensions() && headerObj !== 'undefined' && headerObj != null && headerObj["theme settings"])
+                    if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
                     {
                         // Find out user's theme (user property extensions)
                         getUserPropertyExtensions(false);
@@ -168,7 +93,7 @@ function setupApp()
                         setupStyle(false);
                     }
                 }
-                else if (isUseUserPropertyExtensions() && isSignedInUser())
+                else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
                 {
                     // We set the default time zone choices beacuse
                     // we don't read them from the mailbox settings
@@ -200,56 +125,110 @@ function setupApp()
 };
 
 /**
+ * Creates hooks object for form creation
+ */
+function createHooksObj()
+{
+    return hooksObj =
+    {
+        input: function(input)
+        {
+            this.addEventListener(input, 'focus', formFocusListener(this));
+            this.addEventListener(input, 'blur', setDefaultHelpContent);
+        }
+    };
+}
+
+/**
+ * Returns function which is called by Form.io when component gets focus
+ * @param comp {object} Form.io component which got focus
+ */
+function formFocusListener(comp)
+{
+    return function()
+    {
+        $('#divHelp').empty();
+        if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
+            && comp.component.properties.hasOwnProperty("formhelp"))
+        {
+            var vhelpform = '<div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="formHelp"></span></div></div></div>';
+            $('#divHelp').append(vhelpform);
+            $('#formHelp').html(comp.component.properties.formhelp).attr("lang-tran", comp.component.properties.formhelp).attr("lang-form", "true").translate();
+        }
+        else if (appConfiguration.formhelp)
+        {
+            var vhelpform = '<div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="formHelp"></span></div></div></div>';
+                $('#divHelp').append(vhelpform);
+            $('#formHelp').html(appConfiguration.formhelp).attr("lang-tran", appConfiguration.formhelp).attr("lang-form", "true").translate();
+        }
+        
+        if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
+            && comp.component.properties.hasOwnProperty("fieldhelp"))
+        {
+            var vhelpfield = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="fieldHelp"></span></div></div></div>';
+            $('#divHelp').append(vhelpfield);
+            $('#fieldHelp').html(comp.component.properties.fieldhelp).attr("lang-tran", comp.component.properties.fieldhelp).attr("lang-form", "true").translate();
+        }
+        
+        if(((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("processimagelink")) || appConfiguration.processimagelink)
+            && ((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("processlink")) || appConfiguration.processlink))
+        {
+            var vprocess = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="bussinesplabel"></span></div></div></div><div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="processlink" target="_blank"><img class="help-photo-container" id="processimagelink"></a></div></div></div>';
+            $('#divHelp').append(vprocess);
+            $('#processimagelink').attr('src', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("processimagelink") ? comp.component.properties.processimagelink : appConfiguration.processimagelink));
+            $('#processlink').attr('href', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("processlink") ? comp.component.properties.processlink : appConfiguration.processlink));
+            $('#bussinesplabel').html(appConfiguration.processtext);
+            $('#bussinesplabel').attr("lang-tran", appConfiguration.processtext).attr("lang-form", "true").translate();
+        }
+        
+        if(((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("elearningimagelink")) || appConfiguration.elearningimagelink)
+            && ((comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("elearninglink")) || appConfiguration.elearninglink))
+        {
+            var velearning = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="elearninglabel"></span></div></div></div><div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="elearninglink" target="_blank"><img class="help-photo-container" id="elearningimagelink"></a></div></div></div>';
+            $('#divHelp').append(velearning);
+            $('#elearningimagelink').attr('src', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("elearningimagelink") ? comp.component.properties.elearningimagelink : appConfiguration.elearningimagelink));
+            $('#elearninglink').attr('href', (comp && comp.hasOwnProperty("component")&& comp.component.hasOwnProperty("properties")
+                && comp.component.properties.hasOwnProperty("elearninglink") ? comp.component.properties.elearninglink : appConfiguration.elearninglink));
+            $('#elearninglabel').html(appConfiguration.elearningtext);
+            $('#elearninglabel').attr("lang-tran", appConfiguration.elearningtext).attr("lang-form", "true").translate();
+        }
+    };
+}
+
+/**
  * Sets up the header and layout elements excluding a form
  */
 function setupLayout()
-{    
-    // Check app configuration
+{
     // Set up the main logo
-    var mainLogoPath = "./ress/png/mainlogo.png";
-    var mainLogoUrl = checkForUrlParameter("mainlogopath");
-    if (mainLogoUrl)
-    {
-        mainLogoPath = mainLogoUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["mainlogopath"])
-    {
-        mainLogoPath = formObj.properties["mainlogopath"];
-    }
-    else if (typeof brandObj !== 'undefined' && brandObj != null && brandObj["mainlogopath"])
-    {
-        mainLogoPath = brandObj["mainlogopath"];
-    }
+    $("#mainLogo").find("img").attr("src", appConfiguration.mainlogopath);
     
-    $("#mainLogo").find("img").attr("src", mainLogoPath);
-    
-    // Display the main logo even if its path is not defined in brandObj
+    // Display the main logo even if its path is not configured
     // In this case we use hardcoded path
     $("#mainLogo").show();
     
     // Set up side logo and show it if defined
-    var sideLogoPath = "./ress/png/sidelogo.png";
-    var sideLogoUrl = checkForUrlParameter("sidelogopath");
-    if (sideLogoUrl)
+    if (appConfiguration.sidelogopath)
     {
-        sideLogoPath = sideLogoUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["sidelogopath"])
-    {
-        sideLogoPath = formObj.properties["sidelogopath"];
-    }
-    else if (typeof brandObj !== 'undefined' && brandObj != null && brandObj["sidelogopath"])
-    {
-        sideLogoPath = brandObj["sidelogopath"];
-    }
-    
-    if (typeof sideLogoPath !== 'undefined')
-    {
-        $("#sideLogo").find("img").attr("src", sideLogoPath);
+        $("#sideLogo").find("img").attr("src", appConfiguration.sidelogopath);
         $("#sideLogo").show();
         $("#mainLogo").find("img").removeClass("logo-background");
         $("#mainLogo").addClass("logo-background");
         $("#sideLogo").find("img").addClass("logo-background");
+    }
+    else if ($("#sideLogo").find("img").hasClass("logo-background"))
+    {
+        $("#sideLogo").hide();
+        $("#mainLogo").find("img").addClass("logo-background");
+        $("#mainLogo").removeClass("logo-background");
+        $("#sideLogo").find("img").removeClass("logo-background");
     }
     
     // Set up favicon
@@ -258,298 +237,171 @@ function setupLayout()
     faviconElement.type = "image/x-icon";
     faviconElement.id = "pageIcon";
     
-    // If favicon is not specified use the main logo
-    var faviconPath = "./ress/png/favicon.png";
-    var faviconUrl = checkForUrlParameter("faviconpath");
-    if (faviconUrl)
-    {
-        faviconPath = faviconUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["faviconpath"])
-    {
-        faviconPath = formObj.properties["faviconpath"];
-    }
-    else if (typeof customizationObj !== 'undefined' && customizationObj !== null && customizationObj["faviconpath"])
-    {
-        faviconPath = customizationObj["faviconpath"];
-    }
-    else if (typeof brandObj !== 'undefined' && brandObj != null && brandObj["faviconpath"])
-    {
-        faviconPath = brandObj["faviconpath"];
-    }
-    
-    faviconElement.href = faviconPath;
+    faviconElement.href = appConfiguration.faviconpath;
     var pageTitleNode = document.getElementById("pageTitle");
     pageTitleNode.parentNode.insertBefore(faviconElement, pageTitleNode.nextSibling);
     
     // Set up client's logo (customization logo) and show it if defined
-    var customizationLogoPath;
-    var customizationLogoUrl = checkForUrlParameter("customizationlogopath");
-    if (customizationLogoUrl)
+    if (appConfiguration.customizationlogopath)
     {
-        customizationLogoPath = customizationLogoUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["customizationlogopath"])
-    {
-        customizationLogoPath = formObj.properties["customizationlogopath"];
-    }
-    else if (typeof customizationObj !== 'undefined' && customizationObj !== null && customizationObj["customizationlogopath"])
-    {
-        customizationLogoPath = customizationObj["customizationlogopath"];
-    }
-    
-    if (typeof customizationLogoPath !== 'undefined')
-    {
-        $("#customizationLogo").find(".client-logo").attr("src", customizationLogoPath);
+        $("#customizationLogo").find(".client-logo").attr("src", appConfiguration.customizationlogopath);
         $("#customizationLogo").show();
     }
-    
-    // Check if we should enable the app launcher button
-    var appLauncherDisabled = false;
-    var appLauncherUrl = checkForUrlParameter("app launcher");
-    if (appLauncherUrl === "false" || appLauncherUrl === "true")
+    else if ($("#customizationLogo").find(".client-logo").attr("src") !== "./")
     {
-        if (appLauncherUrl === "false")
-        {
-            appLauncherDisabled = true;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("app launcher"))
-    {
-        if (formObj.properties["app launcher"] == false)
-        {
-            appLauncherDisabled = true;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("app launcher") && headerObj["app launcher"] === false)
-    {
-        appLauncherDisabled = true;
+        $("#customizationLogo").hide();
     }
     
-    if (appLauncherDisabled)
+    // Hide the app launcher button if needed
+    if (!appConfiguration.appLauncher && !$(".appl-button").hasClass('hidden'))
     {
         $(".appl-button").addClass('hidden');
     }
+    else if (appConfiguration.appLauncher && $(".appl-button").hasClass('hidden'))
+    {
+        $(".appl-button").removeClass('hidden');
+    }
     
     // Check if we should maximize the browser window (IE only)
-    var maximizeBrowserWindow = false;
-    var maximizeBrowserWindowUrl = checkForUrlParameter("maximize");
-    if (maximizeBrowserWindowUrl === "false" || maximizeBrowserWindowUrl === "true")
-    {
-        if (maximizeBrowserWindowUrl === "true")
-        {
-            maximizeBrowserWindow = true;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("maximize"))
-    {
-        if (formObj.properties["maximize"] === true)
-        {
-            maximizeBrowserWindow = true;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("maximize") && headerObj["maximize"] === true)
-    {
-        maximizeBrowserWindow = true;
-    }
-    
-    if (maximizeBrowserWindow)
+    if (appConfiguration.maximizeBrowserWindow)
     {
         window.moveTo(0, 0);
         window.resizeTo(screen.availWidth, screen.availHeight);
     }
     
-    // Check if we should change form width
-    var formWidthPercentUrl = checkForUrlParameter("form width percent");
-    if (formWidthPercentUrl)
-    {
-        if (!isNaN(formWidthPercentUrl) && 0.1 < formWidthPercentUrl && formWidthPercentUrl <= 100)
-        {
-            $(".body-content").css("width", formWidthPercentUrl + "%");
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("form width percent"))
-    {
-        if (!isNaN(formObj.properties["form width percent"]) && 0.1 < formObj.properties["form width percent"] && formObj.properties["form width percent"] <= 100)
-        {
-            $(".body-content").css("width", formObj.properties["form width percent"] + "%");
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("form width percent") && !isNaN(headerObj["form width percent"])
-        && 0.1 < headerObj["form width percent"] && headerObj["form width percent"] <= 100)
-    {
-        $(".body-content").css("width", headerObj["form width percent"] + "%");
-    }
+    // Change form width
+    $(".body-content").css("width", appConfiguration.formWidthPercent + "%");
     
     // Check if we should hide the environments dropdown
-    var hasEnvironments = true;
-    var hasEnvironmentsUrl = checkForUrlParameter("environment");
-    if (hasEnvironmentsUrl === "false" || hasEnvironmentsUrl === "true")
+    if (!appConfiguration.environment)
     {
-        if (hasEnvironmentsUrl === "false")
+        if ($("#environmentcontainerl").length)
         {
-            hasEnvironments = false;
+            $("#environmentcontainerl").remove();
         }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("environment"))
-    {
-        if (formObj.properties["environment"] === false)
+        
+        if ($("#environmentcontainers").length)
         {
-            hasEnvironments = false;
+            $("#environmentcontainers").remove();
         }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("environment") && headerObj["environment"] === false)
-    {
-        hasEnvironments = false;
-    }
-    
-    if (!hasEnvironments)
-    {
-        $("#environmentcontainerl").remove();
+        
         hiddenWrappers.push("environmentcontainerl");
-        $("#environmentcontainers").remove();
         hiddenWrappers.push("environmentcontainers");
+    }
+    else if (appConfiguration.environment && !$("#environmentcontainerl").length)
+    {
+        // TODO: Update environments list
+        $("#customizationLogo").after('<div id="environmentcontainerl" class="header-common app-header rsp-visible"><button type="button" class="header-common app-menu-button app-menu-button-right environment-button environments-trigger" onclick="showEnvironmentDropdown(this)"><div class="environment-wrapper"><span lang-tran="Environment" class="environment-text environment-head">Environment</span><span class="environment-text environment-current">Tenant 1 (default)</span></div><svg class="environment-glyph" viewBox="0 0 16 16"><path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path></svg></button><div class="header-common environment-dropdown header-hidden-element"><ul class="environment-dropdown-list"><li><button disabled class="environment-option active-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 1 (default)</div></div></button></li><li><button class="environment-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 2</div></div></button></li><li><button class="environment-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 3</div></div></button></li></ul></div></div>');
+        $("#environmentcontainersplchld").after('<div id="environmentcontainers" class="header-common"><div class="header-common"><button class="header-common user-settings-small-menu-item environments-trigger" onclick="showUserSettingsSmallMenuDropdown(this)"><div class="user-settings-small-menu-item-wrapper"><div class="user-settings-small-menu-item-content" lang-tran="Environments">Environments</div><div class="user user-settings-small-menu-item-glyphwrapper"><svg class="user user-settings-small-menu-item-glyph" focusable="false" viewBox="0 0 16 16"><path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path></svg></div></div></button></div><div class="header-common user-settings-small-menu-dropdown header-hidden-element"><ul class="user-settings-small-menu-dropdown-list"><li><button disabled class="user-settings-small-menu-dropdown-option active-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 1 (default)</div></div></button></li><li><button class="user-settings-small-menu-dropdown-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 2</div></div></button></li><li><button class="user-settings-small-menu-dropdown-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 3</div></div></button></li></ul></div></div>');
     }
     
     // Count how many menu items are missing to apply appropriate css class later
     var missingHeaderElements = 0;
     
     // Check if we should hide the notifications menu
-    var hasNotifications = true;
-    var hasNotificationsUrl = checkForUrlParameter("notifications");
-    if (hasNotificationsUrl === "false" || hasNotifications === "true")
-    {
-        if (hasNotificationsUrl === "false")
-        {
-            hasNotifications = false;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("notifications"))
-    {
-        if (formObj.properties["notifications"] === false)
-        {
-            hasNotifications = false;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("notifications") && headerObj["notifications"] === false)
-    {
-        hasNotifications = false;
-    }
-    
-    if (hasNotifications)
+    if (appConfiguration.notifications)
     {
         firstMenuItem = 'notificationsWrapper';
+        if (!$("#notificationsCommandWrapper").length)
+        {
+            $("#notificationsCommandWrapperplchld").remove();
+            $("#applButtonSmallWrapper").after('<div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--bell" aria-hidden="true"></i></span></button></div>');
+        }
     }
     else
     {
+        $("#notificationsCommandWrapper").after('<div id="notificationsCommandWrapperplchld" style="display: none"></div>');
         $("#notificationsCommandWrapper").remove();
         hiddenWrappers.push("notificationsCommandWrapper");
         missingHeaderElements ++;
     }
     
     // Check if we should hide the settings menu
-    var hasSettings = true;
-    var hasSettingsUrl = checkForUrlParameter("settings");
-    if (hasSettingsUrl === "false" || hasSettingsUrl === "true")
+    if (!appConfiguration.settings)
     {
-        if (hasSettingsUrl === "false")
-        {
-            hasSettings = false;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("settings"))
-    {
-        if (formObj.properties["settings"] === false)
-        {
-            hasSettings = false;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("settings") && headerObj["settings"] === false)
-    {
-        hasSettings = false;
-    }
-    
-    if (!hasSettings)
-    {
+        $("#settingsCommandWrapper").after('<div id="settingsCommandWrapperplchld" style="display: none"></div>');
         $("#settingsCommandWrapper").remove();
         hiddenWrappers.push("settingsCommandWrapper");
         missingHeaderElements ++;
     }
-    else if (firstMenuItem === 'notdefined')
+    else
     {
-        firstMenuItem = 'settingsWrapper';
+        if (firstMenuItem === 'notdefined')
+        {
+            firstMenuItem = 'settingsWrapper';
+        }
+        
+        if (!$("#settingsCommandWrapper").length)
+        {
+            var settingsMenu = '<div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--gear" aria-hidden="true"></i></span></button></div>';
+            $("#settingsCommandWrapperplchld").remove();
+            $("#notificationsCommandWrapper").after(settingsMenu);
+            $("#notificationsCommandWrapperplchld").after(settingsMenu);
+        }
     }
     
     // Check if we should hide the help menu
-    var hasHelp = true;
-    var hasHelpUrl = checkForUrlParameter("help");
-    if (hasHelpUrl === "false" || hasHelpUrl === "true")
+    if (!appConfiguration.help)
     {
-        if (hasHelpUrl === "false")
-        {
-            hasHelp = false;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("help"))
-    {
-        if (formObj.properties["help"] === false)
-        {
-            hasHelp = false;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("help") && headerObj["help"] === false)
-    {
-        hasHelp = false;
-    }
-    
-    if (!hasHelp)
-    {
+        $("#helpCommandWrapper").after('<div id="helpCommandWrapperplchld" style="display: none"></div>');
         $("#helpCommandWrapper").remove();
         hiddenWrappers.push("helpCommandWrapper");
         missingHeaderElements ++;
     }
-    else if (firstMenuItem === 'notdefined')
+    else
     {
-        firstMenuItem = 'helpWrapper';
+        if (firstMenuItem === 'notdefined')
+        {
+            firstMenuItem = 'helpWrapper';
+        }
+        
+        if (!$("#helpCommandWrapper").length)
+        {
+            var helpMenu = '<div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--question" aria-hidden="true"></i></span></button></div>';
+            $("#helpCommandWrapperplchld").remove();
+            $("#notificationsCommandWrapper").after(helpMenu);
+            $("#notificationsCommandWrapperplchld").after(helpMenu);
+        }
     }
     
     // Check if we should hide the account menu
-    var hasAccount = true;
-    var hasAccountUrl = checkForUrlParameter("account");
-    if (hasAccountUrl === "false" || hasAccountUrl === "true")
-    {
-        if (hasAccountUrl === "false")
-        {
-            hasAccount = false;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("account"))
-    {
-        if (formObj.properties["account"] === false)
-        {
-            hasAccount = false;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("account") && headerObj["account"] === false)
-    {
-        hasAccount = false;
-    }
-    
-    if (!hasAccount)
+    if (!appConfiguration.account)
     {
         $("#accountsCommandWrapperL").remove();
         hiddenWrappers.push("accountsCommandWrapperL");
         $("#accountsCommandWrapperS").remove();
         hiddenWrappers.push("accountsCommandWrapperS");
+        if (appConfiguration.environment) 
+        {
+            $("#headerRight").append('<div id="accountsCommandWrapperXS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"></div></button></div>');
+            $("#hide-account-info").hide();
+        }
+        else 
+        {
+            $("#hide-account-info").show();
+        }
     }
-    else if (firstMenuItem === 'notdefined')
+    else
     {
-        firstMenuItem = 'accountsWrapper';
+        $("#accountsCommandWrapperXS").remove();
+        hiddenWrappers.push("accountsCommandWrapperXS");
+        if (firstMenuItem === 'notdefined')
+        {
+            firstMenuItem = 'accountsWrapper';
+        }
+        
+        if (!$("#accountsCommandWrapperL").length)
+        {
+            var accountsMenuL = '<div id="accountsCommandWrapperL" class="header-common app-header rsp-visible"><button id="accountsCommand" type="button" class="header-common app-menu-button app-menu-button-right app-menu-button-right-menu account-trigger" onclick="openUserMenu(this)"><div class="app-menu-button-right-menu-wrapper"><div class="app-menu-button-right-menu-left"><span class="username">James H. Smith</span></div><div class="header-common app-header app-menu-button-right-menu-right"><div class="app-menu-button-right-menu-right-image-wrapper"><span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52"></span></div><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></div></div></button></div>';
+            $("#helpCommandWrapper").after(accountsMenuL);
+            $("#helpCommandWrapperplchld").after(accountsMenuL);
+            $("#accountsCommandWrapperL").after('<div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52 rsp"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></button></div>');
+        }
     }
     
-    if (hasEnvironments && (missingHeaderElements > 0 || !hasAccount))
+    if (appConfiguration.environment && (missingHeaderElements > 0 || !appConfiguration.account))
     {
-        if (hasAccount)
+        if (appConfiguration.account)
         {
             switch (missingHeaderElements)
             {
@@ -582,126 +434,79 @@ function setupLayout()
         }
     }
     
-    // Check if we have to few commands in the header that we don't need ellipsis button on small screens any more
-    if (missingHeaderElements == 3 || (missingHeaderElements == 2 && (!hasAccount || appLauncherDisabled))
-        || (missingHeaderElements == 1 && !hasAccount && appLauncherDisabled))
+    // Check if we have too few commands in the header that we don't need ellipsis button on small screens any more
+    if (missingHeaderElements == 3 || (missingHeaderElements == 2  && ((!appConfiguration.account && !appConfiguration.environment) || !appConfiguration.appLauncher))
+        || (missingHeaderElements == 1 && !appConfiguration.account && !appConfiguration.environment && !appConfiguration.appLauncher))
     {
         $("#ellipsisButtonWrapper").hide();
-        if (!appLauncherDisabled)
+        if (appConfiguration.appLauncher)
         {
             $("#applButtonSmallWrapper").removeClass("hiddensmcommands").removeClass("rsp-med-visible").addClass("rsp-med-small-visible");
         }
         
-        if (hasNotifications)
+        if (appConfiguration.notifications)
         {
             $("#notificationsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
         }
         
-        if (hasSettings)
+        if (appConfiguration.settings)
         {
             $("#settingsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
         }
         
-        if (hasHelp)
+        if (appConfiguration.help)
         {
             $("#helpCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
         }
     }
     
     // Check if we should show theme selection option in the settings menu
-    var hasThemeSettings = false;
-    var hasThemeSettingsUrl = checkForUrlParameter("theme settings");
-    if (hasThemeSettingsUrl === "false" || hasThemeSettingsUrl === "true")
-    {
-        if (hasThemeSettingsUrl === "true")
-        {
-            hasThemeSettings = true;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("theme settings"))
-    {
-        if (formObj.properties["theme settings"] === true)
-        {
-            hasThemeSettings = true;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("theme settings") && headerObj["theme settings"] === true)
-    {
-        hasThemeSettings = true;
-    }
-    
-    if (hasThemeSettings)
+    if (appConfiguration.themeSettings)
     {
         $('#themeCardWrapper').show();
+    }
+    else
+    {
+        $('#themeCardWrapper').hide();
     }
      
     // Check if we should show the PhraseApp settings
     var hasPhraseAppSettings = false;
     var phraseAppSettingsOn = false;
-    var hasPhraseAppSettingsUrl = checkForUrlParameter("phraseapp");
-    if (hasPhraseAppSettingsUrl === "false" || hasPhraseAppSettingsUrl === "true" || hasPhraseAppSettingsUrl === "on" || hasPhraseAppSettingsUrl === "off")
+    if (appConfiguration.phraseApp === true || appConfiguration.phraseApp === "true" || appConfiguration.phraseApp === "on" || appConfiguration.phraseApp === "off")
     {
-        if (hasPhraseAppSettingsUrl === "true" || hasPhraseAppSettingsUrl === "on" || hasPhraseAppSettingsUrl === "off")
+        if (!$('script').filter(function () {
+            return ($(this).attr('src') == "./scripts/phraseapp.js");
+        }).length)
         {
-            hasPhraseAppSettings = true;
+            loadScript("./scripts/phraseapp.js", ((appConfiguration.phraseApp === "on") ? showPhraseAppSettingsCardAndSwitchOn : showPhraseAppSettingsCard), showPhraseAppHelperLoadFailedWarning);
         }
-        
-        if (hasPhraseAppSettingsUrl === "on")
+        else if (appConfiguration.phraseApp === "on")
         {
-            phraseAppSettingsOn = true;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("phraseapp"))
-    {
-        if (formObj.properties["phraseapp"] === true || formObj.properties["phraseapp"] === "true" || formObj.properties["phraseapp"] === "on" || formObj.properties["phraseapp"] === "off")
-        {
-            hasPhraseAppSettings = true;
-        }
-        
-        if (formObj.properties["phraseapp"] === "on")
-        {
-            phraseAppSettingsOn = true;
+            if (!phraseSelector.phraseAppSelection)
+            {
+                changePhraseAppSelection();
+            }
+            
+            applyPhraseAppSettingsChanges();
         }
     }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("phraseapp")
-        && (headerObj["phraseapp"] === true || headerObj["phraseapp"] === "true" || headerObj["phraseapp"] === "on" || headerObj["phraseapp"] === "off"))
+    else
     {
-        hasPhraseAppSettings = true;
-        
-        if (headerObj["phraseapp"] === "on")
+        $('#phraseAppCardWrapper').hide();
+        if (typeof phraseSelector !== 'undefined')
         {
-            phraseAppSettingsOn = true;
+            if (phraseSelector.phraseAppSelection)
+            {
+                changePhraseAppSelection();
+            }
+            
+            applyPhraseAppSettingsChanges();
         }
     }
-    
-    if (hasPhraseAppSettings)
-    {
-        loadScript("./scripts/phraseapp.js", (phraseAppSettingsOn ? showPhraseAppSettingsCardAndSwitchOn : showPhraseAppSettingsCard), showPhraseAppHelperLoadFailedWarning);
-    }
-    
-    // Check if we should show the button which opens the feedback form
-    var hasFeedback = false;
-    var hasFeedbackUrl = checkForUrlParameter("feedback");
-    if (hasFeedbackUrl === "false" || hasFeedbackUrl === "true")
-    {
-        if (hasFeedbackUrl === "true")
-        {
-            hasFeedback = true;
-        }
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("feedback"))
-    {
-        if (formObj.properties["feedback"])
-        {
-            hasFeedback = true;
-        }
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("feedback") && headerObj["feedback"] === true)
-    {
-        hasFeedback = true;
-    }
-    
-    if (hasFeedback)
+
+    // Check if we should show the button which opens the feedback form    
+    if (appConfiguration.feedback && appConfiguration.feedbackUrlAbsolutePath)
     {
         // We add the keydown listener only when feedback is enabled in order to avoid unnecessary triggers and improve performance
         // On press escape close feedback
@@ -712,6 +517,8 @@ function setupLayout()
                 closeFeedbackContent();
             }
         });
+        
+        $("#feedbackInserted").show();
     }
     else
     {
@@ -719,10 +526,10 @@ function setupLayout()
     }
     
     // Set up the header title
-    if (formObj.hasOwnProperty("title"))
+    if (appConfiguration.title)
     {
-        $("#appTitle").find(".app-menu-brand").html(formObj["title"]);
-        $("#appTitlePrint").find("p").html(formObj["title"]);
+        $("#appTitle").find(".app-menu-brand").html(appConfiguration.title);
+        $("#appTitlePrint").find("p").html(appConfiguration.title);
     }
     
     $("#appTitle").show();
@@ -785,6 +592,44 @@ function setupLayout()
         $(this).addClass('feedback-overall-anchor-active');
     });
     
+    // Submit Feedback JSON file if required field is filled 
+    $("#myForm").submit(function(event) 
+    {
+        /* stop form from submitting normally */
+        event.preventDefault();
+
+        var feedbacktype = $('#feedbacktype').val(); 
+        var feedbackComment = $('#feedbackBasicFormComment').val();
+        if ($('#feedbackBasicFormScreenshotCheckbox').prop('checked') === true)
+        {
+            var screenshot = $('#img_val').val(); 
+        }
+        else if ($('#feedbackBasicFormScreenshotCheckbox').prop('checked') === false) 
+        {
+            var screenshot = ''; 
+        }
+        
+        var feedbackuser = currentUser.uid; 
+        var payload = 
+        {
+            "feedbacktype": feedbacktype,
+            "feedbackcomment": feedbackComment,
+            "screenshot": screenshot,
+            "fedbackuser": feedbackuser
+        };    
+        if (checkFeedbackValidity())
+        {
+            sendfeedback(appConfiguration.feedbackUrlAbsolutePath, payload);
+            closeFeedbackContent();
+        }                
+    });
+    
+    //Added validity for required field in Feedback container 
+    $('#feedbackBasicFormComment').blur(function()
+    {
+        checkFeedbackValidity();        
+    });
+
     if (matchMedia)
     {
         const mediaMaximizedQuery = matchMedia("(min-width: 883px)");
@@ -808,68 +653,12 @@ function setupLayout()
         });
         
     }
-}
 
-/**
- * Checks if there is a given URL parameter
- * @param {string} parameterName URL parameter name whose existence should be checked
- */
-function checkForUrlParameter(parameterName)
-{
-    var paramRegex = new RegExp("[?&]" + encodeURIComponent(parameterName) + "(=([^&#]*)|&|#|$)");
-    var paramValue = paramRegex.exec(window.location.href);
-    if (paramValue && paramValue[2])
+    // Don't lose focus when clicking on Help division
+    $('.user-help-panel').bind('mousedown', function(e)
     {
-        return decodeURIComponent(paramValue[2].replace(/\+/g, " "));
-    }
-    
-    return null;
-}
-
-/**
- * Returns configured process text
- */
-function getProcessText()
-{
-    var processText = "Click the gear icon below to see the business process...";
-    var processTextUrl = checkForUrlParameter("processtext");
-    if (processTextUrl)
-    {
-        processText = processTextUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["processtext"])
-    {
-        processText = formObj.properties["processtext"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["processtext"])
-    {
-        processText = headerObj["processtext"];
-    }
-    
-    return processText;
-}
-
-/**
- * Returns configured e-learning text
- */
-function getELearningText()
-{
-    var eLearningText = "Click the learning icon below to visit the e-learning module...";
-    var eLearningTextUrl = checkForUrlParameter("elearningtext");
-    if (eLearningTextUrl)
-    {
-        eLearningText = eLearningTextUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["elearningtext"])
-    {
-        eLearningText = formObj.properties["elearningtext"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["elearningtext"])
-    {
-        eLearningText = headerObj["elearningtext"];
-    }
-    
-    return eLearningText;
+        e.preventDefault();
+    });
 }
 
 /**
@@ -878,35 +667,31 @@ function getELearningText()
 function setDefaultHelpContent()
 {
     $('#divHelp').empty();
-    if (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("formhelp"))
+    if (appConfiguration.formhelp)
     {
         var vhelpform = '<div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="formHelp"></span></div></div></div>';
         $('#divHelp').append(vhelpform);
-        $('#formHelp').html(formObj.properties.formhelp).attr("lang-tran", formObj.properties.formhelp).attr("lang-form", "true").translate();
+        $('#formHelp').html(appConfiguration.formhelp).attr("lang-tran", appConfiguration.formhelp).attr("lang-form", "true").translate();
     }
     
-    if(formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("processimagelink")
-        && formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("processlink"))
+    if (appConfiguration.processimagelink && appConfiguration.processlink)
     {
-        var vprocess = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="bussinesplabel"></span></div></div></div><div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="processlink"><img class="help-photo-container" id="processimagelink"></a></div></div></div>';
+        var vprocess = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="bussinesplabel"></span></div></div></div><div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="processlink" target="_blank"><img class="help-photo-container" id="processimagelink"></a></div></div></div>';
         $('#divHelp').append(vprocess);
-        $('#processimagelink').attr('src', formObj.properties.processimagelink);
-        $('#processlink').attr('href', formObj.properties.processlink);
-        var processText = getProcessText();
-        $('#bussinesplabel').html(processText);
-        $('#bussinesplabel').attr("lang-tran", processText).attr("lang-form", "true");
+        $('#processimagelink').attr('src', appConfiguration.processimagelink);
+        $('#processlink').attr('href', appConfiguration.processlink);
+        $('#bussinesplabel').html(appConfiguration.processtext);
+        $('#bussinesplabel').attr("lang-tran", appConfiguration.processtext).attr("lang-form", "true").translate();
     }
     
-    if(formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearningimagelink")
-        && formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearninglink"))
+    if (appConfiguration.elearningimagelink && appConfiguration.elearninglink)
     {
-        var velearning = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="elearninglabel"></span></div></div></div><div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="elearninglink"><img class="help-photo-container" id="elearningimagelink"></a></div></div></div>';
+        var velearning = '<div id="fieldHelpCardWrapper"><div id="fieldHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><span id="elearninglabel"></span></div></div></div><div id="formHelpCardWrapper"><div id="formHelpCard" class="header-common user-help-card"><div class="header-common user-settings-card-header-label"><a id="elearninglink" target="_blank"><img class="help-photo-container" id="elearningimagelink"></a></div></div></div>';
         $('#divHelp').append(velearning);
-        $('#elearningimagelink').attr('src', formObj.properties.elearningimagelink);
-        $('#elearninglink').attr('href', formObj.properties.elearninglink);
-        var eLearningText = getELearningText();
-        $('#elearninglabel').html(eLearningText);
-        $('#elearninglabel').attr("lang-tran", eLearningText).attr("lang-form", "true");
+        $('#elearningimagelink').attr('src', appConfiguration.elearningimagelink);
+        $('#elearninglink').attr('href', appConfiguration.elearninglink);
+        $('#elearninglabel').html(appConfiguration.elearningtext);
+        $('#elearninglabel').attr("lang-tran", appConfiguration.elearningtext).attr("lang-form", "true").translate();
     }
 }
 
@@ -922,6 +707,47 @@ function closeFeedbackContent()
     $('#feedbackBasicFormQuestionMiddleText').html('');
     $('#feedbackBasicFormComment').val('');
     $('#feedbackBasicFormScreenshotCheckbox').prop('checked', false);
+    $('#feedbackBasicFormComment').removeClass('invalid valid');
+    $('#validity_message').removeClass('error_show').addClass('error');
+}
+
+/**
+ * Check validity of required field in Feedback container and show error message if required field is empty.
+ */
+function checkFeedbackValidity()
+{
+    var feedbackTextarea = $('#feedbackBasicFormComment');
+    var errorElement = $("span", feedbackTextarea.parent());
+    if (feedbackTextarea.val()) 
+    {
+        feedbackTextarea.removeClass('invalid').addClass('valid');
+        errorElement.removeClass('error_show').addClass('error');
+        
+        return true;
+    }
+    else 
+    {
+        feedbackTextarea.removeClass('valid').addClass('invalid');
+        errorElement.removeClass('error').addClass('error_show');
+        
+        return false;
+    }
+}
+
+/**
+ *  Make screenshot of body element and placed base64encodedstring in input (img_val)
+ */
+function capture() 
+{
+    html2canvas(document.body, 
+    {
+        allowTaint: false,
+        useCORS: true
+    }).then(function (canvas) 
+    {
+        var base64encodedstring = canvas.toDataURL("ïmage/png");
+        $('#img_val').attr('value', base64encodedstring).show();
+    });    
 }
 
 /**
@@ -1363,7 +1189,7 @@ function saveLTZ(e)
     var timeZoneChanged = setChosenTimeZone();
     if ((languageChanged || timeZoneChanged) && isSignedInUser())
     {
-        if (isUseOutlookMailSettings() && mailboxSettingsAvailable)
+        if (appConfiguration.useOutlookSettings && mailboxSettingsAvailable)
         {
             var payload;
             if (languageChanged && timeZoneChanged)
@@ -1381,7 +1207,7 @@ function saveLTZ(e)
             
             patchmailboxsettingsdata("https://graph.microsoft.com/beta/me/mailboxSettings", payload);
         }
-        else if (isUseUserPropertyExtensions() && userPropertyExtensionsAvailable)
+        else if (appConfiguration.useUserPropertyExtensions && userPropertyExtensionsAvailable)
         {
             if (languageChanged && timeZoneChanged)
             {
@@ -1491,11 +1317,15 @@ function cancelPhraseAppSwitch(e)
  */
 function showFeedbackDialog()
 {
+    capture();
+    setTimeout(function()
+    {
         $('#feedbackOverlayBackground').show();
-        setTimeout(function()
-        {
-          $('#feedbackLeftFormContainer').show();
-        }, 1000);
+    }, 1);
+    setTimeout(function()
+    {
+      $('#feedbackLeftFormContainer').show();
+    }, 1000);
 }
 
 /**
@@ -1504,14 +1334,20 @@ function showFeedbackDialog()
 function showFeedbackFields(buttonSetText)
 {
     $('#feedbackBasicFormQuestionMiddleText').html(langLayoutObj[languageSelector.selectedLanguage][buttonSetText]);
+    if (buttonSetText === 'Title Frown')
+    {
+        $('#feedbacktype').val('dontlike');
+    }
+    else if (buttonSetText === 'Title Idea')
+    {
+        $('#feedbacktype').val('suggestion'); 
+    }
+    else if (buttonSetText === 'Title Smile')
+    {
+        $('#feedbacktype').val('like');
+    }
+    
     $('#feedbackLeftFormContainer').addClass('slide-left');
     $('#feedbackMiddleFormContainer').addClass('slide-left');
-    
-    // Set value for email field if currentUser exist
-    if(typeof currentUser !== 'undefined' && currentUser !== null && 
-        typeof currentUser.uid !== 'undefined' && currentUser.uid !== null)
-    {
-        $('#emailOptional').val(currentUser.uid);
-    }
     $('#feedbackMiddleFormContainer').show();
 } 

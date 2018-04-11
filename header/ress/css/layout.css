@@ -411,6 +411,38 @@ body {
     .environment-dropdown.minus-accounts-three {
         right: 48px;
     }
+    
+    .environment-dropdown.minus-applauncher {
+        right: 321px;
+    }
+    
+    .environment-dropdown.minus-applauncher-one {
+        right: 273px;
+    }
+    
+    .environment-dropdown.minus-applauncher-two {
+        right: 225px;
+    }
+    
+    .environment-dropdown.minus-applauncher-three {
+        right: 177px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher {
+        right: 144px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher-one {
+        right: 96px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher-two {
+        right: 48px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher-three {
+        right: 0px;
+    }
 }
 
 @media (min-width: 1300px) {
@@ -443,6 +475,38 @@ body {
     }
     
     .environment-dropdown.minus-accounts-three {
+        right: 0px;
+    }
+    
+    .environment-dropdown.minus-applauncher {
+        right: 321px;
+    }
+    
+    .environment-dropdown.minus-applauncher-one {
+        right: 273px;
+    }
+    
+    .environment-dropdown.minus-applauncher-two {
+        right: 225px;
+    }
+    
+    .environment-dropdown.minus-applauncher-three {
+        right: 177px;
+    }
+    
+     .environment-dropdown.minus-accounts-applauncher {
+        right: 144px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher-one {
+        right: 96px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher-two {
+        right: 48px;
+    }
+    
+    .environment-dropdown.minus-accounts-applauncher-three {
         right: 0px;
     }
 }

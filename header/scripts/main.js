@@ -41,6 +41,9 @@ function _setupAppInternal()
         setupLayout();
         var hooksObj = createHooksObj();
         langObj.hooks = hooksObj;
+        console.log("AC="+JSON.stringify(appConfiguration));
+        console.log("HO="+JSON.stringify(headerObj));
+        console.log("BO="+JSON.stringify(brandObj));
         Formio.createForm(document.getElementById('formio'), formObj, langObj)
         .then(function(form)
         {
@@ -74,6 +77,25 @@ function _setupAppInternal()
             
             form.ready.then(function()
             {
+               // Executing custom script when the form is ready
+               // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
+               if (formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("customScript"))
+                {
+                   var customScript = "";
+                   try {
+                     customScript = formObj.properties["customScript"];
+                     console.log('Executing custom script:'+customScript);
+                     eval(customScript);
+                   } catch (err) {
+                     var msg = "Error occurred when executing custom script:\n\n"+customScript;
+                     msg+="\n\nError name: "+err.name;
+                     msg+="\n\nError message: "+err.message;
+                     msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+                     console.log(msg);
+                     alert(msg);                      
+                   }
+                }
+               
                 // Sets up form level defined help content
                 setDefaultHelpContent();
                 
@@ -399,9 +421,9 @@ function setupLayout()
         }
     }
     
-    if (appConfiguration.environment && (missingHeaderElements > 0 || !appConfiguration.account))
+    if (appConfiguration.environment && (missingHeaderElements > 0 || !appConfiguration.account || !appConfiguration.appLauncher))
     {
-        if (appConfiguration.account)
+        if (appConfiguration.account && appConfiguration.appLauncher)
         {
             switch (missingHeaderElements)
             {
@@ -415,7 +437,7 @@ function setupLayout()
                     $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-three");
             }
         }
-        else
+        else if (!appConfiguration.account && appConfiguration.appLauncher)
         {
             switch (missingHeaderElements)
             {
@@ -430,6 +452,40 @@ function setupLayout()
                     break;
                 case 3:
                     $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-three");
+            }
+        }
+        else if (appConfiguration.account && !appConfiguration.appLauncher)
+        {
+            switch (missingHeaderElements)
+            {
+                case 0:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher");
+                    break;
+                case 1:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-one");
+                    break;
+                case 2:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-two");
+                    break;
+                case 3:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-three");
+            }
+        }
+        else if (!appConfiguration.account && !appConfiguration.appLauncher)
+        {
+            switch (missingHeaderElements)
+            {
+                case 0:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher");
+                    break;
+                case 1:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-one");
+                    break;
+                case 2:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-two");
+                    break;
+                case 3:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-three");
             }
         }
     }
@@ -566,8 +622,7 @@ function setupLayout()
     
     $('#saveTheme').click(saveTheme);
     $('#cancelTheme').click(cancelTheme);
-    $('#collapseTheme').click(cancelTheme);
-    
+    $('#collapseTheme').click(cancelTheme); 
     $('#saveLTZ').click(saveLTZ);
     $('#cancelLTZ').click(cancelLTZ);
     $('#collapseLTZ').click(cancelLTZ);

@@ -145,7 +145,7 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
         if (error || errcode || !token) {
             var msg = '';
             if (error || errcode) {
-               msg+='Error '+(errcode!=null ? '"'+errcode+'"' : '')+' occured when acquiring token for the resource "'+resource+'" for calling function "'+getFunctionName(callbackfunc)+'" with ajax url "'+ajaxurl+'".';
+               msg+='Error '+(errcode!=null ? '"'+errcode+'"' : '')+' occurred when acquiring token for the resource "'+resource+'" for calling function "'+getFunctionName(callbackfunc)+'" with ajax url "'+ajaxurl+'".';
                msg+='\n\nError details:\n'+error;
             }
             var dologin = false;

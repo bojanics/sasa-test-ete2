@@ -215,7 +215,6 @@ var themeSelector =
     currentTheme: 'cosmo',
     selectedTheme: 'cosmo',
     overridden: false,
-    configuredTheme: '',
     changedTheme: ''
 };
 
@@ -246,6 +245,17 @@ function setupStyle(overrideBrandTheme)
             themeSelector.currentTheme = appConfiguration.bootswatchtheme;
             themeSelector.selectedTheme = themeSelector.currentTheme;
         }
+        
+        // Remember Changed theme and when user changes form if Changed theme exist in set of Theme (themesMap) apply Changed theme.
+        if (themeSelector.changedTheme) 
+        {
+            if (themesMap.hasOwnProperty(themeSelector.changedTheme))
+            {
+                appConfiguration.bootswatchtheme = themeSelector.changedTheme;
+                themeSelector.currentTheme = appConfiguration.bootswatchtheme;
+                themeSelector.selectedTheme = themeSelector.currentTheme;
+            }
+        }  
     }
     
     setupThemeMenu();
@@ -350,6 +360,8 @@ function applyTheme()
     if (appConfiguration.useUserPropertyExtensions && userPropertyExtensionsAvailable  && isSignedInUser()) {
         updateThemePropertyExtension(themeSelector.currentTheme);
     }
+    
+    themeSelector.changedTheme = themeSelector.currentTheme;
 }
 
 /**

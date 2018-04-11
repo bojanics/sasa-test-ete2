@@ -254,21 +254,6 @@ function setupFormConfiguration()
         appConfiguration.processlink = formObj.properties["processlink"];
     }
     
-    // Set up process text in help menu
-    var processTextUrl = checkForUrlParameter("processtext");
-    if (processTextUrl)
-    {
-        appConfiguration.processtext = processTextUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["processtext"])
-    {
-        appConfiguration.processtext = formObj.properties["processtext"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["processtext"])
-    {
-        appConfiguration.processtext = headerObj["processtext"];
-    }
-    
     // Set up default e-learning link which user can open when click on the e-learning image in help menu
     // (can be overridden with component level "elearningimagelink" property)
     if (formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearningimagelink"))
@@ -280,21 +265,6 @@ function setupFormConfiguration()
     if ((formObj && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("elearninglink")))
     {
         appConfiguration.elearninglink = formObj.properties["elearninglink"];
-    }
-    
-    // Set up e-learning text in help menu
-    var eLearningTextUrl = checkForUrlParameter("elearningtext");
-    if (eLearningTextUrl)
-    {
-        appConfiguration.elearningtext = eLearningTextUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["elearningtext"])
-    {
-        appConfiguration.elearningtext = formObj.properties["elearningtext"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["elearningtext"])
-    {
-        appConfiguration.elearningtext = headerObj["elearningtext"];
     }
 }
 
@@ -814,25 +784,6 @@ function setupHeaderConfiguration()
     {
         appConfiguration.themeSettings = true;
     }
-    
-    // Remember Changed theme and when user changes form if Changed theme exist in set of Theme (themesMap) apply Changed theme.
-    if (!themeSelector.configuredTheme)
-    {
-        themeSelector.configuredTheme = appConfiguration.bootswatchtheme;
-    }
-    
-    if (themeSelector.currentTheme != themeSelector.configuredTheme) 
-    {
-        themeSelector.changedTheme = themeSelector.currentTheme;
-    }
-    
-    if (themeSelector.changedTheme) 
-    {
-        if (themesMap.hasOwnProperty(themeSelector.changedTheme))
-        {
-            appConfiguration.bootswatchtheme = themeSelector.changedTheme;
-        }
-    }    
 
     // If the themes definition path has been specified
     var themesUrl = checkForUrlParameter("themes");
@@ -889,7 +840,7 @@ function setupHeaderConfiguration()
     }
 
     // Make sure that we have a home parameter and if there is an additional parameter(relativepath) create complete feedback url
-    var hasHomeUrlParam = checkForUrlParameter('home');
+    var hasHomeUrlParam = checkForUrlParameter('Appl-Home');
     var hasFeedbackUrlParam = checkForUrlParameter('feedbackurl');
     if (hasHomeUrlParam)
     {
@@ -952,6 +903,36 @@ function setupHeaderConfiguration()
     else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj.hasOwnProperty("use user property extensions"))
     {
         appConfiguration.useUserPropertyExtensions = (headerObj["use user property extensions"] === true);
+    }
+    
+    // Set up process text in help menu
+    var processTextUrl = checkForUrlParameter("processtext");
+    if (processTextUrl)
+    {
+        appConfiguration.processtext = processTextUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["processtext"])
+    {
+        appConfiguration.processtext = formObj.properties["processtext"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["processtext"])
+    {
+        appConfiguration.processtext = headerObj["processtext"];
+    }
+    
+    // Set up e-learning text in help menu
+    var eLearningTextUrl = checkForUrlParameter("elearningtext");
+    if (eLearningTextUrl)
+    {
+        appConfiguration.elearningtext = eLearningTextUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["elearningtext"])
+    {
+        appConfiguration.elearningtext = formObj.properties["elearningtext"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["elearningtext"])
+    {
+        appConfiguration.elearningtext = headerObj["elearningtext"];
     }
 }
 
@@ -1090,14 +1071,7 @@ function checkForAppSetup()
  */
 function checkForLoadingCallback()
 {
-    var homePath;
-    var homeUrlParam = checkForUrlParameter("home");
-    if (homeUrlParam)
-    {
-        homePath = homeUrlParam;
-    }
-    
-    if (!homePath)
+    if (!appConfiguration.home)
     {
         // We don't have the base URL for the API call so we don't perform a call
         setupApp();
@@ -1137,7 +1111,7 @@ function checkForLoadingCallback()
             });
         }
         
-        var url = homePath + "/" + loadingActionPath;
+        var url = appConfiguration.home + "/" + loadingActionPath;
         
         performLoadingCallback();
     }
@@ -1193,29 +1167,15 @@ function formUpdated()
 {
     resetAppConfiguration();
     
-    // Updates header properties
+    // Update header properties
     setupFormConfiguration();
     setupBrandConfiguration();
     setupCustomizationConfiguration();
     setupHeaderConfiguration();
     
-    // Applies updated properties
-    setupLayout();
-    
     // Update the form
-    formioForm.form = formObj;
-    
-    var hooksObj = 
-    langObj.hooks = hooksObj;
-    
-    // Update the form options
-    formioForm.options.hooks = createHooksObj();
-    
-    // Sets up form level defined help content
-    setDefaultHelpContent();
-    
-    // Reset themes set
-    resetThemes();
+    formioForm.destroy();
+    setupApp();
 }
 
 /**
@@ -1240,7 +1200,14 @@ var TogFormViewer =
                 updateFormDefinition(propValue);
             }
         }
-    }
+    },
+    
+    
+    loadForm: function(formPath, data)
+    {
+        updateFormDefinition(formPath);
+        formioForm.submission = {"data": data};
+    },
     
    sendReceiveFormData: function(operation)
    {
@@ -1248,8 +1215,8 @@ var TogFormViewer =
       {
          operation = "Submit";
       }
-      _sendReceiveFormData(operation);
-   }
+      _sendReceiveOrHandOver(operation,true);
+   },
 
    handOverFormData: function(operation)
    {
@@ -1257,17 +1224,170 @@ var TogFormViewer =
       {
          operation = "Submit";
       }
-      _handOverFormData(operation);
+      _sendReceiveOrHandOver(operation,false);
+   },
+   
+   calculate: function(calcPath)
+   {
+      _calculate(calcPath);
+   },
+   
+   // filename and target attributes are not utilized...don't know if there is a way to set the title of the window to the "filename"...don't know what would be the meaning of "target"
+   openFile: function(filePath,filename,target) {
+      window.open(filePath);
+   },
+   downloadFile: function(filePath,filename) {
+      downloadURI(filePath,filename);
+   },
+   loadData: function(filePath,clearOldData) {
+      _loadData(filePath,clearOldData);
+   }
+}
+
+// It is expected that the file referenced by path (json.js file) contains JS variable called mockupFormDataObj
+// This variable is JSON containing the data to be loaded into the form. 
+// E.g. the file content could look like: var mockupFormDataObj = {"n1":33,"n2":44,"str1":"mystr","bln1":true};
+function _loadData(filePath,clearOldData){
+   var script = getScript(filePath);
+   if (script) {
+      script.parentNode.removeChild(script);
+   }
+   loadScript(filePath,function(){mockupDataOK(filePath,clearOldData);},function(){mockupDataFailed(filePath);});   
+}
+
+function mockupDataOK(mockupPath,clearOldData) {
+   try {
+      if (clearOldData) {
+         formioForm.reset();
+      }      
+      var datamerged = $.extend(formioForm.submission.data,mockupFormDataObj);
+      console.log('MERGED WITH MOCK-UP DATA='+JSON.stringify(datamerged));   
+      formioForm.submission={"data":datamerged};
+   } catch (err) {
+      var msg = "Error occurred when loading mock-up data "+mockupPath+"!";
+      msg+="\n\nError name: "+err.name;
+      msg+="\n\nError message: "+err.message;
+      msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+      msg+="\n\nForm data: "+(formioForm.submission.data!=null ? JSON.stringify(formioForm.submission.data) : null);
+      
+      console.log(msg);
+      alert(msg);
+   }
+}
+
+function mockupDataFailed(mockupPath) {
+   var msg = "Error occurred when loading mock-up data "+mockupPath+"!";   
+   console.log(msg);
+   alert(msg);
+}
+
+// NOTE: it works properly on Chrome and Opera. Other browsers are opening files if the extension is known
+function downloadURI(uri, name) 
+{
+    var link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    //link.target="_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function _calculate(calcPath) {
+   var script = getScript(calcPath);
+   if (script) {
+      script.parentNode.removeChild(script);
+   }
+   loadScript(calcPath,function(){calcScriptOK(calcPath);},function(){calcScriptFailed(calcPath);});
+}
+
+function getScript(url) {
+    if (!url) return null;
+    var scripts = document.getElementsByTagName('script');
+    for (var i = scripts.length; i--;) {
+        if (scripts[i].src == url) return scripts[i];
+    }
+    return null;
+}
+
+function calcScriptOK(calcPath) {
+   try {
+      var initdata = calc.calculate(formioForm.submission.data);
+      var jsond = JSON.parse(initdata);
+      var datamerged = $.extend(formioForm.submission.data,jsond);
+      console.log('MERGED WITH CALCULATION DATA='+JSON.stringify(datamerged));   
+      formioForm.submission={"data":datamerged};
+   } catch (err) {
+      var msg = "Error occurred when executing calculation "+calcPath+"!";
+      msg+="\n\nError name: "+err.name;
+      msg+="\n\nError message: "+err.message;
+      msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+      msg+="\n\nForm data: "+(formioForm.submission.data!=null ? JSON.stringify(formioForm.submission.data) : null);
+      
+      console.log(msg);
+      alert(msg);
+   }
+}
+
+function calcScriptFailed(calcPath) {
+   var msg = "Error occurred when loading calculation "+calcPath+"!";   
+   console.log(msg);
+   alert(msg);
+}
+
+function handleADALError() {
+}
+
+function _sendReceiveOrHandOver(operation,isSendReceive) {
+   var additionalCfg = {"isSendReceive" : isSendReceive,"operation":operation};
+   var url = appConfiguration.home+'/'+operation;
+   var data = {"data":formioForm.submission.data};
+   if (appConfiguration.home && appConfiguration.home!='') {
+      if (typeof ADAL!== 'undefined' && ADAL) {
+         executeAjaxRequestWithAdalLogic(ADAL.config.clientId,executeAjaxRequestForSendReceiveOrHandOver,url,data,additionalCfg,handleADALError);
+      } else {
+         executeAjaxRequestForSendReceiveOrHandOver(null,url,data,additionalCfg,handleADALError);
+      } 
+   } else {
+      alert("It is not possible to perform operation '"+operation+"' since base URL for the API call is not specified!");
    }
    
 }
 
-function _sendReceiveFormData(operation) {
-   alert('O='+operation+', Home='+appConfiguration.home);
-   alert(JSON.stringify(formioForm.submission));
-}
+function executeAjaxRequestForSendReceiveOrHandOver(token,url,formdata,additionalConfiguration) {
+   var settings = {
+     "crossDomain": true,     
+     "url": url,
+     "timeout":30000,
+     "method": "POST",
+     "headers": {
+       "content-type": "application/json",
+       "cache-control": "no-cache"
+     },
+     "data": JSON.stringify(formdata),
+     "dataType": 'json',
+     "contentType": 'application/json'                          
+   };
+   if (token) {   
+      settings.headers.authorization = "Bearer "+token;
+   }
 
-function _handOverFormData(operation) {
-   alert('O='+operation+', Home='+appConfiguration.home);
-   alert(JSON.stringify(formioForm.submission));
+   var msgPart = ((additionalConfiguration && additionalConfiguration.isSendReceive) ? "sendReceiveFormData" : "handOverFormData")+" operation '"+additionalConfiguration.operation+"' against base API '"+appConfiguration.home+"'";
+   $.ajax(settings).done(function (data,textStatus,request) {
+      console.log("Successfully executed "+msgPart+".");
+      if (additionalConfiguration && additionalConfiguration.isSendReceive) {
+         var datamerged = $.extend(formdata.data,data.data);
+         console.log('MERGED DATA for sendreceive='+JSON.stringify(datamerged));   
+         formioForm.submission={"data":datamerged};
+      }
+   }).fail(function (err, textStatus, errorThrown) {
+      var msg = "Error occurred when executing "+msgPart+"!";
+      msg+="\n\nError type: "+textStatus;
+      msg+="\nError status: "+err.status + (err.statusText && err.statusText!='' ? " - "+err.statusText : "");
+      msg+="\n\nForm data: "+(formdata!=null ? JSON.stringify(formdata) : null);
+      msg+=(err.responseText!=null || err.responseXML!=null) ? ("\n\nResponse: "+(err.responseText!=null ? err.responseText : err.responseXML)) : "";
+      
+      console.log(msg);
+      alert(msg);
+   });
 }

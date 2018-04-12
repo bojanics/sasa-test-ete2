@@ -1,10 +1,10 @@
-﻿<html>
+﻿<html dir="ltr">
     <head>
         <meta charset="utf-8">
         <title id="pageTitle"></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./ress/css/fabric.min.css">
-        <link rel="stylesheet" href="./ress/css/fabric.components.min.css">
+        <link rel="stylesheet" href="./ress/css/fabric.component.min.css">
         <link id="layoutstyle" href="./ress/css/layout.css" rel="stylesheet">
 		<link href="./ress/css/formio.full.min.css" rel="stylesheet">
 		<!--###PLATFORM.CSS###-->
@@ -19,11 +19,11 @@
         <script src="./scripts/lang.js"></script>
         <script src="./scripts/tz.js"></script>
         <script src="./scripts/theme.js"></script>
+        <script src="./scripts/loading.js"></script>
         <script src="./scripts/main.js"></script>
         <script src="./scripts/auth.js"></script>
 		<script src="./scripts/auth_spec.js"></script>
         <script src="./scripts/defimp.js"></script>
-        <script src="./scripts/loading.js"></script>
 		<meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src *;img-src * data:;">
     </head>
     <body>
@@ -34,11 +34,13 @@
             <div class="header-wrapper">
                 <div class="header-common header-left">
                     <div class="header-common app-header app-menu rsp-lar-visible">
-                        <button type="button" class="header-common app-menu-button appl-button" onclick="openAppLauncher(this)"/>
+                        <button type="button" class="header-common app-menu-button appl-button" onclick="openAppLauncher(this)"
+                            <span class="header-common app-menu-button-label"><i id="appIcon" class="ms-Icon ms-Icon--Waffle" aria-hidden="true"></i></span>
+                        </button>
                     </div>
                     <div class="header-common app-header header-hidden-element hiddensmcommands">
                         <button type="button" class="header-common app-menu-button app-menu-button-right" onclick="hideCommands()">
-                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--x" aria-hidden="true"></i></span>
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></i></span>
                         </button>
                     </div>
                     <div id="mainLogo" class="header-common app-header main-logo visiblesmcommands" style="display: none" onmousedown="return false">
@@ -94,25 +96,27 @@
                     </div>
                     <div id="ellipsisButtonWrapper" class="header-common app-header rsp-hidden visiblesmcommands">
                         <button id="ellipsisButton" type="button" class="header-common app-menu-button app-menu-button-right" onclick="showCommands()">
-                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--ellipsis" aria-hidden="true"></i></span>
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--More" aria-hidden="true"></i></span>
                         </button>
                     </div>
                     <div id="applButtonSmallWrapper" class="header-common app-header rsp-med-visible hiddensmcommands">
-                        <button type="button" class="header-common app-menu-button app-menu-button-right appl-button" onclick="openAppLauncher(this)"/>
+                        <button type="button" class="header-common app-menu-button app-menu-button-right appl-button" onclick="openAppLauncher(this)">
+                            <span class="header-common app-menu-button-label"><i id="appIcon" class="ms-Icon ms-Icon--Waffle" aria-hidden="true"></i></span>
+                        </button>
                     </div>
                     <div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
                         <button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)">
-                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--bell" aria-hidden="true"></i></span>
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Ringer" aria-hidden="true"></i></span>
                         </button>
                     </div>
                     <div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
                         <button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)">
-                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--gear" aria-hidden="true"></i></span>
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Settings" aria-hidden="true"></i></span>
                         </button>
                     </div>
                     <div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands">
                         <button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)">
-                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--question" aria-hidden="true"></i></span>
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Help" aria-hidden="true"></i></span>
                         </button>
                     </div>
                     <div id="accountsCommandWrapperL" class="header-common app-header rsp-visible">
@@ -123,7 +127,7 @@
                                 </div>
                                 <div class="header-common app-header app-menu-button-right-menu-right">
                                     <div class="app-menu-button-right-menu-right-image-wrapper">
-                                        <span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52"></span>
+                                        <span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact"></span>
                                     </div>
                                     <div class="app-menu-button-right-menu-right-user-image-wrapper">
                                         <img class="app-menu-button-right-menu-right-user-image userphoto"/>
@@ -134,7 +138,7 @@
                     </div>
                     <div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands">
                         <button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)">
-                            <span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52 rsp"></span>
+                            <span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact rsp"></span>
                             <div class="app-menu-button-right-menu-right-user-image-wrapper">
                                 <img class="app-menu-button-right-menu-right-user-image userphoto"/>
                             </div>
@@ -146,7 +150,7 @@
                     <div class="user-settings-wrapper header-hidden-element">
                         <div class="user-settings-container">
                             <button type="button" class="header-common user-settings-close" onclick="closeUserMenu()">
-                                <span><i class="ms-Icon ms-Icon--x ms-icon-font-size-16" aria-hidden="true"></i></span>
+                                <span><i class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></i></span>
                             </button>
                             <div id="settingsWrapper" class="header-common user-settings-overlay header-hidden-element">
                                 <div class="user-settings-section">
@@ -206,10 +210,10 @@
                                                             <div>
                                                                 <div class="header-common user-settings-card-collapse-area">
                                                                     <a id="collapseTheme" class="user-settings-card-collapse-button">
-                                                                        <span class="ms-Icon ms-Icon--chevronUp"></span>
+                                                                        <span class="ms-Icon ms-Icon--ChevronUp"></span>
                                                                     </a>
                                                                     <div class="user-settings-card-expand-button">
-                                                                        <span class="ms-Icon ms-Icon--chevronDown"></span>
+                                                                        <span class="ms-Icon ms-Icon--ChevronDown"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -239,7 +243,7 @@
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="user-settings-card-picker-button-arrow-wrapper">
-                                                                                        <span class="user-settings-card-picker-button-arrow ms-Icon ms-Icon--caretDown"></span>
+                                                                                        <span class="user-settings-card-picker-button-arrow ms-Icon ms-Icon--CaretDownSolid8"></span>
                                                                                     </div>
                                                                                 </button>
                                                                             </div>
@@ -255,7 +259,7 @@
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="user-settings-card-picker-button-arrow-wrapper">
-                                                                                        <span class="user-settings-card-picker-button-arrow ms-Icon ms-Icon--caretDown"></span>
+                                                                                        <span class="user-settings-card-picker-button-arrow ms-Icon ms-Icon--CaretDownSolid8"></span>
                                                                                     </div>
                                                                                 </button>
                                                                             </div>
@@ -274,10 +278,10 @@
                                                             <div>
                                                                 <div class="header-common user-settings-card-collapse-area">
                                                                     <a id="collapseLTZ" class="user-settings-card-collapse-button">
-                                                                        <span class="ms-Icon ms-Icon--chevronUp"></span>
+                                                                        <span class="ms-Icon ms-Icon--ChevronUp"></span>
                                                                     </a>
                                                                     <div class="user-settings-card-expand-button">
-                                                                        <span class="ms-Icon ms-Icon--chevronDown"></span>
+                                                                        <span class="ms-Icon ms-Icon--ChevronDown"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -297,7 +301,7 @@
                                                                     </div>
                                                                     <div class="header-common user-settings-card-combo-wrapper">
                                                                         <button type="button" class="user-settings-card-checkbox" onclick="changePhraseAppSelection()">
-                                                                            <span id="phraseAppCardCheckBox" class="ms-Icon ms-Icon--blank user-settings-card-checkbox-box"></span>
+                                                                            <span id="phraseAppCardCheckBox" class="ms-Icon ms-Icon--Checkbox user-settings-card-checkbox-box"></span>
                                                                             <span class="user-settings-card-checkbox-label" lang-tran="On">On</span>
                                                                         </button>
                                                                     </div>
@@ -314,10 +318,10 @@
                                                             <div>
                                                                 <div class="header-common user-settings-card-collapse-area">
                                                                     <a id="collapsePhraseApp" class="user-settings-card-collapse-button">
-                                                                        <span class="ms-Icon ms-Icon--chevronUp"></span>
+                                                                        <span class="ms-Icon ms-Icon--ChevronUp"></span>
                                                                     </a>
                                                                     <div class="user-settings-card-expand-button">
-                                                                        <span class="ms-Icon ms-Icon--chevronDown"></span>
+                                                                        <span class="ms-Icon ms-Icon--ChevronDown"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -361,7 +365,7 @@
                                     <div>
                                         <div class="header-common user-settings-info">
                                             <div class="user-settings-photo-wrapper">
-                                                <span class="user-settings-photo-placeholder ms-Icon ms-Icon--person ms-icon-font-size-52"></span>
+                                                <span class="user-settings-photo-placeholder ms-Icon ms-Icon--Contact"></span>
                                                 <div class="user-settings-photo-container">
                                                     <img class="user-settings-photo-image userphoto"/>
                                                 </div>
@@ -458,7 +462,7 @@
             <div id="feedbackInserted" class="feedback-inserted">
                 <a id="feedbackContainer" class="feedback-container" onclick="showFeedbackDialog();" href="javascript:void(0)" data-clicking="custom">
                     <div class="feedback-button">
-                        <span class="feedback-icon"><i class="ms-Icon ms-Icon--Chat" aria-hidden="true"></i></span>
+                        <span class="feedback-icon"><i class="ms-Icon ms-Icon--ChatSolid" aria-hidden="true" style="font-size: 14px;"></i></span>
                         <span lang-tran="Feedback">Feedback</span>
                     </div>
                 </a>

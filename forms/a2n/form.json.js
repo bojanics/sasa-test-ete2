@@ -140,7 +140,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.loadData('../data/datawrong.json.js',true);"
+      "custom": "TogFormViewer.loadData('../data/datasmall.json.js');"
 	},
 	{
 		"autofocus": false,
@@ -494,6 +494,8 @@ var formObj={
     "elearningimagelink": "../logos/elearn.png",
     "processlink": "https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers",
     "processimagelink": "../logos/process.png",
-    "customScript": "TogFormViewer.loadData('../data/data.json.js',true);TogFormViewer.calculate('../calc/calc_v12abc.js');",
+    "customScriptS": "alert('ssa');",
+    "customScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
+    "customScript": "TogFormViewer.loadData('../data/datasmall.json.js');",
   }   
 };

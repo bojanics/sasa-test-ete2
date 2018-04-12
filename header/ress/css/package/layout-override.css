@@ -41,6 +41,7 @@
 .appl-button.opened {
     background-position: bottom;
     background-color: transparent;
+    color: #d7d7d7;
 }
 
 .environment-button.opened {

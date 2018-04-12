@@ -142,14 +142,14 @@ function changePhraseAppSelection()
 {
     if (phraseSelector.phraseAppSelection)
     {
-        $("#phraseAppCardCheckBox").removeClass("ms-Icon--checkboxCheck");
-        $("#phraseAppCardCheckBox").addClass("ms-Icon--blank");
+        $("#phraseAppCardCheckBox").removeClass("ms-Icon--CheckboxComposite");
+        $("#phraseAppCardCheckBox").addClass("ms-Icon--Checkbox");
         phraseSelector.phraseAppSelection = false;
     }
     else
     {
-        $("#phraseAppCardCheckBox").removeClass("ms-Icon--blank");
-        $("#phraseAppCardCheckBox").addClass("ms-Icon--checkboxCheck");
+        $("#phraseAppCardCheckBox").removeClass("ms-Icon--Checkbox");
+        $("#phraseAppCardCheckBox").addClass("ms-Icon--CheckboxComposite");
         phraseSelector.phraseAppSelection = true;
     }
 }

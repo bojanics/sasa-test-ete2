@@ -36,6 +36,10 @@
     background-image: url('../../gif/appl/appl-city.gif') !important;
 }
 
+.appl-button.opened {
+    color: #2e5dad; 
+}
+
 .app-menu-button-right-menu-selected {
     background-image: none !important;
 }

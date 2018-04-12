@@ -49,6 +49,11 @@
     outline: none;
 }
 
+.appl-button.opened {
+    outline: 1px solid #ddd;
+    outline-offset: -2px; 
+}
+
 .environment-button.opened {
     background-color: transparent;
     outline: 1px solid #ddd;

@@ -37,6 +37,10 @@
     background-image: url('../../gif/appl/appl-paper.gif') !important;
 }
 
+.appl-button.opened {
+    color: white;
+}
+
 .environment-button.opened {
     background-color: #0c7cd5;
 }

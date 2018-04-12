@@ -37,6 +37,10 @@
     background-image: url('../../gif/appl/appl-sandstone.gif') !important;
 }
 
+.appl-button.opened {
+    color: white;
+}
+
 .environment-button.opened {
     background-color: #89be3d;
 }

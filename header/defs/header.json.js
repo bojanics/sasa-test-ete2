@@ -18,6 +18,12 @@ var headerObj = {
     "phraseapp prefix": "[[__",
     "phraseapp suffix": "__]]",
     "form width percent": "",
-    "processtext": "",
-    "elearningtext": ""
+    "processtext": "Overridden text",
+    "elearningtext": "",
+    "autocalc": "fieldchange",
+    "calc_js_path": "https://sasa-test-misc-wap.azurewebsites.net/calc/calc_amulbintocwithotherchanges.js",
+    "calc_js_setting": "",
+    "calc_conf_path": "",
+    "calc_conf_setting": "",
+    "calc_api_path": "https://sasa-test-ete-fnc.azurewebsites.net/Calculation('{calcname}/{calcversion}')/Calculate"
 };

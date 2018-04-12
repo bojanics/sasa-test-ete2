@@ -38,6 +38,10 @@
     background-image: url('../../gif/appl/appl-lumen.gif') !important;
 }
 
+.appl-button.opened {
+    color: #333333; 
+}
+
 .environment-button.opened {
     background-color: transparent;
 }

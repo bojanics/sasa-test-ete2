@@ -4,6 +4,11 @@
  */
 var appConfiguration;
 
+/**
+ * Used to avoid infinite loop when performing calculations on field change.
+ */
+var calculationResultSet = false;
+
 function resetAppConfiguration()
 {
     appConfiguration =
@@ -44,7 +49,13 @@ function resetAppConfiguration()
         feedbackUrlAbsolutePath: "",
         home: "",
         useOutlookSettings: false,
-        useUserPropertyExtensions: false
+        useUserPropertyExtensions: false,
+        autocalc: "",
+        calcJsPath: "",
+        calcJsSetting: "",
+        calcConfPath: "",
+        calcConfSetting: "",
+        calcApiPath: ""
     };
 }
 
@@ -934,6 +945,97 @@ function setupHeaderConfiguration()
     {
         appConfiguration.elearningtext = headerObj["elearningtext"];
     }
+    
+    // Set up property which specifies if we perform auto calculation modes.
+    // Possible values are an empty string (default), "fieldchange" and "focuschange"
+    var autoCalculationUrl = checkForUrlParameter("autocalc");
+    if (autoCalculationUrl)
+    {
+        appConfiguration.autocalc = autoCalculationUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["autocalc"])
+    {
+        appConfiguration.autocalc = formObj.properties["autocalc"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj["autocalc"])
+    {
+        appConfiguration.autocalc = headerObj["autocalc"];
+    }
+    
+    // Set up path or URL to calculation file
+    var calcJsPathUrl = checkForUrlParameter("calc_js_path");
+    if (calcJsPathUrl)
+    {
+        appConfiguration.calcJsPath = calcJsPathUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["calc_js_path"])
+    {
+        appConfiguration.calcJsPath = formObj.properties["calc_js_path"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj["calc_js_path"])
+    {
+        appConfiguration.calcJsPath = headerObj["calc_js_path"];
+    }
+    
+    // Set up calculation setting name
+    var calcJsSettingUrl = checkForUrlParameter("calc_js_setting");
+    if (calcJsSettingUrl)
+    {
+        appConfiguration.calcJsSetting = calcJsSettingUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["calc_js_setting"])
+    {
+        appConfiguration.calcJsSetting = formObj.properties["calc_js_setting"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj["calc_js_setting"])
+    {
+        appConfiguration.calcJsSetting = headerObj["calc_js_setting"];
+    }
+    
+    // Set up calculation configuration
+    var calcConfPathUrl = checkForAppSetup("calc_conf_path");
+    if (calcConfPathUrl)
+    {
+        appConfiguration.calcConfPath = calcConfPathUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["calc_conf_path"])
+    {
+        appConfiguration.calcConfPath = formObj.properties["calc_conf_path"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj["calc_conf_path"])
+    {
+        appConfiguration.calcConfPath = headerObj["calc_conf_path"];
+    }
+    
+    // Set up calculation configuration setting name
+    var calcConfSettingUrl = checkForUrlParameter("calc_conf_setting");
+    if (calcConfSettingUrl)
+    {
+        appConfiguration.calcConfSetting = calcConfSettingUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["calc_conf_setting"])
+    {
+        appConfiguration.calcConfSetting = formObj.properties["calc_conf_setting"];
+    }
+    else if (typeof headerObj !== 'úndefined' && headerObj !== null && headerObj["calc_conf_setting"])
+    {
+        appConfiguration.calcConfSetting = headerObj["calc_conf_setting"];
+    }
+    
+    // Set up calculation API path
+    var calcApiPathUrl = checkForUrlParameter("calc_api_path");
+    if (calcApiPathUrl)
+    {
+        appConfiguration.calcApiPath = calcApiPathUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["calc_api_path"])
+    {
+        appConfiguration.calcApiPath = formObj.properties["calc_api_path"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj["calc_api_path"])
+    {
+        appConfiguration.calcApiPath = headerObj["calc_api_path"];
+    }
 }
 
 /**
@@ -1199,9 +1301,46 @@ var TogFormViewer =
             {
                 updateFormDefinition(propValue);
             }
+            else if (propName === "formWidthPercent" && propValue != appConfiguration.formWidthPercent) 
+            {
+                appConfiguration.formWidthPercent = propValue;
+                $('.body-content').width(propValue);
+            }
+            else if(propName === "formhelp" && propValue != appConfiguration.formhelp)
+            {
+                appConfiguration.formhelp = propValue;
+            }
+            else if(propName === "formtitle" && propValue != appConfiguration.formtitle)
+            {
+                appConfiguration.formtitle = propValue;
+                document.title = appConfiguration.formtitle;
+            }
+            else if(propName === "processtext" && propValue != appConfiguration.processtext)
+            {
+                appConfiguration.processtext = propValue;
+            }
+            else if(propName === "processlink" && propValue != appConfiguration.processlink)
+            {
+                appConfiguration.processlink = propValue;
+            }
+            else if(propName === "processimagelink" && propValue != appConfiguration.processimagelink)
+            {
+                appConfiguration.processimagelink = propValue;
+            }
+            else if(propName === "elearningtext" && propValue != appConfiguration.elearningtext)
+            {
+                appConfiguration.elearningtext = propValue;
+            }
+            else if(propName === "elearninglink" && propValue != appConfiguration.elearninglink)
+            {
+                appConfiguration.elearninglink = propValue;
+            }
+            else if(propName === "elearningimagelink" && propValue != appConfiguration.elearningimagelink)
+            {
+                appConfiguration.elearningimagelink = propValue;
+            }
         }
     },
-    
     
     loadForm: function(formPath, data)
     {
@@ -1209,57 +1348,66 @@ var TogFormViewer =
         formioForm.submission = {"data": data};
     },
     
-   sendReceiveFormData: function(operation)
-   {
-      if (!operation)
-      {
-         operation = "Submit";
-      }
-      _sendReceiveOrHandOver(operation,true);
-   },
+    sendReceiveFormData: function(operation)
+    {
+       if (!operation)
+       {
+            operation = "Submit";
+        }
+        _sendReceiveOrHandOver(operation,true);
+    },
 
-   handOverFormData: function(operation)
-   {
-      if (!operation)
-      {
-         operation = "Submit";
-      }
-      _sendReceiveOrHandOver(operation,false);
-   },
+    handOverFormData: function(operation)
+    {
+        if (!operation)
+        {
+            operation = "Submit";
+        }
+        _sendReceiveOrHandOver(operation,false);
+    },
+    
+    calculate: function(calcPath)
+    {
+        if (arguments.length == 1)
+        {
+            _calculate(calcPath);
+        }
+        else
+        {
+            performCalculation();
+        }
+    },
    
-   calculate: function(calcPath)
-   {
-      _calculate(calcPath);
-   },
-   
-   // filename and target attributes are not utilized...don't know if there is a way to set the title of the window to the "filename"...don't know what would be the meaning of "target"
-   openFile: function(filePath,filename,target) {
-      window.open(filePath);
-   },
-   downloadFile: function(filePath,filename) {
-      downloadURI(filePath,filename);
-   },
-   loadData: function(filePath,clearOldData) {
-      _loadData(filePath,clearOldData);
-   }
+    // filename and target attributes are not utilized...don't know if there is a way to set the title of the window to the "filename"...don't know what would be the meaning of "target"
+    openFile: function(filePath,filename,target)
+    {
+        window.open(filePath);
+    },
+    
+    downloadFile: function(filePath,filename)
+    {
+        downloadURI(filePath,filename);
+    },
+    
+    loadData: function(filePath)
+    {
+        _loadData(filePath);
+    }
 }
 
 // It is expected that the file referenced by path (json.js file) contains JS variable called mockupFormDataObj
 // This variable is JSON containing the data to be loaded into the form. 
 // E.g. the file content could look like: var mockupFormDataObj = {"n1":33,"n2":44,"str1":"mystr","bln1":true};
-function _loadData(filePath,clearOldData){
+function _loadData(filePath){
    var script = getScript(filePath);
    if (script) {
       script.parentNode.removeChild(script);
    }
-   loadScript(filePath,function(){mockupDataOK(filePath,clearOldData);},function(){mockupDataFailed(filePath);});   
+   loadScript(filePath,function(){mockupDataOK(filePath);},function(){mockupDataFailed(filePath);});   
 }
 
-function mockupDataOK(mockupPath,clearOldData) {
+function mockupDataOK(mockupPath) {
    try {
-      if (clearOldData) {
-         formioForm.reset();
-      }      
       var datamerged = $.extend(formioForm.submission.data,mockupFormDataObj);
       console.log('MERGED WITH MOCK-UP DATA='+JSON.stringify(datamerged));   
       formioForm.submission={"data":datamerged};
@@ -1293,6 +1441,77 @@ function downloadURI(uri, name)
     document.body.removeChild(link);
 }
 
+/**
+ * Performs calculation as specified in APP configuration.
+ * It can be executed either in the browser or by performing
+ * an ajax call to an APIs 
+ */
+function performCalculation()
+{
+    if (appConfiguration.calcJsPath && appConfiguration.calcApiPath)
+    {
+        if (ADAL)
+        {
+            _performCalculationRemotely();
+        }
+        else
+        {
+            _performCalculationLocally();
+        }
+    }
+    else if (!appConfiguration.calcJsPath && appConfiguration.calcApiPath && ADAL)
+    {
+        _performCalculationRemotely();
+    }
+    else if (appConfiguration.calcJsPath && !appConfiguration.calcApiPath)
+    {
+        _performCalculationLocally();
+    }
+}
+
+function _performCalculationRemotely()
+{
+    var payload = {"data": formioForm.submission.data};
+    if (appConfiguration.calcJsPath)
+    {
+        payload["calculation"] = appConfiguration.calcJsPath;
+    }
+    
+    if (appConfiguration.calcJsSetting)
+    {
+        payload["calculation_SettingName"] = appConfiguration.calcJsSetting;
+    }
+    
+    if (appConfiguration.calcConfPath)
+    {
+        payload["Configuration"] = appConfiguration.calcConfPath;
+    }
+    
+    if (appConfiguration.calcConfSetting)
+    {
+        payload["Configuration_SettingName"] = appConfiguration.calcConfSetting;
+    }
+    
+    var additionalConfiguration =
+    {
+        "isSendReceive": true,
+        "operation": "Calculate"
+    };
+    executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, appConfiguration.calcApiPath, payload, additionalConfiguration,onsuccess_calc,onfailure_generic);
+}
+
+function _performCalculationLocally()
+{
+    if (getScript(appConfiguration.calcJsPath))
+    {
+        applyCalculation();
+    }
+    else
+    {
+        _calculate(appConfiguration.calcJsPath);
+    }
+}
+
 function _calculate(calcPath) {
    var script = getScript(calcPath);
    if (script) {
@@ -1312,11 +1531,7 @@ function getScript(url) {
 
 function calcScriptOK(calcPath) {
    try {
-      var initdata = calc.calculate(formioForm.submission.data);
-      var jsond = JSON.parse(initdata);
-      var datamerged = $.extend(formioForm.submission.data,jsond);
-      console.log('MERGED WITH CALCULATION DATA='+JSON.stringify(datamerged));   
-      formioForm.submission={"data":datamerged};
+      applyCalculation();
    } catch (err) {
       var msg = "Error occurred when executing calculation "+calcPath+"!";
       msg+="\n\nError name: "+err.name;
@@ -1327,6 +1542,16 @@ function calcScriptOK(calcPath) {
       console.log(msg);
       alert(msg);
    }
+}
+
+function applyCalculation()
+{
+    var initdata = calc.calculate(formioForm.submission.data);
+    var jsond = JSON.parse(initdata);
+    var datamerged = $.extend(formioForm.submission.data,jsond);
+    console.log('MERGED WITH CALCULATION DATA='+JSON.stringify(datamerged));
+    calculationResultSet = true;
+    formioForm.submission={"data":datamerged};
 }
 
 function calcScriptFailed(calcPath) {
@@ -1344,9 +1569,9 @@ function _sendReceiveOrHandOver(operation,isSendReceive) {
    var data = {"data":formioForm.submission.data};
    if (appConfiguration.home && appConfiguration.home!='') {
       if (typeof ADAL!== 'undefined' && ADAL) {
-         executeAjaxRequestWithAdalLogic(ADAL.config.clientId,executeAjaxRequestForSendReceiveOrHandOver,url,data,additionalCfg,handleADALError);
+         executeAjaxRequestWithAdalLogic(ADAL.config.clientId,executeAjaxRequest,url,data,additionalCfg,onsuccess_sendReceiveOrHandover,onfailure_generic,handleADALError);
       } else {
-         executeAjaxRequestForSendReceiveOrHandOver(null,url,data,additionalCfg,handleADALError);
+         executeAjaxRequest(null,url,data,additionalCfg,onsuccess_sendReceiveOrHandover,onfailure_generic,handleADALError);
       } 
    } else {
       alert("It is not possible to perform operation '"+operation+"' since base URL for the API call is not specified!");
@@ -1354,7 +1579,36 @@ function _sendReceiveOrHandOver(operation,isSendReceive) {
    
 }
 
-function executeAjaxRequestForSendReceiveOrHandOver(token,url,formdata,additionalConfiguration) {
+function onsuccess_calc(token,url,formdata,additionalConfiguration,data,textStatus,request) {
+   console.log("Successfully executed calculation");
+   var datamerged = $.extend(formdata.data,data.calcResult);
+   console.log('MERGED DATA for calculation='+JSON.stringify(datamerged));
+   calculationResultSet = true;
+   formioForm.submission={"data":datamerged};
+}
+
+function onsuccess_sendReceiveOrHandover(token,url,formdata,additionalConfiguration,data,textStatus,request) {
+   var msgPart = ((additionalConfiguration && additionalConfiguration.isSendReceive) ? "sendReceiveFormData" : "handOverFormData")+" operation '"+additionalConfiguration.operation+"' against base API '"+appConfiguration.home+"'";
+   console.log("Successfully executed "+msgPart+".");
+   if (additionalConfiguration && additionalConfiguration.isSendReceive) {
+      var datamerged = $.extend(formdata.data,data.data);
+      console.log('MERGED DATA for sendreceive='+JSON.stringify(datamerged));   
+      formioForm.submission={"data":datamerged};
+   }
+}
+
+function onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
+   var msg = "Error occurred when executing request against url "+url+"!";
+   msg+="\n\nError type: "+textStatus;
+   msg+="\nError status: "+err.status + (err.statusText && err.statusText!='' ? " - "+err.statusText : "");
+   msg+="\n\nForm data: "+(formdata!=null ? JSON.stringify(formdata) : null);
+   msg+=(err.responseText!=null || err.responseXML!=null) ? ("\n\nResponse: "+(err.responseText!=null ? err.responseText : err.responseXML)) : "";
+
+   console.log(msg);
+   alert(msg);
+}
+
+function executeAjaxRequest(token,url,formdata,additionalConfiguration,onsuccess,onfailure) {
    var settings = {
      "crossDomain": true,     
      "url": url,
@@ -1372,22 +1626,9 @@ function executeAjaxRequestForSendReceiveOrHandOver(token,url,formdata,additiona
       settings.headers.authorization = "Bearer "+token;
    }
 
-   var msgPart = ((additionalConfiguration && additionalConfiguration.isSendReceive) ? "sendReceiveFormData" : "handOverFormData")+" operation '"+additionalConfiguration.operation+"' against base API '"+appConfiguration.home+"'";
    $.ajax(settings).done(function (data,textStatus,request) {
-      console.log("Successfully executed "+msgPart+".");
-      if (additionalConfiguration && additionalConfiguration.isSendReceive) {
-         var datamerged = $.extend(formdata.data,data.data);
-         console.log('MERGED DATA for sendreceive='+JSON.stringify(datamerged));   
-         formioForm.submission={"data":datamerged};
-      }
+      onsuccess(token,url,formdata,additionalConfiguration,data,textStatus,request);
    }).fail(function (err, textStatus, errorThrown) {
-      var msg = "Error occurred when executing "+msgPart+"!";
-      msg+="\n\nError type: "+textStatus;
-      msg+="\nError status: "+err.status + (err.statusText && err.statusText!='' ? " - "+err.statusText : "");
-      msg+="\n\nForm data: "+(formdata!=null ? JSON.stringify(formdata) : null);
-      msg+=(err.responseText!=null || err.responseXML!=null) ? ("\n\nResponse: "+(err.responseText!=null ? err.responseText : err.responseXML)) : "";
-      
-      console.log(msg);
-      alert(msg);
+      onfailure(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
    });
 }

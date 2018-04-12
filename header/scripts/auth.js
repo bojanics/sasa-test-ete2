@@ -470,7 +470,7 @@ function getUserPropertyExtensions(fetchLTZ) {
         fetchLTZ: fetchLTZ,
         justCheck: false
     };
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, additionalConfiguration,
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, additionalConfiguration,null,null,
         (fetchLTZ ? function() {
             userPropertyExtensionExists = false;
             userPropertyExtensionsAvailable = false;

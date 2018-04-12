@@ -41,9 +41,10 @@ function _setupAppInternal()
         setupLayout();
         var hooksObj = createHooksObj();
         langObj.hooks = hooksObj;
-        console.log("AC="+JSON.stringify(appConfiguration));
-        console.log("HO="+JSON.stringify(headerObj));
-        console.log("BO="+JSON.stringify(brandObj));
+        //console.log("AC="+JSON.stringify(appConfiguration));
+        //console.log("HO="+JSON.stringify(headerObj));
+        //console.log("BO="+JSON.stringify(brandObj));
+        executeLoadingRequest();
         Formio.createForm(document.getElementById('formio'), formObj, langObj)
         .then(function(form)
         {
@@ -137,6 +138,18 @@ function _setupAppInternal()
             {
                 console.log(submission);
             });
+            
+            form.on('change', function()
+            {
+                if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
+                {
+                    TogFormViewer.calculate();
+                }
+                else
+                {
+                    calculationResultSet = false;
+                }
+            });
         });
         fillUserInfo();
     }
@@ -156,7 +169,7 @@ function createHooksObj()
         input: function(input)
         {
             this.addEventListener(input, 'focus', formFocusListener(this));
-            this.addEventListener(input, 'blur', setDefaultHelpContent);
+            this.addEventListener(input, 'blur', formBlurListener);
         }
     };
 }
@@ -222,6 +235,18 @@ function formFocusListener(comp)
             $('#elearninglabel').attr("lang-tran", appConfiguration.elearningtext).attr("lang-form", "true").translate();
         }
     };
+}
+
+/**
+ * Called by Form.io when a component loses focus
+ */
+function formBlurListener()
+{
+    setDefaultHelpContent();
+    if (appConfiguration && appConfiguration.autocalc === "focuschange")
+    {
+        TogFormViewer.calculate();
+    }
 }
 
 /**
@@ -327,7 +352,7 @@ function setupLayout()
         if (!$("#notificationsCommandWrapper").length)
         {
             $("#notificationsCommandWrapperplchld").remove();
-            $("#applButtonSmallWrapper").after('<div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--bell" aria-hidden="true"></i></span></button></div>');
+            $("#applButtonSmallWrapper").after('<div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Ringer" aria-hidden="true"></i></span></button></div>');
         }
     }
     else
@@ -355,7 +380,7 @@ function setupLayout()
         
         if (!$("#settingsCommandWrapper").length)
         {
-            var settingsMenu = '<div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--gear" aria-hidden="true"></i></span></button></div>';
+            var settingsMenu = '<div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Settings" aria-hidden="true"></i></span></button></div>';
             $("#settingsCommandWrapperplchld").remove();
             $("#notificationsCommandWrapper").after(settingsMenu);
             $("#notificationsCommandWrapperplchld").after(settingsMenu);
@@ -379,7 +404,7 @@ function setupLayout()
         
         if (!$("#helpCommandWrapper").length)
         {
-            var helpMenu = '<div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--question" aria-hidden="true"></i></span></button></div>';
+            var helpMenu = '<div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Help" aria-hidden="true"></i></span></button></div>';
             $("#helpCommandWrapperplchld").remove();
             $("#notificationsCommandWrapper").after(helpMenu);
             $("#notificationsCommandWrapperplchld").after(helpMenu);
@@ -414,10 +439,10 @@ function setupLayout()
         
         if (!$("#accountsCommandWrapperL").length)
         {
-            var accountsMenuL = '<div id="accountsCommandWrapperL" class="header-common app-header rsp-visible"><button id="accountsCommand" type="button" class="header-common app-menu-button app-menu-button-right app-menu-button-right-menu account-trigger" onclick="openUserMenu(this)"><div class="app-menu-button-right-menu-wrapper"><div class="app-menu-button-right-menu-left"><span class="username">James H. Smith</span></div><div class="header-common app-header app-menu-button-right-menu-right"><div class="app-menu-button-right-menu-right-image-wrapper"><span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52"></span></div><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></div></div></button></div>';
+            var accountsMenuL = '<div id="accountsCommandWrapperL" class="header-common app-header rsp-visible"><button id="accountsCommand" type="button" class="header-common app-menu-button app-menu-button-right app-menu-button-right-menu account-trigger" onclick="openUserMenu(this)"><div class="app-menu-button-right-menu-wrapper"><div class="app-menu-button-right-menu-left"><span class="username">James H. Smith</span></div><div class="header-common app-header app-menu-button-right-menu-right"><div class="app-menu-button-right-menu-right-image-wrapper"><span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact ms-icon-font-size-52"></span></div><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></div></div></button></div>';
             $("#helpCommandWrapper").after(accountsMenuL);
             $("#helpCommandWrapperplchld").after(accountsMenuL);
-            $("#accountsCommandWrapperL").after('<div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--person ms-icon-font-size-52 rsp"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></button></div>');
+            $("#accountsCommandWrapperL").after('<div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact ms-icon-font-size-52 rsp"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></button></div>');
         }
     }
     

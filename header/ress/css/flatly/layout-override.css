@@ -33,6 +33,10 @@
     background-image: url('../../gif/appl/appl-flatly.gif') !important;
 }
 
+.appl-button.opened {
+    color: #2c3e50; 
+}
+
 .environment-button.opened {
     background-color: #15a589;
 }

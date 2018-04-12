@@ -139,7 +139,7 @@ function fillUserInfo() {
     }
 }
 
-function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjsondata, additionalConfiguration, adalerrorcallback) {
+function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjsondata, additionalConfiguration, callbackfunc_oncsuccessfnc, callbackfunc_onfailurefnc, adalerrorcallback) {
     ADAL.acquireToken(resource, function (error, token, errcode) {
         // Handle ADAL Error
         if (error || errcode || !token) {
@@ -268,7 +268,7 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
            var noaurlmsg = 'The function "'+getFunctionName(callbackfunc)+'" will not be called because URL is not provided!';
            console.log(noaurlmsg);
         } else {
-           callbackfunc(token, ajaxurl, ajaxjsondata, additionalConfiguration);
+           callbackfunc(token, ajaxurl, ajaxjsondata, additionalConfiguration, callbackfunc_oncsuccessfnc, callbackfunc_onfailurefnc);
         }
     });
 }

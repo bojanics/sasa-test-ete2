@@ -44,6 +44,10 @@
     background-image: url('../../gif/appl/appl-spacelab.gif') !important;
 }
 
+.appl-button.opened {
+    color: white; 
+}
+
 .app-menu-button-right-menu-selected {
     background-image: none !important;
 }

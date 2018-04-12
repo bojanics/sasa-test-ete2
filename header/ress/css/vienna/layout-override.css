@@ -36,6 +36,12 @@
     background-image: url('../../gif/appl/appl-vienna.gif') !important;
 }
 
+.appl-button.opened {
+    outline: 1px solid #000046;
+    outline-offset: -2px; 
+    color: #000046;
+}
+
 .appl-button:hover, .appl-button:active {
     outline: 1px solid #000046 !important;
     outline-offset: -1px;

@@ -38,6 +38,10 @@
     background-image: url('../../gif/appl/appl-healthy.gif') !important;
 }
 
+.appl-button.opened {
+    color: #ffff; 
+}
+
 .environment-button.opened {
     background-color: #d9e3ee;
     border-top: 1px solid rgb(3, 66, 109);

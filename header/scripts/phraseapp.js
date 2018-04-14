@@ -12,63 +12,16 @@ var phraseSelector =
  */
 function loadPhraseApp()
 {
-    // Set up PhraseApp project ID
-    var projectIdConfig = "";
-    var projectIdUrl = checkForUrlParameter("phraseapp project id");
-    if (projectIdUrl)
-    {
-        projectIdConfig = projectIdUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["phraseapp project id"])
-    {
-        projectIdConfig = formObj.properties["phraseapp project id"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["phraseapp project id"])
-    {
-        projectIdConfig = headerObj["phraseapp project id"];
-    }
     
-    // Set up PhraseApp prefix
-    var prefixConfig = "[[__";
-    var prefixUrl = checkForUrlParameter("phraseapp prefix");
-    if (prefixUrl)
-    {
-        prefixConfig = prefixUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["phraseapp prefix"])
-    {
-        prefixConfig = formObj.properties["phraseapp prefix"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["phraseapp prefix"])
-    {
-        prefixConfig = headerObj["phraseapp prefix"];
-    }
-    
-    phraseSelector.prefix = prefixConfig;
-    
-    // Set up PhraseApp suffix
-    var suffixConfig = "__]]";
-    var suffixUrl = checkForUrlParameter("phraseapp suffix");
-    if (suffixUrl)
-    {
-        suffixConfig = suffixUrl;
-    }
-    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties["phraseapp suffix"])
-    {
-        suffixConfig = formObj.properties["phraseapp suffix"];
-    }
-    else if (typeof headerObj !== 'undefined' && headerObj != null && headerObj["phraseapp suffix"])
-    {
-        suffixConfig = headerObj["phraseapp suffix"];
-    }
-    
-    phraseSelector.suffix = suffixConfig;
+    phraseSelector.prefix = appConfiguration.phraseAppPrefix;
+        
+    phraseSelector.suffix = appConfiguration.phraseAppSuffix;
     
     window.PHRASEAPP_CONFIG =
     {
-        projectId:  projectIdConfig,
-        prefix: prefixConfig,
-        suffix: suffixConfig,
+        projectId:  appConfiguration.phraseAppProjectId,
+        prefix: appConfiguration.phraseAppPrefix,
+        suffix: appConfiguration.phraseAppSuffix,
         autoLowercase: false,
         forceLocale: languageSelector.currentLanguage,
         fullReparse: true

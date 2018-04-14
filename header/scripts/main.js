@@ -13,6 +13,8 @@ var firstMenuItem = 'notdefined';
 
 var userSignedIn = $.Deferred();
 function setupApp() {
+    // we set the title once again (it might be changed during loading)
+    document.title = appConfiguration.formtitle;   
     if (window.cordova) {
         adalSignIn();
     } else {
@@ -29,135 +31,122 @@ function setupApp() {
  */
 function _setupAppInternal()
 {                
-    // if this code runs in iFrame it means it is used from ADAL in the background...in that case we don't want to execute our APP logic
-    if (!isIframe())
-    {      
-        if (isSignedInUser())
+    if (isSignedInUser())
+    {
+        console.log('ADAL logic finished...');
+    }
+    
+    // Initializing the form
+    setupLayout();
+    var hooksObj = createHooksObj();
+    langObj.hooks = hooksObj;
+    Formio.createForm(document.getElementById('formio'), appConfiguration.formObj, langObj)
+    .then(function(form)
+    {
+        form.header =
         {
-            console.log('ADAL logic finished...');
-        }
-        
-        // Initializing the form
-        setupLayout();
-        var hooksObj = createHooksObj();
-        langObj.hooks = hooksObj;
-        //console.log("AC="+JSON.stringify(appConfiguration));
-        //console.log("HO="+JSON.stringify(headerObj));
-        //console.log("BO="+JSON.stringify(brandObj));
-        executeLoadingRequest();
-        Formio.createForm(document.getElementById('formio'), formObj, langObj)
-        .then(function(form)
-        {
-            form.header =
+            user: currentUser,
+            settings:
             {
-                user: currentUser,
-                settings:
-                {
-                    brand: brandObj,
-                    customization: customizationObj,
-                    headerConfiguration: headerObj
-                }
-            };
-            form.header.settings.brand.mainlogopath = $("#mainLogo").find("img").attr("src");
-            form.header.settings.brand.faviconpath = $("#pageIcon").attr("href");
-            var qsjson = parse_query_string(window.location.search.substring(1));
-            form.submission = {"data":qsjson};
-            form.httprequest =
-            {
-                protocol : window.location.protocol.substring(0,window.location.protocol.length-1),
-                hostname: window.location.hostname,
-                pathname: window.location.pathname,
-                querystring: window.location.search,
-                queryjson: qsjson
+                brand: brandObj,
+                customization: customizationObj,
+                headerConfiguration: headerObj
             }
-            window.setLanguage = function (lang)
+        };
+        form.header.settings.brand.mainlogopath = $("#mainLogo").find("img").attr("src");
+        form.header.settings.brand.faviconpath = $("#pageIcon").attr("href");            
+        form.submission = {"data":appConfiguration.queries};
+        form.httprequest =
+        {
+            protocol : window.location.protocol.substring(0,window.location.protocol.length-1),
+            hostname: window.location.hostname,
+            pathname: window.location.pathname,
+            querystring: window.location.search,
+            queryjson: appConfiguration.queries
+        }
+        window.setLanguage = function (lang)
+        {
+            form.language = lang;
+        };
+        window.formioForm = form;
+        
+        form.ready.then(function()
+        {
+           // Executing custom script when the form is ready
+           // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
+           if (appConfiguration.formObj.hasOwnProperty("properties") && appConfiguration.formObj.properties.hasOwnProperty("customScript"))
             {
-                form.language = lang;
-            };
-            window.formioForm = form;
+               var customScript = "";
+               try {
+                 customScript = appConfiguration.formObj.properties["customScript"];
+                 console.log('Executing custom script:'+customScript);
+                 eval(customScript);
+               } catch (err) {
+                 var msg = "Error occurred when executing custom script:\n\n"+customScript;
+                 msg+="\n\nError name: "+err.name;
+                 msg+="\n\nError message: "+err.message;
+                 msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+                 console.log(msg);
+                 alert(msg);                      
+               }
+            }
+           
+            // Sets up form level defined help content
+            setDefaultHelpContent();
             
-            form.ready.then(function()
+            if (appConfiguration.useOutlookSettings && isSignedInUser())
             {
-               // Executing custom script when the form is ready
-               // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
-               if (formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("customScript"))
+                // Find out user's mailbox settings
+                getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings');
+                getSupportedTimeZones();
+                if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
                 {
-                   var customScript = "";
-                   try {
-                     customScript = formObj.properties["customScript"];
-                     console.log('Executing custom script:'+customScript);
-                     eval(customScript);
-                   } catch (err) {
-                     var msg = "Error occurred when executing custom script:\n\n"+customScript;
-                     msg+="\n\nError name: "+err.name;
-                     msg+="\n\nError message: "+err.message;
-                     msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
-                     console.log(msg);
-                     alert(msg);                      
-                   }
-                }
-               
-                // Sets up form level defined help content
-                setDefaultHelpContent();
-                
-                if (appConfiguration.useOutlookSettings && isSignedInUser())
-                {
-                    // Find out user's mailbox settings
-                    getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings');
-                    getSupportedTimeZones();
-                    if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
-                    {
-                        // Find out user's theme (user property extensions)
-                        getUserPropertyExtensions(false);
-                    }
-                    else
-                    {
-                        // Set default theme
-                        setupStyle(false);
-                    }
-                }
-                else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
-                {
-                    // We set the default time zone choices beacuse
-                    // we don't read them from the mailbox settings
-                    setDefaultTimeZonesChoices();
-                    
-                    // Find out user's language, time zone and theme settings
-                    // defined in user's property extensions on AAD
-                    getUserPropertyExtensions(true);
+                    // Find out user's theme (user property extensions)
+                    getUserPropertyExtensions(false);
                 }
                 else
                 {
-                    // Just translate the page and set default theme
-                    applyTranslation();
+                    // Set default theme
                     setupStyle(false);
                 }
-            });
-            
-            form.on('submit', function(submission)
+            }
+            else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
             {
-                console.log(submission);
-            });
-            
-            form.on('change', function()
+                // We set the default time zone choices beacuse
+                // we don't read them from the mailbox settings
+                setDefaultTimeZonesChoices();
+                
+                // Find out user's language, time zone and theme settings
+                // defined in user's property extensions on AAD
+                getUserPropertyExtensions(true);
+            }
+            else
             {
-                if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
-                {
-                    TogFormViewer.calculate();
-                }
-                else
-                {
-                    calculationResultSet = false;
-                }
-            });
+                // Just translate the page and set default theme
+                applyTranslation();
+                setupStyle(false);
+            }
         });
-        fillUserInfo();
-    }
-    else
-    {
-        console.log('The onload code wont be executed because we are running inside iFrame');
-    }
-};
+        
+        form.on('submit', function(submission)
+        {
+            console.log(submission);
+        });
+        
+        form.on('change', function()
+        {
+            if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
+            {
+                TogFormViewer.calculate();
+            }
+            else
+            {
+                calculationResultSet = false;
+            }
+        });
+    });
+    fillUserInfo();
+}
 
 /**
  * Creates hooks object for form creation

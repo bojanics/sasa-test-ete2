@@ -131,7 +131,7 @@ function fillUserInfo() {
         $("#allAppsLink").attr("href", "https://account.activedirectory.windowsazure.com/r?tenantId=" + ADAL.config.tenant + "#/applications");
         currentUser.name = signeduser.profile.name;
         $('.username').html(signeduser.profile.name);
-        if (headerObj !== 'undefined' && headerObj != null && headerObj.hasOwnProperty("mailbox photo") && headerObj["mailbox photo"] === true) {
+        if (appConfiguration.mailboxPhoto) {
             getuserphotometadata();
         } else {
             getUserThumbnailPhoto();

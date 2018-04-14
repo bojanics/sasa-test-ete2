@@ -25,5 +25,6 @@ var headerObj = {
     "calc_js_setting": "",
     "calc_conf_path": "",
     "calc_conf_setting": "",
-    "calc_api_path": "https://sasa-test-ete-fnc.azurewebsites.net/Calculation('{calcname}/{calcversion}')/Calculate"
+    "calc_api_path": "https://sasa-test-ete-fnc.azurewebsites.net/Calculation('{calcname}/{calcversion}')/Calculate",
+    "action loading":"Form('{formname}/{formversion}')/Loading"
 };

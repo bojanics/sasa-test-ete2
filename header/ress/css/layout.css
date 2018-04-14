@@ -8,6 +8,44 @@
     font-style:normal
 }
 
+@font-face {
+    font-family:FabricMDL2Icons;
+    src:url('fonts/fabricmdl2icons.woff2') format('woff2'),
+        url('fonts/fabricmdl2icons.woff') format('woff'),
+        url('fonts/fabricmdl2icons.ttf') format('truetype');
+    font-weight:400;
+    font-style:normal;
+}
+
+.ms-Icon2 {
+    -moz-osx-font-smoothing:grayscale;
+    -webkit-font-smoothing:antialiased;
+    display:inline-block;
+    font-family:Office365Icons;
+    font-style:normal;
+    font-weight:400;
+    line-height:1;
+    speak:none
+}
+
+.ms-Icon--chevronUp:before {
+    content:'\e087';
+    }
+.ms-Icon--chevronDown:before {
+    content:'\e088';
+}
+
+.ms-Icon--x:before {
+    content:'\e042';
+}
+
+.ms-Icon--caretUp:before {
+    content:'\e051';
+    }
+.ms-Icon--caretDown:before {
+    content:'\e052';
+} 
+
 body {
     padding-top: 50px;
     overflow-y: hidden;
@@ -155,7 +193,7 @@ body {
     background-position: top;
 }
 
-#ellipsisButton, #appIcon {
+.icon-font-size-24 {
     font-size: 24px !important;
 }
 
@@ -225,10 +263,10 @@ body {
     margin-top: 6px;
     display: inline-block;
     color: white;
-    font-size: 28px !important;
+    font-size: 24px !important;
     position: static;
     background-color: #767676 !important;
-    line-height: 1.3 !important;
+    line-height: 1.45 !important;
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -1424,7 +1462,7 @@ body {
 }
 
 .user-settings-photo-placeholder {
-    line-height: 1.3 !important;
+    line-height: 1.45 !important;
     color: white;
     font-size: 48px;
     text-align: center;
@@ -2175,8 +2213,8 @@ body {
 }
 
 .feedback-icon {
-    font-size: 14px;
-    vertical-align: bottom;
+    font-size: 14px !important;
+    vertical-align: bottom !important;
     margin-right: 6px;
 }
 

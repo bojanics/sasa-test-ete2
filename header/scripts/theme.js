@@ -385,6 +385,9 @@ function showContentOnStyleApply()
         $('.header-border').show();
         $('.content-wrapper').show();
         $('.overlay').hide();
+        
+        // Embeds a map (for example Bing Map) 
+        embedMap();
     }
     else
     {

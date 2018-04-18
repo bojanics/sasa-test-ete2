@@ -62,7 +62,16 @@ function resetAppConfiguration()
         calcConfPath: "",
         calcConfSetting: "",
         calcApiPath: "",
-        actionLoading: ""
+        actionLoading: "",
+        bingMapsKey: "",
+        mapWrapperId: "",
+        mapCountryName: "",
+        mapZoom: "",
+        mapCenterPushpin: true,
+        mapCenterPushpinTitle: "",
+        mapCenterPushpinSubTitle: "",
+        mapCenterLatitude: "",
+        mapCenterLongitude: ""
     };
 }
 
@@ -102,6 +111,7 @@ function resetAppConfiguration()
 function loadScript(url, callback, errorHandler)
 {
     var scriptElement = document.createElement("script");
+    scriptElement.type = "text/javascript";
     scriptElement.src = url;
     
     // Bind the event to the callback function.
@@ -642,8 +652,84 @@ function setupHeaderConfiguration()
 
    // setup loading action
     resolveStringOrBooleanParameter(false,"action loading","actionLoading",formObj,headerObj,null,true,appConfiguration.actionLoading); 
+    
+    // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
+    resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 
+    
+    // Set up map wrapper ID which is the ID of an HTML element where we put a map
+    resolveStringOrBooleanParameter(false,"map wrapper id","mapWrapperId",formObj,headerObj,null,true,appConfiguration.mapWrapperId); 
+    
+    // Set up map country name used to specify starting map area
+    resolveStringOrBooleanParameter(false,"map country name","mapCountryName",formObj,headerObj,null,true,appConfiguration.mapCountryName); 
+    
+    // Set up map zoom level
+    resolveStringOrBooleanParameter(false,"map zoom","mapZoom",formObj,headerObj,null,true,appConfiguration.mapZoom); 
+    
+    // Set up if we show a pushpin on the map center
+    resolveStringOrBooleanParameter(true, "map center pushpin","mapCenterPushpin",formObj,headerObj,null,true,appConfiguration.mapCenterPushpin);
+    
+    // Set up center map pushpin title
+    resolveStringOrBooleanParameter(false, "map center pushpin title","mapCenterPushpinTitle",formObj,headerObj,null,true,appConfiguration.mapCenterPushpinTitle);
+    
+    // Set up center map pushpin subtitle
+    resolveStringOrBooleanParameter(false, "map center pushpin subtitle","mapCenterPushpinSubTitle",formObj,headerObj,null,true,appConfiguration.mapCenterPushpinSubTitle);
+    
+    // Set up map center latitude
+    var mapCenterLatitudeUrl = checkForUrlParameter("map center latitude");
+    if (mapCenterLatitudeUrl)
+    {
+        if (!isNaN(mapCenterLatitudeUrl))
+        {
+            appConfiguration.mapCenterLatitude = mapCenterLatitudeUrl;
+        }
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties")
+        && formObj.properties !== null && formObj.properties.hasOwnProperty("map center latitude"))
+    {
+        if (!isNaN(formObj.properties["map center latitude"]))
+        {
+            appConfiguration.mapCenterLatitude = formObj.properties["map center latitude"];
+        }
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("map center latitude") && headerObj["map center latitude"])
+    {
+        if (!isNaN(headerObj["map center latitude"]))
+        {
+            appConfiguration.mapCenterLatitude = headerObj["map center latitude"];
+        }
+    }
+    
+    // Set up map center longitude
+    var mapCenterLongitudeUrl = checkForUrlParameter("map center longitude");
+    if (mapCenterLongitudeUrl)
+    {
+        if (!isNaN(mapCenterLongitudeUrl))
+        {
+            appConfiguration.mapCenterLongitude = mapCenterLongitudeUrl;
+        }
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties")
+        && formObj.properties !== null && formObj.properties.hasOwnProperty("map center longitude"))
+    {
+        if (!isNaN(formObj.properties["map center longitude"]))
+        {
+            appConfiguration.mapCenterLongitude = formObj.properties["map center longitude"];
+        }
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("map center longitude") && headerObj["map center longitude"])
+    {
+        if (!isNaN(headerObj["map center longitude"]))
+        {
+            appConfiguration.mapCenterLongitude = headerObj["map center longitude"];
+        }
+    }
 }
 
+/**
+ * Resolves boolean or string parameter (depending on the 1st isBoolean method parameter) by first checking query parameters (if  checkUrlParameter method parameter is true),
+ * and then, if not found, checking firstObj, secondObj and thirdObj JSON object's sequentially (if they exist) for the paramName attribute. If parameter value is not found anywhere, 
+ * the value of defaultValue method parameter is set to the appConfiguration attribute with the name specified by appConfigurationParamName. 
+ */
 function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationParamName,firstObj,secondObj,thirdObj,checkUrlParameter,defaultValue) 
 {
     var paramVal = defaultValue;
@@ -657,7 +743,7 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
             paramVal = paramValFromUrl;
         }
     }
-    else if (typeof firstObj !== 'undefined' && firstObj !== null && firstObj.hasOwnProperty("properties") && firstObj.properties.hasOwnProperty(paramName))
+    else if (typeof firstObj !== 'undefined' && firstObj !== null && firstObj.hasOwnProperty("properties") && firstObj.properties !== null && firstObj.properties.hasOwnProperty(paramName))
     {
         paramVal = firstObj.properties[paramName];
     }
@@ -901,6 +987,29 @@ function updateFormDefinition(formPath)
 }
 
 /**
+ * Updating the form definition when we change display property.
+ */
+function reloadFormDefinition()
+{
+    $('.header-border').hide();
+    $('.content-wrapper').hide();
+    $('.overlay').show();
+    window.formSubmissionData = formioForm.submission;
+    
+    // Update the form
+    formioForm.destroy();
+    setupAppForUpdatedForm();
+}
+
+/**
+ * Initializing the form when we change display property.
+ */
+function setupAppForUpdatedForm() 
+{
+    generateForm(showFormWithUnchagedData);
+}
+
+/**
  * Runs when a new form definition has been loaded. Updates rendered form and header properties.
  * Applies updated properties to the layout.
  */
@@ -939,6 +1048,13 @@ var TogFormViewer =
             if (propName === "form")
             {
                 updateFormDefinition(propValue);
+            }
+            else if (propName === "display" && propValue !== appConfiguration.display && (propValue === "form" || propValue === "wizard")) 
+            {
+                appConfiguration.display = propValue;
+                formObj["display"] = appConfiguration.display;
+                appConfiguration.formObj["display"] = appConfiguration.display;
+                reloadFormDefinition();
             }
             else if (propName === "formWidthPercent" && propValue != appConfiguration.formWidthPercent) 
             {

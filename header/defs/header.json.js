@@ -26,5 +26,14 @@ var headerObj = {
     "calc_conf_path": "",
     "calc_conf_setting": "",
     "calc_api_path": "https://sasa-test-ete-fnc.azurewebsites.net/Calculation('{calcname}/{calcversion}')/Calculate",
-    "action loading":"Form('{formname}/{formversion}')/Loading"
+    "action loading":"Form('{formname}/{formversion}')/Loading",
+    "bing maps key": "",
+    "map wrapper id": "",
+    "map country name": "",
+    "map zoom": "",
+    "map center pushpin": true,
+    "map center pushpin title": "",
+    "map center pushpin subtitle": "",
+    "map center latitude": "",
+    "map center longitude": ""
 };

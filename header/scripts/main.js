@@ -40,7 +40,55 @@ function _setupAppInternal()
     setupLayout();
     var hooksObj = createHooksObj();
     langObj.hooks = hooksObj;
-    Formio.createForm(document.getElementById('formio'), appConfiguration.formObj, langObj)
+    generateForm(setUserSettings);
+    fillUserInfo();
+}
+
+/**
+ * Set user settings from Outlook or Azure. 
+ */
+function setUserSettings()
+{
+    if (appConfiguration.useOutlookSettings && isSignedInUser())
+    {
+        // Find out user's mailbox settings
+        getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings');
+        getSupportedTimeZones();
+        if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
+        {
+            // Find out user's theme (user property extensions)
+            getUserPropertyExtensions(false);
+        }
+        else
+        {
+            // Set default theme
+            setupStyle(false);
+        }
+    }
+    else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
+    {
+        // We set the default time zone choices beacuse
+        // we don't read them from the mailbox settings
+        setDefaultTimeZonesChoices();
+                
+        // Find out user's language, time zone and theme settings
+        // defined in user's property extensions on AAD
+        getUserPropertyExtensions(true);
+    }
+    else
+    {
+        // Just translate the page and set default theme
+        applyTranslation();
+        setupStyle(false);
+    }       
+} 
+
+/**
+ * Create form with form ready callback paremeter. 
+ */
+function generateForm(formReadyCallback) 
+{
+     Formio.createForm(document.getElementById('formio'), appConfiguration.formObj, langObj)
     .then(function(form)
     {
         form.header =
@@ -94,38 +142,7 @@ function _setupAppInternal()
             // Sets up form level defined help content
             setDefaultHelpContent();
             
-            if (appConfiguration.useOutlookSettings && isSignedInUser())
-            {
-                // Find out user's mailbox settings
-                getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings');
-                getSupportedTimeZones();
-                if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
-                {
-                    // Find out user's theme (user property extensions)
-                    getUserPropertyExtensions(false);
-                }
-                else
-                {
-                    // Set default theme
-                    setupStyle(false);
-                }
-            }
-            else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
-            {
-                // We set the default time zone choices beacuse
-                // we don't read them from the mailbox settings
-                setDefaultTimeZonesChoices();
-                
-                // Find out user's language, time zone and theme settings
-                // defined in user's property extensions on AAD
-                getUserPropertyExtensions(true);
-            }
-            else
-            {
-                // Just translate the page and set default theme
-                applyTranslation();
-                setupStyle(false);
-            }
+            formReadyCallback();
         });
         
         form.on('submit', function(submission)
@@ -145,7 +162,17 @@ function _setupAppInternal()
             }
         });
     });
-    fillUserInfo();
+}
+
+/**
+ * Display a form with unchanged data. 
+*/
+function showFormWithUnchagedData()
+{
+    $('.header-border').show();
+    $('.content-wrapper').show();
+    $('.overlay').hide();
+    formioForm.submission = formSubmissionData;
 }
 
 /**

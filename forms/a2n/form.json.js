@@ -140,7 +140,8 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.loadData('../data/datasmall.json.js');"
+      "custom1": "TogFormViewer.loadData('../data/datasmall.json.js');",
+      "custom": "TogFormViewer.loadData('https://sasa-formio-pdf.azurewebsites.net/data/data.json.js');"
 	},
 	{
 		"autofocus": false,

@@ -44,6 +44,10 @@
     }
 .ms-Icon--caretDown:before {
     content:'\e052';
+}
+
+.ms-Icon--check:before {
+  content: '\e041';
 } 
 
 body {
@@ -2333,6 +2337,8 @@ textarea.valid {
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
+    color: #333333 !important;
+    font-family: Arial !important;
 }
 
 .ltz-itm-selector {

@@ -3,7 +3,7 @@ exports.calculate = function (data){
    if (data==null) {
       data = {};
    }
-   var isxok = true;
+   var isaok = true;
    var isbok = true;
    var a = data['a'];
    if (typeof a !='number') {

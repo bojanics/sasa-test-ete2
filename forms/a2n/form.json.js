@@ -120,6 +120,215 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Number x",
+		"key": "x",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true,
+		"isNew": false
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Number y",
+		"key": "y",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true,
+		"isNew": false
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tree": true,
+		"components": [{
+			"autofocus": false,
+			"input": true,
+			"inputType": "checkbox",
+			"tableView": true,
+			"label": "dataGridCheckboxField",
+			"dataGridLabel": false,
+			"key": "dataGridCheckboxField",
+			"defaultValue": false,
+			"protected": false,
+			"persistent": true,
+			"hidden": false,
+			"name": "",
+			"value": "",
+			"clearOnHide": true,
+			"validate": {
+				"required": false
+			},
+			"type": "checkbox",
+			"labelPosition": "right",
+			"inDataGrid": true,
+			"hideLabel": true,
+			"tags": [],
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"properties": {
+				
+			}
+		},
+		{
+			"autofocus": false,
+			"input": true,
+			"tableView": true,
+			"inputType": "text",
+			"inputMask": "",
+			"label": "Text",
+			"key": "dataGridText",
+			"placeholder": "",
+			"prefix": "",
+			"suffix": "",
+			"multiple": false,
+			"defaultValue": "",
+			"protected": false,
+			"unique": false,
+			"persistent": true,
+			"hidden": false,
+			"clearOnHide": true,
+			"spellcheck": true,
+			"validate": {
+				"required": false,
+				"minLength": "",
+				"maxLength": "",
+				"pattern": "",
+				"custom": "",
+				"customPrivate": false
+			},
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"type": "textfield",
+			"inDataGrid": true,
+			"labelPosition": "top",
+			"tags": [],
+			"properties": {
+				
+			}
+		},
+		{
+			"autofocus": false,
+			"input": true,
+			"tableView": true,
+			"inputType": "number",
+			"label": "Number",
+			"key": "dataGridNumber",
+			"placeholder": "",
+			"prefix": "",
+			"suffix": "",
+			"defaultValue": "",
+			"protected": false,
+			"persistent": true,
+			"hidden": false,
+			"clearOnHide": true,
+			"validate": {
+				"required": false,
+				"min": "",
+				"max": "",
+				"step": "any",
+				"integer": "",
+				"multiple": "",
+				"custom": ""
+			},
+			"type": "number",
+			"inDataGrid": true,
+			"labelPosition": "top",
+			"tags": [],
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"properties": {
+				
+			}
+		}],
+		"tableView": true,
+		"label": "Data Grid",
+		"key": "dataGrid",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"type": "datagrid",
+		"addAnotherPosition": "bottom",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"isNew": false
+	},    
+	{
+		"autofocus": false,
+		"input": true,
 		"label": "load data1",
 		"tableView": false,
 		"key": "loaddata1",
@@ -140,8 +349,58 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom1": "TogFormViewer.loadData('../data/datasmall.json.js');",
-      "custom": "TogFormViewer.loadData('https://sasa-formio-pdf.azurewebsites.net/data/data.json.js');"
+      "custom": "TogFormViewer.loadData('../data/datasmall.json.js');",
+      "custom2": "TogFormViewer.loadData('https://sasa-formio-pdf.azurewebsites.net/data/data.json.js');"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "show data",
+		"tableView": false,
+		"key": "showdata",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showData();"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "show data2",
+		"tableView": false,
+		"key": "showdata2",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showData('showdatawindow');"
 	},
 	{
 		"autofocus": false,
@@ -166,8 +425,9 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom1": "TogFormViewer.openFile(escape('../docs/Leave#Request.pdf'),'myfile.pdf');",
-      "custom": "TogFormViewer.openFile('http://sasaboy-asus:8080/sleasing.pdf','myfile.pdf');"
+      "custom": "TogFormViewer.openFile(escape('../docs/Leave#Request.pdf'),'myfile.pdf');",
+      "custom2": "TogFormViewer.openFile('http://sasaboy-asus:8080/sleasing.pdf','myfile.pdf');",
+      "custom3": "TogFormViewer.openFile('http://sasaboy-asus:8080/sleasing.pdf');"
 	},
 	{
 		"autofocus": false,
@@ -495,8 +755,8 @@ var formObj={
     "elearningimagelink": "../logos/elearn.png",
     "processlink": "https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers",
     "processimagelink": "../logos/process.png",
-    "customScriptS": "alert('ssa');",
-    "customScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
-    "customScript": "TogFormViewer.loadData('../data/datasmall.json.js');",
+    "loadingScriptS": "alert('ssa');",
+    "loadingScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
+    "loadingScript": "TogFormViewer.loadData('../data/datasmall.json.js');",
   }   
 };

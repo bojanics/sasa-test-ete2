@@ -1,4 +1,4 @@
-﻿var mockupFormDataObj = {
+﻿var dataObj = {
    "a": 11,
    "b": 44,
    "c": 77,

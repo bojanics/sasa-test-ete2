@@ -20,7 +20,7 @@ var headerObj = {
     "form width percent": "",
     "processtext": "Overridden text",
     "elearningtext": "",
-    "autocalc": "fieldchange",
+    "autocalc": "focuschange",
     "calc_js_path": "https://sasa-test-misc-wap.azurewebsites.net/calc/calc_amulbintocwithotherchanges.js",
     "calc_js_setting": "",
     "calc_conf_path": "",
@@ -29,11 +29,15 @@ var headerObj = {
     "action loading":"Form('{formname}/{formversion}')/Loading",
     "bing maps key": "",
     "map wrapper id": "",
+    "map route info wrapper id": "",
     "map country name": "",
     "map zoom": "",
     "map center pushpin": true,
     "map center pushpin title": "",
     "map center pushpin subtitle": "",
+    "map center pushpin description": "",
     "map center latitude": "",
-    "map center longitude": ""
+    "map center longitude": "",
+    "map show info box": true,
+    "map show traffic": ""
 };

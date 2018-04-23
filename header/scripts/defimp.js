@@ -65,13 +65,17 @@ function resetAppConfiguration()
         actionLoading: "",
         bingMapsKey: "",
         mapWrapperId: "",
+        mapRouteInfoWrapperId: "",
         mapCountryName: "",
         mapZoom: "",
         mapCenterPushpin: true,
         mapCenterPushpinTitle: "",
         mapCenterPushpinSubTitle: "",
+        mapCenterPushpinDescription: "",
         mapCenterLatitude: "",
-        mapCenterLongitude: ""
+        mapCenterLongitude: "",
+        mapShowInfoBox: true,
+        mapShowTraffic: ""
     };
 }
 
@@ -657,7 +661,10 @@ function setupHeaderConfiguration()
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 
     
     // Set up map wrapper ID which is the ID of an HTML element where we put a map
-    resolveStringOrBooleanParameter(false,"map wrapper id","mapWrapperId",formObj,headerObj,null,true,appConfiguration.mapWrapperId); 
+    resolveStringOrBooleanParameter(false,"map wrapper id","mapWrapperId",formObj,headerObj,null,true,appConfiguration.mapWrapperId);
+    
+    // Set up map route information wrapper ID which is the ID of an HTML element where we put a route information from the map
+    resolveStringOrBooleanParameter(false,"map route info wrapper id","mapRouteInfoWrapperId",formObj,headerObj,null,true,appConfiguration.mapRouteInfoWrapperId);
     
     // Set up map country name used to specify starting map area
     resolveStringOrBooleanParameter(false,"map country name","mapCountryName",formObj,headerObj,null,true,appConfiguration.mapCountryName); 
@@ -673,6 +680,9 @@ function setupHeaderConfiguration()
     
     // Set up center map pushpin subtitle
     resolveStringOrBooleanParameter(false, "map center pushpin subtitle","mapCenterPushpinSubTitle",formObj,headerObj,null,true,appConfiguration.mapCenterPushpinSubTitle);
+    
+    // Set up center map pushpin description
+    resolveStringOrBooleanParameter(false, "map center pushpin description","mapCenterPushpinDescription",formObj,headerObj,null,true,appConfiguration.mapCenterPushpinDescription);
     
     // Set up map center latitude
     var mapCenterLatitudeUrl = checkForUrlParameter("map center latitude");
@@ -723,6 +733,13 @@ function setupHeaderConfiguration()
             appConfiguration.mapCenterLongitude = headerObj["map center longitude"];
         }
     }
+    
+    // Set up if we show an info box when pushpin is clicked
+    resolveStringOrBooleanParameter(true, "map show info box","mapShowInfoBox",formObj,headerObj,null,true,appConfiguration.mapShowInfoBox);
+    
+    // Set up if we show traffic on the map
+    // Possible values are an empty string (default), "pushpinclick" and "fromstart"
+    resolveStringOrBooleanParameter(false,"map show traffic","mapShowTraffic",formObj,headerObj,null,true,appConfiguration.mapShowTraffic); 
 }
 
 /**
@@ -908,7 +925,7 @@ function checkForLoadingCallback()
     if (appConfiguration.actionLoading)
     {
         // Replace placeholders in relative path with available settings
-        var placeholders = {"formname":appConfiguration.formObj.name,"formversion":appConfiguration.formObj.properties["formversion"]};
+        var placeholders = {"formname":appConfiguration.formObj.name,"formversion":(appConfiguration.formObj.hasOwnProperty("properties") && appConfiguration.formObj.properties!=null ? appConfiguration.formObj.properties["formversion"] : null)};
         var loadAct = appConfiguration.actionLoading;
         for (let key in placeholders) {
             loadAct = loadAct.replace(/({([^}]+)})/g, function(i) {
@@ -923,7 +940,7 @@ function checkForLoadingCallback()
         
         var url = appConfiguration.home + "/" + loadAct;
         
-        performLoadingCallback(url);
+        performLoadingCallback(url,1);
     }
     else
     {
@@ -934,30 +951,37 @@ function checkForLoadingCallback()
 /**
  * Calls loading callback and set up the APP
  */
-function performLoadingCallback(url)
+function performLoadingCallback(url,cnt)
 {
     var payload = {
         "plugin": "form.io",
         "appConfiguration": appConfiguration,
     };
-    console.log('executing loading action for url '+url);
+    console.log('executing loading action for url '+url+', attempt number '+cnt);
     // TODO: Perform loading API call with the given callback
     if (typeof ADAL!== 'undefined' && ADAL) {
-        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {},onsuccess_loading,onfailure_loading);
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"callbackCount":cnt},onsuccess_loading,onfailure_loading);
     } else {
         alert("It is not possible to perform loading because user is not logged-in!");
         setupApp();
     }    
 }
 
+/**
+ * This function is executed on successful call to Loading API. If form definition changed, it will call again Loading API...but Loading API can be called max 3 times.
+ */
 function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textStatus,request) {
-   var msgPart = "loading operation for url '"+url+"'";
+   var msgPart = "loading operation for url '"+url+"', attempt number "+additionalConfiguration.callbackCount;
    console.log("Successfully executed "+msgPart+".");
    //console.log('DATA received ='+JSON.stringify(data));
+   var formDidntChange = JSON.stringify(appConfiguration.formObj)===JSON.stringify(data.appConfiguration.formObj);   
    appConfiguration = $.extend(appConfiguration,data.appConfiguration);
    //console.log('DATA merged ='+JSON.stringify(appConfiguration));
+   if (!formDidntChange && additionalConfiguration.callbackCount<3) {
+       performLoadingCallback(url,additionalConfiguration.callbackCount+1);
+       return;
+   }
    setupApp();
-   
 }
 
 function onfailure_loading(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
@@ -1045,7 +1069,7 @@ var TogFormViewer =
     {
         setProperty: function(propName, propValue)
         {
-            if (propName === "form")
+            if (_checkPropertyValue(propName, propValue, "form", "string"))
             {
                 updateFormDefinition(propValue);
             }
@@ -1056,44 +1080,161 @@ var TogFormViewer =
                 appConfiguration.formObj["display"] = appConfiguration.display;
                 reloadFormDefinition();
             }
-            else if (propName === "formWidthPercent" && propValue != appConfiguration.formWidthPercent) 
+            else if (_checkPropertyValue(propName, propValue, "formWidthPercent", "number")) 
             {
                 appConfiguration.formWidthPercent = propValue;
                 $('.body-content').width(propValue);
             }
-            else if(propName === "formhelp" && propValue != appConfiguration.formhelp)
+            else if(_checkPropertyValue(propName, propValue, "formhelp", "string"))
             {
                 appConfiguration.formhelp = propValue;
             }
-            else if(propName === "formtitle" && propValue != appConfiguration.formtitle)
+            else if(_checkPropertyValue(propName, propValue, "formtitle", "string"))
             {
                 appConfiguration.formtitle = propValue;
                 document.title = appConfiguration.formtitle;
             }
-            else if(propName === "processtext" && propValue != appConfiguration.processtext)
+            else if(_checkPropertyValue(propName, propValue, "processtext", "string"))
             {
                 appConfiguration.processtext = propValue;
             }
-            else if(propName === "processlink" && propValue != appConfiguration.processlink)
+            else if(_checkPropertyValue(propName, propValue, "processlink", "string"))
             {
                 appConfiguration.processlink = propValue;
             }
-            else if(propName === "processimagelink" && propValue != appConfiguration.processimagelink)
+            else if(_checkPropertyValue(propName, propValue, "processimagelink", "string"))
             {
                 appConfiguration.processimagelink = propValue;
             }
-            else if(propName === "elearningtext" && propValue != appConfiguration.elearningtext)
+            else if(_checkPropertyValue(propName, propValue, "elearningtext", "string"))
             {
                 appConfiguration.elearningtext = propValue;
             }
-            else if(propName === "elearninglink" && propValue != appConfiguration.elearninglink)
+            else if(_checkPropertyValue(propName, propValue, "elearninglink", "string"))
             {
                 appConfiguration.elearninglink = propValue;
             }
-            else if(propName === "elearningimagelink" && propValue != appConfiguration.elearningimagelink)
+            else if(_checkPropertyValue(propName, propValue, "elearningimagelink", "string"))
             {
                 appConfiguration.elearningimagelink = propValue;
             }
+        }
+    },
+    
+    setProperty: function(propName, propValue)
+    {
+        if (_checkPropertyValue(propName, propValue, "appLauncher", "boolean")) 
+        {
+            appConfiguration.appLauncher = propValue;
+            setHeaderElements();
+        }
+        else if (_checkPropertyValue(propName, propValue, "environment", "boolean")) 
+        {
+            appConfiguration.environment = propValue;
+            setHeaderElements();
+        }
+        else if (_checkPropertyValue(propName, propValue, "notifications", "boolean")) 
+        {
+            appConfiguration.notifications = propValue;
+            setHeaderElements();
+        }
+        else if (_checkPropertyValue(propName, propValue, "settings", "boolean")) 
+        {
+            appConfiguration.settings = propValue;
+            setHeaderElements();
+        }
+        else if (_checkPropertyValue(propName, propValue, "help", "boolean")) 
+        {
+            appConfiguration.help = propValue;
+            setHeaderElements();
+        }
+        else if (_checkPropertyValue(propName, propValue, "account", "boolean")) 
+        {
+            appConfiguration.account = propValue;
+            setHeaderElements();
+        }
+        else if (_checkPropertyValue(propName, propValue, "bingMapsKey", "string"))
+        {
+            appConfiguration.bingMapsKey = propValue;
+            updateMap();
+        }
+        else if (_checkPropertyValue(propName, propValue, "maximizeBrowserWindow", "boolean")) 
+        {
+            appConfiguration.maximizeBrowserWindow = propValue;
+            setMaximizeBrowserWindow();
+        }
+        else if (_checkPropertyValue(propName, propValue, "themeSettings", "boolean")) 
+        {
+            appConfiguration.themeSettings = propValue;
+            showThemeSettings();
+        }
+        else if (_checkPropertyValue(propName, propValue, "phraseApp", "boolean")) 
+        {
+            appConfiguration.phraseApp = propValue;
+            showPhraseApp();
+        }
+        else if (_checkPropertyValue(propName, propValue, "phraseAppProjectId", "string")) 
+        {
+            appConfiguration.phraseAppProjectId = propValue;
+            reloadPhraseApp();
+        }
+        else if (_checkPropertyValue(propName, propValue, "phraseAppPrefix", "string")) 
+        {
+            appConfiguration.phraseAppPrefix = propValue;
+            reloadPhraseApp();
+        }
+        else if (_checkPropertyValue(propName, propValue, "phraseAppSuffix", "string")) 
+        {
+            appConfiguration.phraseAppSuffix = propValue;
+            reloadPhraseApp();
+        }
+        else if (_checkPropertyValue(propName, propValue, "feedback", "boolean")) 
+        {
+            appConfiguration.feedback = propValue;
+            showFeeedbackButton();
+        }
+        else if (_checkPropertyValue(propName, propValue, "feedbackurl", "string")) 
+        {
+            appConfiguration.feedbackurl = propValue;
+        }
+        else if (_checkPropertyValue(propName, propValue, "feedbackUrlAbsolutePath", "string")) 
+        {
+            appConfiguration.feedbackUrlAbsolutePath = propValue;
+        }
+        else if (_checkPropertyValue(propName, propValue, "home", "string")) 
+        {
+            appConfiguration.home = propValue;
+        }
+        // TODO Add check for mapWrapperId and mapRouteInfoWrapperId
+        else if (_checkPropertyValue(propName, propValue, "mapCountryName", "string"))
+        {
+            appConfiguration.mapCountryName = propValue;
+            updateMap();
+        }
+        else if (propName === "mapZoom" && propValue != appConfiguration.mapZoom && propValue && !isNaN(propValue))
+        {
+            appConfiguration.mapZoom = propValue;
+            updateMap();
+        }
+        else if (_checkPropertyValue(propName, propValue, "mapCenterPushpin", "boolean"))
+        {
+            appConfiguration.mapCenterPushpin = propValue;
+            updateMap();
+        }
+        else if (_checkPropertyValue(propName, propValue, "mapCenterPushpinTitle", "string"))
+        {
+            appConfiguration.mapCenterPushpinTitle = propValue;
+            updateMap();
+        }
+        else if (_checkPropertyValue(propName, propValue, "mapCenterPushpinSubTitle", "string"))
+        {
+            appConfiguration.mapCenterPushpinSubTitle = propValue;
+            updateMap();
+        }
+        else if (_checkPropertyValue(propName, propValue, "mapCenterPushpinDescription", "string"))
+        {
+            appConfiguration.mapCenterPushpinDescription = propValue;
+            updateMap();
         }
     },
     
@@ -1133,10 +1274,12 @@ var TogFormViewer =
         }
     },
    
-    // filename and target attributes are not utilized...don't know if there is a way to set the title of the window to the "filename"...don't know what would be the meaning of "target"
-    openFile: function(filePath,filename,target)
+    openFile: function(filePath,target)
     {
-        window.open(filePath);
+        if (!target) {
+            target = "_blank";
+        }
+        window.open(filePath,target);
     },
     
     downloadFile: function(filePath,filename)
@@ -1147,12 +1290,31 @@ var TogFormViewer =
     loadData: function(filePath)
     {
         _loadData(filePath);
+    },
+
+    showData: function(target)
+    {
+        if (!target) {
+            target = "_blank";
+        }
+        var myjson = JSON.stringify(formioForm.submission.data, null, 2);
+        var showDataWindow = window.open("",target);
+        showDataWindow.document.open();
+        showDataWindow.document.write('<html><body><h1><u>Form submission data</u></h1><pre>' + myjson + '</pre></body></html>');
+        showDataWindow.document.close(); 
+        showDataWindow.focus();
     }
+    
 }
 
-// It is expected that the file referenced by path (json.js file) contains JS variable called mockupFormDataObj
+function _checkPropertyValue(propertyName, propertyValue, parameterName, parameterType)
+{
+    return propertyName === parameterName && propertyValue != appConfiguration[parameterName] && typeof propertyValue === parameterType;
+}
+
+// It is expected that the file referenced by path (json.js file) contains JS variable called dataObj
 // This variable is JSON containing the data to be loaded into the form. 
-// E.g. the file content could look like: var mockupFormDataObj = {"n1":33,"n2":44,"str1":"mystr","bln1":true};
+// E.g. the file content could look like: var dataObj = {"n1":33,"n2":44,"str1":"mystr","bln1":true};
 function _loadData(filePath){
    var script = getScript(filePath);
    if (script) {
@@ -1163,7 +1325,7 @@ function _loadData(filePath){
 
 function mockupDataOK(mockupPath) {
    try {
-      var datamerged = $.extend(formioForm.submission.data,mockupFormDataObj);
+      var datamerged = $.extend(formioForm.submission.data,dataObj);
       console.log('MERGED WITH MOCK-UP DATA='+JSON.stringify(datamerged));   
       formioForm.submission={"data":datamerged};
    } catch (err) {

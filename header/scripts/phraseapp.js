@@ -30,6 +30,38 @@ function loadPhraseApp()
     phraseapp.type = 'text/javascript';
     phraseapp.async = true;
     phraseapp.src = ['https://', 'phraseapp.com/assets/in-context-editor/2.0/app.js?', new Date().getTime()].join('');
+    phraseapp.id = "phraseAppPlugin";
+    phraseapp.onload = (function() { phraseSelector.phraseAppLoaded = true; })
+    phraseapp.onerror = (function() {alert('Failed to load PhraseApp')});
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(phraseapp, s);
+}
+
+/**
+ * Reloads PhraseApp plugin
+ */
+function reloadPhraseApp()
+{
+    
+    phraseSelector.prefix = appConfiguration.phraseAppPrefix;
+        
+    phraseSelector.suffix = appConfiguration.phraseAppSuffix;
+    
+    window.PHRASEAPP_CONFIG =
+    {
+        projectId:  appConfiguration.phraseAppProjectId,
+        prefix: appConfiguration.phraseAppPrefix,
+        suffix: appConfiguration.phraseAppSuffix,
+        autoLowercase: false,
+        forceLocale: languageSelector.currentLanguage,
+        fullReparse: true
+    };
+    $('#phraseAppPlugin').remove();
+    var phraseapp = document.createElement('script');
+    phraseapp.type = 'text/javascript';
+    phraseapp.async = true;
+    phraseapp.src = ['https://', 'phraseapp.com/assets/in-context-editor/2.0/app.js?', new Date().getTime()].join('');
+    phraseapp.id = "phraseAppPlugin";
     phraseapp.onload = (function() { phraseSelector.phraseAppLoaded = true; })
     phraseapp.onerror = (function() {alert('Failed to load PhraseApp')});
     var s = document.getElementsByTagName('script')[0];

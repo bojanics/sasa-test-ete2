@@ -37,7 +37,7 @@ function setupLanguageMenu()
     $.each(languagesMap, function(code, name)
     {
         var languageItem = '<div class="ltz-itm-container"><button class="ltz-itm-selector" onclick="selectLanguage(this,\''
-            + code + '\')"><span id="langCheck' + code + '" class="ms-Icon ms-Icon--check ltz-itm-selector-check"'
+            + code + '\')"><span id="langCheck' + code + '" class="ms-Icon2 ms-Icon--check ltz-itm-selector-check"'
             + (code === languageSelector.currentLanguage ? ' style="visibility: visible;"' : '') 
             + '></span><div class="ltz-itm-content"><div class="ltz-itm-wrapper"><span>'
             + name + '&lrm;</span></div></div></button></div>';

@@ -40,6 +40,7 @@ function _setupAppInternal()
     setupLayout();
     var hooksObj = createHooksObj();
     langObj.hooks = hooksObj;
+    langObj.languageOverride = numberFormatObj;
     generateForm(setUserSettings);
     fillUserInfo();
 }
@@ -120,17 +121,17 @@ function generateForm(formReadyCallback)
         
         form.ready.then(function()
         {
-           // Executing custom script when the form is ready
+           // Executing loading script when the form is ready
            // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
-           if (appConfiguration.formObj.hasOwnProperty("properties") && appConfiguration.formObj.properties.hasOwnProperty("customScript"))
+           if (appConfiguration.formObj.hasOwnProperty("properties") && appConfiguration.formObj.properties!=null && appConfiguration.formObj.properties.hasOwnProperty("loadingScript"))
             {
-               var customScript = "";
+               var loadingScript = "";
                try {
-                 customScript = appConfiguration.formObj.properties["customScript"];
-                 console.log('Executing custom script:'+customScript);
-                 eval(customScript);
+                 loadingScript = appConfiguration.formObj.properties["loadingScript"];
+                 console.log('Executing loading script:'+loadingScript);
+                 eval(loadingScript);
                } catch (err) {
-                 var msg = "Error occurred when executing custom script:\n\n"+customScript;
+                 var msg = "Error occurred when executing loading script:\n\n"+loadingScript;
                  msg+="\n\nError name: "+err.name;
                  msg+="\n\nError message: "+err.message;
                  msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
@@ -315,321 +316,25 @@ function setupLayout()
         $("#customizationLogo").hide();
     }
     
-    // Hide the app launcher button if needed
-    if (!appConfiguration.appLauncher && !$(".appl-button").hasClass('hidden'))
-    {
-        $(".appl-button").addClass('hidden');
-    }
-    else if (appConfiguration.appLauncher && $(".appl-button").hasClass('hidden'))
-    {
-        $(".appl-button").removeClass('hidden');
-    }
-    
     // Check if we should maximize the browser window (IE only)
-    if (appConfiguration.maximizeBrowserWindow)
-    {
-        window.moveTo(0, 0);
-        window.resizeTo(screen.availWidth, screen.availHeight);
-    }
+    setMaximizeBrowserWindow();
     
     // Change form width
     $(".body-content").css("width", appConfiguration.formWidthPercent + "%");
     
-    // Check if we should hide the environments dropdown
-    if (!appConfiguration.environment)
-    {
-        if ($("#environmentcontainerl").length)
-        {
-            $("#environmentcontainerl").remove();
-        }
-        
-        if ($("#environmentcontainers").length)
-        {
-            $("#environmentcontainers").remove();
-        }
-        
-        hiddenWrappers.push("environmentcontainerl");
-        hiddenWrappers.push("environmentcontainers");
-    }
-    else if (appConfiguration.environment && !$("#environmentcontainerl").length)
-    {
-        // TODO: Update environments list
-        $("#customizationLogo").after('<div id="environmentcontainerl" class="header-common app-header rsp-visible"><button type="button" class="header-common app-menu-button app-menu-button-right environment-button environments-trigger" onclick="showEnvironmentDropdown(this)"><div class="environment-wrapper"><span lang-tran="Environment" class="environment-text environment-head">Environment</span><span class="environment-text environment-current">Tenant 1 (default)</span></div><svg class="environment-glyph" viewBox="0 0 16 16"><path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path></svg></button><div class="header-common environment-dropdown header-hidden-element"><ul class="environment-dropdown-list"><li><button disabled class="environment-option active-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 1 (default)</div></div></button></li><li><button class="environment-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 2</div></div></button></li><li><button class="environment-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 3</div></div></button></li></ul></div></div>');
-        $("#environmentcontainersplchld").after('<div id="environmentcontainers" class="header-common"><div class="header-common"><button class="header-common user-settings-small-menu-item environments-trigger" onclick="showUserSettingsSmallMenuDropdown(this)"><div class="user-settings-small-menu-item-wrapper"><div class="user-settings-small-menu-item-content" lang-tran="Environments">Environments</div><div class="user user-settings-small-menu-item-glyphwrapper"><svg class="user user-settings-small-menu-item-glyph" focusable="false" viewBox="0 0 16 16"><path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path></svg></div></div></button></div><div class="header-common user-settings-small-menu-dropdown header-hidden-element"><ul class="user-settings-small-menu-dropdown-list"><li><button disabled class="user-settings-small-menu-dropdown-option active-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 1 (default)</div></div></button></li><li><button class="user-settings-small-menu-dropdown-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 2</div></div></button></li><li><button class="user-settings-small-menu-dropdown-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 3</div></div></button></li></ul></div></div>');
-    }
-    
-    // Count how many menu items are missing to apply appropriate css class later
-    var missingHeaderElements = 0;
-    
-    // Check if we should hide the notifications menu
-    if (appConfiguration.notifications)
-    {
-        firstMenuItem = 'notificationsWrapper';
-        if (!$("#notificationsCommandWrapper").length)
-        {
-            $("#notificationsCommandWrapperplchld").remove();
-            $("#applButtonSmallWrapper").after('<div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Ringer" aria-hidden="true"></i></span></button></div>');
-        }
-    }
-    else
-    {
-        $("#notificationsCommandWrapper").after('<div id="notificationsCommandWrapperplchld" style="display: none"></div>');
-        $("#notificationsCommandWrapper").remove();
-        hiddenWrappers.push("notificationsCommandWrapper");
-        missingHeaderElements ++;
-    }
-    
-    // Check if we should hide the settings menu
-    if (!appConfiguration.settings)
-    {
-        $("#settingsCommandWrapper").after('<div id="settingsCommandWrapperplchld" style="display: none"></div>');
-        $("#settingsCommandWrapper").remove();
-        hiddenWrappers.push("settingsCommandWrapper");
-        missingHeaderElements ++;
-    }
-    else
-    {
-        if (firstMenuItem === 'notdefined')
-        {
-            firstMenuItem = 'settingsWrapper';
-        }
-        
-        if (!$("#settingsCommandWrapper").length)
-        {
-            var settingsMenu = '<div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Settings" aria-hidden="true"></i></span></button></div>';
-            $("#settingsCommandWrapperplchld").remove();
-            $("#notificationsCommandWrapper").after(settingsMenu);
-            $("#notificationsCommandWrapperplchld").after(settingsMenu);
-        }
-    }
-    
-    // Check if we should hide the help menu
-    if (!appConfiguration.help)
-    {
-        $("#helpCommandWrapper").after('<div id="helpCommandWrapperplchld" style="display: none"></div>');
-        $("#helpCommandWrapper").remove();
-        hiddenWrappers.push("helpCommandWrapper");
-        missingHeaderElements ++;
-    }
-    else
-    {
-        if (firstMenuItem === 'notdefined')
-        {
-            firstMenuItem = 'helpWrapper';
-        }
-        
-        if (!$("#helpCommandWrapper").length)
-        {
-            var helpMenu = '<div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Help" aria-hidden="true"></i></span></button></div>';
-            $("#helpCommandWrapperplchld").remove();
-            $("#notificationsCommandWrapper").after(helpMenu);
-            $("#notificationsCommandWrapperplchld").after(helpMenu);
-        }
-    }
-    
-    // Check if we should hide the account menu
-    if (!appConfiguration.account)
-    {
-        $("#accountsCommandWrapperL").remove();
-        hiddenWrappers.push("accountsCommandWrapperL");
-        $("#accountsCommandWrapperS").remove();
-        hiddenWrappers.push("accountsCommandWrapperS");
-        if (appConfiguration.environment) 
-        {
-            $("#headerRight").append('<div id="accountsCommandWrapperXS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"></div></button></div>');
-            $("#hide-account-info").hide();
-        }
-        else 
-        {
-            $("#hide-account-info").show();
-        }
-    }
-    else
-    {
-        $("#accountsCommandWrapperXS").remove();
-        hiddenWrappers.push("accountsCommandWrapperXS");
-        if (firstMenuItem === 'notdefined')
-        {
-            firstMenuItem = 'accountsWrapper';
-        }
-        
-        if (!$("#accountsCommandWrapperL").length)
-        {
-            var accountsMenuL = '<div id="accountsCommandWrapperL" class="header-common app-header rsp-visible"><button id="accountsCommand" type="button" class="header-common app-menu-button app-menu-button-right app-menu-button-right-menu account-trigger" onclick="openUserMenu(this)"><div class="app-menu-button-right-menu-wrapper"><div class="app-menu-button-right-menu-left"><span class="username">James H. Smith</span></div><div class="header-common app-header app-menu-button-right-menu-right"><div class="app-menu-button-right-menu-right-image-wrapper"><span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact ms-icon-font-size-52"></span></div><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></div></div></button></div>';
-            $("#helpCommandWrapper").after(accountsMenuL);
-            $("#helpCommandWrapperplchld").after(accountsMenuL);
-            $("#accountsCommandWrapperL").after('<div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact ms-icon-font-size-52 rsp"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></button></div>');
-        }
-    }
-    
-    if (appConfiguration.environment && (missingHeaderElements > 0 || !appConfiguration.account || !appConfiguration.appLauncher))
-    {
-        if (appConfiguration.account && appConfiguration.appLauncher)
-        {
-            switch (missingHeaderElements)
-            {
-                case 1:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-one");
-                    break;
-                case 2:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-two");
-                    break;
-                case 3:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-three");
-            }
-        }
-        else if (!appConfiguration.account && appConfiguration.appLauncher)
-        {
-            switch (missingHeaderElements)
-            {
-                case 0:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts");
-                    break;
-                case 1:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-one");
-                    break;
-                case 2:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-two");
-                    break;
-                case 3:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-three");
-            }
-        }
-        else if (appConfiguration.account && !appConfiguration.appLauncher)
-        {
-            switch (missingHeaderElements)
-            {
-                case 0:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher");
-                    break;
-                case 1:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-one");
-                    break;
-                case 2:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-two");
-                    break;
-                case 3:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-three");
-            }
-        }
-        else if (!appConfiguration.account && !appConfiguration.appLauncher)
-        {
-            switch (missingHeaderElements)
-            {
-                case 0:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher");
-                    break;
-                case 1:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-one");
-                    break;
-                case 2:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-two");
-                    break;
-                case 3:
-                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-three");
-            }
-        }
-    }
-    
-    // Check if we have too few commands in the header that we don't need ellipsis button on small screens any more
-    if (missingHeaderElements == 3 || (missingHeaderElements == 2  && ((!appConfiguration.account && !appConfiguration.environment) || !appConfiguration.appLauncher))
-        || (missingHeaderElements == 1 && !appConfiguration.account && !appConfiguration.environment && !appConfiguration.appLauncher))
-    {
-        $("#ellipsisButtonWrapper").hide();
-        if (appConfiguration.appLauncher)
-        {
-            $("#applButtonSmallWrapper").removeClass("hiddensmcommands").removeClass("rsp-med-visible").addClass("rsp-med-small-visible");
-        }
-        
-        if (appConfiguration.notifications)
-        {
-            $("#notificationsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
-        }
-        
-        if (appConfiguration.settings)
-        {
-            $("#settingsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
-        }
-        
-        if (appConfiguration.help)
-        {
-            $("#helpCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
-        }
-    }
-    
+    setHeaderElements();
+
     // Check if we should show theme selection option in the settings menu
-    if (appConfiguration.themeSettings)
-    {
-        $('#themeCardWrapper').show();
-    }
-    else
-    {
-        $('#themeCardWrapper').hide();
-    }
+    showThemeSettings();
      
     // Check if we should show the PhraseApp settings
-    var hasPhraseAppSettings = false;
-    var phraseAppSettingsOn = false;
-    if (appConfiguration.phraseApp === true || appConfiguration.phraseApp === "true" || appConfiguration.phraseApp === "on" || appConfiguration.phraseApp === "off")
-    {
-        if (!$('script').filter(function () {
-            return ($(this).attr('src') == "./scripts/phraseapp.js");
-        }).length)
-        {
-            loadScript("./scripts/phraseapp.js", ((appConfiguration.phraseApp === "on") ? showPhraseAppSettingsCardAndSwitchOn : showPhraseAppSettingsCard), showPhraseAppHelperLoadFailedWarning);
-        }
-        else if (appConfiguration.phraseApp === "on")
-        {
-            if (!phraseSelector.phraseAppSelection)
-            {
-                changePhraseAppSelection();
-            }
-            
-            applyPhraseAppSettingsChanges();
-        }
-    }
-    else
-    {
-        $('#phraseAppCardWrapper').hide();
-        if (typeof phraseSelector !== 'undefined')
-        {
-            if (phraseSelector.phraseAppSelection)
-            {
-                changePhraseAppSelection();
-            }
-            
-            applyPhraseAppSettingsChanges();
-        }
-    }
+    showPhraseApp();
 
     // Check if we should show the button which opens the feedback form    
-    if (appConfiguration.feedback && appConfiguration.feedbackUrlAbsolutePath)
-    {
-        // We add the keydown listener only when feedback is enabled in order to avoid unnecessary triggers and improve performance
-        // On press escape close feedback
-        $(document).on('keydown', function(e)
-        {
-            if(e.keyCode === 27)  // ESC
-            {
-                closeFeedbackContent();
-            }
-        });
-        
-        $("#feedbackInserted").show();
-    }
-    else
-    {
-        $("#feedbackInserted").hide();
-    }
+    showFeeedbackButton();
     
     // Set up the header title
-    if (appConfiguration.title)
-    {
-        $("#appTitle").find(".app-menu-brand").html(appConfiguration.title);
-        $("#appTitlePrint").find("p").html(appConfiguration.title);
-    }
-    
-    $("#appTitle").show();
+    setHeaderTitle();
     
     $(document).mouseup(function (e)
     {
@@ -755,6 +460,391 @@ function setupLayout()
     {
         e.preventDefault();
     });
+}
+
+/**
+ * Sets default form level help content. Used when no form element has focus
+ */
+function setHeaderElements() 
+{
+    // Count how many menu items are missing to apply appropriate css class later
+    var missingHeaderElements = 0;
+    
+    // Hide the app launcher button if needed
+    if (!appConfiguration.appLauncher && !$(".appl-button").hasClass('hidden'))
+    {
+        $(".appl-button").addClass('hidden');
+    }
+    else if (appConfiguration.appLauncher && $(".appl-button").hasClass('hidden'))
+    {
+        $(".appl-button").removeClass('hidden');
+    }
+    
+    // Check if we should hide the environments dropdown
+    if (!appConfiguration.environment)
+    {
+        if ($("#environmentcontainerl").length)
+        {
+            $("#environmentcontainerl").remove();
+        }
+        
+        if ($("#environmentcontainers").length)
+        {
+            $("#environmentcontainers").remove();
+        }
+        
+        hiddenWrappers.push("environmentcontainerl");
+        hiddenWrappers.push("environmentcontainers");
+    }
+    else if (appConfiguration.environment && !$("#environmentcontainerl").length)
+    {
+        // TODO: Update environments list
+        $("#customizationLogo").after('<div id="environmentcontainerl" class="header-common app-header rsp-visible"><button type="button" class="header-common app-menu-button app-menu-button-right environment-button environments-trigger" onclick="showEnvironmentDropdown(this)"><div class="environment-wrapper"><span lang-tran="Environment" class="environment-text environment-head">Environment</span><span class="environment-text environment-current">Tenant 1 (default)</span></div><svg class="environment-glyph" viewBox="0 0 16 16"><path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path></svg></button><div class="header-common environment-dropdown header-hidden-element"><ul class="environment-dropdown-list"><li><button disabled class="environment-option active-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 1 (default)</div></div></button></li><li><button class="environment-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 2</div></div></button></li><li><button class="environment-option"><div class="header-common environment-option-item"><div class="header-common environment-option-label">Tenant 3</div></div></button></li></ul></div></div>');
+        $("#environmentcontainersplchld").after('<div id="environmentcontainers" class="header-common"><div class="header-common"><button class="header-common user-settings-small-menu-item environments-trigger" onclick="showUserSettingsSmallMenuDropdown(this)"><div class="user-settings-small-menu-item-wrapper"><div class="user-settings-small-menu-item-content" lang-tran="Environments">Environments</div><div class="user user-settings-small-menu-item-glyphwrapper"><svg class="user user-settings-small-menu-item-glyph" focusable="false" viewBox="0 0 16 16"><path d="M1.02,5.02L2.05,4L8,9.95L13.95,4l1.02,1.02L8,12L1.02,5.02z"></path></svg></div></div></button></div><div class="header-common user-settings-small-menu-dropdown header-hidden-element"><ul class="user-settings-small-menu-dropdown-list"><li><button disabled class="user-settings-small-menu-dropdown-option active-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 1 (default)</div></div></button></li><li><button class="user-settings-small-menu-dropdown-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 2</div></div></button></li><li><button class="user-settings-small-menu-dropdown-option"><div class="user-settings-small-menu-dropdown-option-item"><div class="user-settings-small-menu-dropdown-option-label">Tenant 3</div></div></button></li></ul></div></div>');
+    }
+    
+    // Check if we should hide the notifications menu
+    if (appConfiguration.notifications)
+    {
+        hiddenWrappers.splice("notificationsCommandWrapper");
+        firstMenuItem = 'notificationsWrapper';
+        if (!$("#notificationsCommandWrapper").length)
+        {
+            $("#notificationsCommandWrapperplchld").remove();
+            $("#applButtonSmallWrapper").after('<div id="notificationsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="notificationsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Ringer" aria-hidden="true"></i></span></button></div>');
+        }
+    }
+    else
+    {
+        $("#notificationsCommandWrapper").after('<div id="notificationsCommandWrapperplchld" style="display: none"></div>');
+        $("#notificationsCommandWrapper").remove();
+        hiddenWrappers.push("notificationsCommandWrapper");
+        missingHeaderElements ++;
+    }
+    
+    // Check if we should hide the settings menu
+    if (!appConfiguration.settings)
+    {
+        $("#settingsCommandWrapper").after('<div id="settingsCommandWrapperplchld" style="display: none"></div>');
+        $("#settingsCommandWrapper").remove();
+        hiddenWrappers.push("settingsCommandWrapper");
+        missingHeaderElements ++;
+    }
+    else
+    {
+        hiddenWrappers.splice("settingsCommandWrapper");
+        if (firstMenuItem === 'notdefined')
+        {
+            firstMenuItem = 'settingsWrapper';
+        }
+        
+        if (!$("#settingsCommandWrapper").length)
+        {
+            var settingsMenu = '<div id="settingsCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="settingsCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Settings" aria-hidden="true"></i></span></button></div>';
+            $("#settingsCommandWrapperplchld").remove();
+            $("#notificationsCommandWrapper").after(settingsMenu);
+            $("#notificationsCommandWrapperplchld").after(settingsMenu);
+        }
+    }
+    
+    // Check if we should hide the help menu
+    if (!appConfiguration.help)
+    {
+        $("#helpCommandWrapper").after('<div id="helpCommandWrapperplchld" style="display: none"></div>');
+        $("#helpCommandWrapper").remove();
+        hiddenWrappers.push("helpCommandWrapper");
+        missingHeaderElements ++;
+    }
+    else
+    {
+        if (firstMenuItem === 'notdefined')
+        {
+            firstMenuItem = 'helpWrapper';
+        }
+        
+        if (!$("#helpCommandWrapper").length)
+        {
+            hiddenWrappers.splice("helpCommandWrapper");
+            var helpMenu = '<div id="helpCommandWrapper" class="header-common app-header rsp-visible hiddensmcommands"><button id="helpCommand" type="button" class="header-common app-menu-button app-menu-button-right" onclick="openUserMenu(this)"><span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Help" aria-hidden="true"></i></span></button></div>';
+            $("#helpCommandWrapperplchld").remove();
+            $("#settingsCommandWrapper").after(helpMenu);
+            $("#settingsCommandWrapperplchld").after(helpMenu);
+        }
+    }
+    
+    // Check if we should hide the account menu
+    if (!appConfiguration.account)
+    {
+        $("#accountsCommandWrapperL").remove();
+        hiddenWrappers.push("accountsCommandWrapperL");
+        $("#accountsCommandWrapperS").remove();
+        hiddenWrappers.push("accountsCommandWrapperS");
+        if (appConfiguration.environment) 
+        {
+            if(!$('#accountsCommandWrapperXS').length)
+            {
+                $("#headerRight").append('<div id="accountsCommandWrapperXS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"></div></button></div>');
+            }
+            $("#hide-account-info").hide();
+        }
+        else 
+        {
+            $('#accountsCommandWrapperXS').remove();
+            $("#hide-account-info").show();
+        }
+    }
+    else
+    {
+        hiddenWrappers.splice("accountsCommandWrapperL");
+        hiddenWrappers.splice("accountsCommandWrapperS");
+        $("#accountsCommandWrapperXS").remove();
+        hiddenWrappers.push("accountsCommandWrapperXS");
+        if (firstMenuItem === 'notdefined')
+        {
+            firstMenuItem = 'accountsWrapper';
+        }
+        
+        if (!$("#accountsCommandWrapperL").length)
+        {
+            var accountsMenuL = '<div id="accountsCommandWrapperL" class="header-common app-header rsp-visible"><button id="accountsCommand" type="button" class="header-common app-menu-button app-menu-button-right app-menu-button-right-menu account-trigger" onclick="openUserMenu(this)"><div class="app-menu-button-right-menu-wrapper"><div class="app-menu-button-right-menu-left"><span class="username">James H. Smith</span></div><div class="header-common app-header app-menu-button-right-menu-right"><div class="app-menu-button-right-menu-right-image-wrapper"><span class="app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact ms-icon-font-size-52"></span></div><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></div></div></button></div>';
+            $("#helpCommandWrapper").after(accountsMenuL);
+            $("#helpCommandWrapperplchld").after(accountsMenuL);
+            $("#accountsCommandWrapperL").after('<div id="accountsCommandWrapperS" class="header-common app-header rsp-hidden visiblesmcommands"><button id="accountsCommandSmall" type="button" class="header-common app-menu-button app-menu-button-right account-trigger" onclick="hideUserSettingsSmallMenuDropdown();openUserMenu(this)"><span class="header-common app-menu-button-label app-menu-button-right-menu-right-image ms-Icon ms-Icon--Contact ms-icon-font-size-52 rsp"></span><div class="app-menu-button-right-menu-right-user-image-wrapper"><img class="app-menu-button-right-menu-right-user-image userphoto"/></div></button></div>');
+            $('#hide-account-info').show();
+        }
+    }
+    
+    if (appConfiguration.environment && (missingHeaderElements > 0 || !appConfiguration.account || !appConfiguration.appLauncher))
+    {
+        $('#environmentdropdown').removeClass();
+        $('#environmentdropdown').addClass('header-common environment-dropdown header-hidden-element');
+        if (appConfiguration.account && appConfiguration.appLauncher)
+        {
+            switch (missingHeaderElements)
+            {
+                case 1:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-one");
+                    break;
+                case 2:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-two");
+                    break;
+                case 3:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-three");
+            }
+        }
+        else if (!appConfiguration.account && appConfiguration.appLauncher)
+        {
+            switch (missingHeaderElements)
+            {
+                case 0:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts");
+                    break;
+                case 1:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-one");
+                    break;
+                case 2:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-two");
+                    break;
+                case 3:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-three");
+            }
+        }
+        else if (appConfiguration.account && !appConfiguration.appLauncher)
+        {
+            switch (missingHeaderElements)
+            {
+                case 0:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher");
+                    break;
+                case 1:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-one");
+                    break;
+                case 2:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-two");
+                    break;
+                case 3:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-applauncher-three");
+            }
+        }
+        else if (!appConfiguration.account && !appConfiguration.appLauncher)
+        {
+            switch (missingHeaderElements)
+            {
+                case 0:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher");
+                    break;
+                case 1:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-one");
+                    break;
+                case 2:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-two");
+                    break;
+                case 3:
+                    $("#environmentcontainerl").find(".environment-dropdown").addClass("minus-accounts-applauncher-three");
+            }
+        }
+    }
+    else 
+    {
+        $('#environmentdropdown').removeClass();
+        $('#environmentdropdown').addClass('header-common environment-dropdown header-hidden-element');
+    }
+    
+    // Check if we have too few commands in the header that we don't need ellipsis button on small screens any more
+    if (missingHeaderElements == 3 || (missingHeaderElements == 2  && ((!appConfiguration.account && !appConfiguration.environment) || !appConfiguration.appLauncher))
+        || (missingHeaderElements == 1 && !appConfiguration.account && !appConfiguration.environment && !appConfiguration.appLauncher))
+    {
+        $("#ellipsisButtonWrapper").hide();
+        if (appConfiguration.appLauncher)
+        {
+            $("#applButtonSmallWrapper").removeClass("hiddensmcommands").removeClass("rsp-med-visible").addClass("rsp-med-small-visible");
+        }
+        
+        if (appConfiguration.notifications)
+        {
+            $("#notificationsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
+        }
+        
+        if (appConfiguration.settings)
+        {
+            $("#settingsCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
+        }
+        
+        if (appConfiguration.help)
+        {
+            $("#helpCommandWrapper").removeClass("hiddensmcommands").addClass("visiblecommand");
+        }
+    }
+    else
+    {
+        $("#ellipsisButtonWrapper").attr('style', 'display:table-cell');
+        if (appConfiguration.appLauncher)
+        {
+            $("#applButtonSmallWrapper").removeClass("rsp-med-small-visible").addClass("hiddensmcommands rsp-med-visible");
+        }
+        
+        if (appConfiguration.notifications)
+        {
+            $("#notificationsCommandWrapper").removeClass("visiblecommand").addClass("hiddensmcommands");
+        }
+        
+        if (appConfiguration.settings)
+        {
+            $("#settingsCommandWrapper").removeClass("visiblecommand").addClass("hiddensmcommands");
+        }
+        
+        if (appConfiguration.help)
+        {
+            $("#helpCommandWrapper").removeClass("visiblecommand").addClass("hiddensmcommands");
+        }
+    }
+}
+
+/**
+ * Check if we should maximize the browser window (IE only).
+ */
+function setMaximizeBrowserWindow() 
+{
+    if (appConfiguration.maximizeBrowserWindow)
+    {
+        window.moveTo(0, 0);
+        window.resizeTo(screen.availWidth, screen.availHeight);
+    }
+}
+
+/**
+ * Check if we should show theme selection option in the settings menu
+ */
+function showThemeSettings() 
+{
+    if (appConfiguration.themeSettings)
+    {
+        $('#themeCardWrapper').show();
+    }
+    else
+    {
+        $('#themeCardWrapper').hide();
+    }
+}
+
+/**
+ * Check if we should show phrase app settings.
+ */
+function showPhraseApp() 
+{
+    var hasPhraseAppSettings = false;
+    var phraseAppSettingsOn = false;
+    if (appConfiguration.phraseApp === true || appConfiguration.phraseApp === "true" || appConfiguration.phraseApp === "on" || appConfiguration.phraseApp === "off")
+    {
+        if (!$('script').filter(function () {
+            return ($(this).attr('src') == "./scripts/phraseapp.js");
+        }).length)
+        {
+            loadScript("./scripts/phraseapp.js", ((appConfiguration.phraseApp === "on") ? showPhraseAppSettingsCardAndSwitchOn : showPhraseAppSettingsCard), showPhraseAppHelperLoadFailedWarning);
+        }
+        else if (appConfiguration.phraseApp === "on")
+        {
+            if (!phraseSelector.phraseAppSelection)
+            {
+                changePhraseAppSelection();
+            }
+            
+            applyPhraseAppSettingsChanges();
+        }
+    }
+    else
+    {
+        $('#phraseAppCardWrapper').hide();
+        if (typeof phraseSelector !== 'undefined')
+        {
+            if (phraseSelector.phraseAppSelection)
+            {
+                changePhraseAppSelection();
+            }
+            
+            applyPhraseAppSettingsChanges();
+        }
+    }
+    
+}
+
+/**
+ * Sets the Header title.
+ */
+function setHeaderTitle() 
+{
+    if (appConfiguration.title)
+    {
+        $("#appTitle").find(".app-menu-brand").html(appConfiguration.title);
+        $("#appTitlePrint").find("p").html(appConfiguration.title);
+    }
+    
+    $("#appTitle").show();
+}
+
+/**
+ * Check if we should show the button which opens the feedback form .
+ */
+function showFeeedbackButton() 
+{
+    if (appConfiguration.feedback && appConfiguration.feedbackUrlAbsolutePath)
+    {
+        // We add the keydown listener only when feedback is enabled in order to avoid unnecessary triggers and improve performance
+        // On press escape close feedback
+        $(document).on('keydown', function(e)
+        {
+            if(e.keyCode === 27)  // ESC
+            {
+                closeFeedbackContent();
+            }
+        });
+        
+        $("#feedbackInserted").show();
+    }
+    else
+    {
+        $("#feedbackInserted").hide();
+    }
 }
 
 /**

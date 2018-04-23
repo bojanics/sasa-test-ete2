@@ -1,4 +1,4 @@
-﻿var amockupFormDataObj = {
+﻿var adataObj = {
    "a": 33,
    "b": 33,
    "info1": "val1",

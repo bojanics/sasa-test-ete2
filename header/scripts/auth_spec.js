@@ -83,9 +83,12 @@
         } else {
            if (!isIfrm) {
                writeADALInitTime();
+               initAfterADALSetup();
            }
         }
-    }    
+    } else {
+        initAfterADALSetup();
+    }        
 })();
 
 function isSignedInUser () {

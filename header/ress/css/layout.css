@@ -102,6 +102,11 @@ body {
 	border-bottom: 1px solid #005aa1;
 }
 
+.header-wrapper.toggle-menu-opened {
+    border-bottom-color: #f4f4f4 !important;
+    box-shadow: none;
+}
+
 .header-common {
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -132,6 +137,10 @@ body {
 
 .header-left > .app-header {
     padding-right: 4px;
+}
+
+.toggle-menu {
+    padding-right: 0px !important;
 }
 
 .main-logo {
@@ -685,6 +694,10 @@ body {
     .rsp-med-small-visible {
         display: none !important;
     }
+}
+
+.web-hidden {
+    display: none;
 }
 
 .visiblecommand {
@@ -1608,6 +1621,10 @@ body {
     overflow-y: auto;
     height: 100%;
     display: none;
+}
+
+.content-wrapper.toggle-menu-opened {
+    background-color: #f4f4f4 !important;
 }
 
 .content-wrapper.shrink {

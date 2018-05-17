@@ -215,7 +215,8 @@ var themeSelector =
     currentTheme: 'cosmo',
     selectedTheme: 'cosmo',
     overridden: false,
-    changedTheme: ''
+    changedTheme: '',
+    themeInitialized: false
 };
 
 function setupTheme(theme) {
@@ -236,8 +237,6 @@ function setupStyle(overrideBrandTheme)
     bootswatchStyleDE.id = "bodystyle";
     bootswatchStyleDE.rel = "stylesheet";
     
-    // We should show the form after new styles has been loaded to prevent FOUC
-    bootswatchStyleDE.onload = showContentOnStyleApply();
     if (!overrideBrandTheme)
     {
         if (themesMap.hasOwnProperty(appConfiguration.bootswatchtheme))
@@ -255,9 +254,10 @@ function setupStyle(overrideBrandTheme)
                 themeSelector.currentTheme = appConfiguration.bootswatchtheme;
                 themeSelector.selectedTheme = themeSelector.currentTheme;
             }
-        }  
+        }
     }
     
+    themeSelector.themeInitialized = true;
     setupThemeMenu();
     
     bootswatchStyleDE.href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
@@ -269,6 +269,11 @@ function setupStyle(overrideBrandTheme)
     headerStyleDE.rel = "stylesheet";
     headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
     layoutStyleNode.parentNode.insertBefore(headerStyleDE, layoutStyleNode.nextSibling);
+}
+
+function isThemeSettingsLoaded()
+{
+    return themeSelector.themeInitialized;
 }
 
 /**
@@ -365,6 +370,35 @@ function applyTheme()
 }
 
 /**
+ * Update bootswatch theme.
+ */
+function updateBootswatchthemeTheme(bootswatchTheme)
+{
+    selectTheme(bootswatchTheme);
+    applyTheme();
+}
+
+/**
+ * Check existance of Current theme in new ThemesObj and if doesn't exist, set Cosmo theme or set first theme in new ThemesObj.
+ */
+function checkExistenceOfCurrentTheme(newThemesObj)
+{
+    if (!newThemesObj.hasOwnProperty(themeSelector.currentTheme))
+    {
+        if (newThemesObj.hasOwnProperty("cosmo"))
+        {
+            appConfiguration.bootswatchtheme = "cosmo";
+        }
+        else 
+        {
+            appConfiguration.bootswatchtheme = newThemesObj[Object.keys(newThemesObj)[0]].name.toLowerCase();
+        }
+        
+        updateBootswatchthemeTheme(appConfiguration.bootswatchtheme);
+    }      
+}
+
+/**
  * Clears theme selection
  */
 function resetTheme()
@@ -376,22 +410,22 @@ function resetTheme()
 /**
  * Shows content when bootstrap or bootswatch style is loaded and applied to the content
  */
-function showContentOnStyleApply()
+function showContentOnStyleApply(callback)
 {
     // We added btn class to this element and it will have text-align
     // set to center once bootswatch has been rendered
     if ($("#renderIndicator").css("text-align") !== "right" && $("#headerRenderIndicator").css("text-align") === "right")
     {
-        $('.header-border').show();
-        $('.content-wrapper').show();
-        $('.overlay').hide();
+        hideSpinner();
         
-        // Embeds a map (for example Bing Map) 
-        embedMap();
+        if (callback)
+        {
+            callback();
+        }
     }
     else
     {
-        setTimeout(showContentOnStyleApply, 50);
+        setTimeout(function() {showContentOnStyleApply(callback)}, 50);
     }
 }
 

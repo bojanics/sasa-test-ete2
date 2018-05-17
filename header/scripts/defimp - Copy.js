@@ -24,16 +24,6 @@ var calculationResultSet = false;
  */
 var defaultFormObj = {"type":"form","tags":[],"access":[{"roles":["5a05516e35677f0001aeef6f","5a05516e35677f0001aeef70","5a05516e35677f0001aeef71"],"type":"read_all"}],"submissionAccess":[],"owner":"594fd15f7684cc005c2280ae","components":[{"hideLabel":false,"clearOnHide":false,"components":[{"hideLabel":false,"clearOnHide":false,"columns":[{"pull":0,"push":0,"offset":0,"width":6,"components":[{"hideLabel":false,"lockKey":true,"properties":{"formhelp":"This example shows how to add two numbers","fieldhelp":"The first number to add","elearninglink":"https://en.wikipedia.org/wiki/Operation_(mathematics)","elearningimagelink":"http://www.sparklebox.co.uk/wp-content/uploads/1-1231.jpg","processimagelink":"https://i.stack.imgur.com/MjNuE.gif","processlink":"https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers"},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"number","validate":{"required":false,"min":0,"max":9999,"step":"any","integer":"","multiple":"","custom":""},"clearOnHide":true,"hidden":false,"persistent":true,"protected":false,"defaultValue":"","suffix":"","prefix":"","placeholder":"","key":"a","label":"Number 1","inputType":"number","tableView":true,"input":true,"labelPosition":"top"}]},{"pull":0,"push":0,"offset":0,"width":6,"components":[{"hideLabel":false,"lockKey":true,"properties":{"elearninglink":"https://en.wikipedia.org/wiki/Operation_(mathematics)","elearningimagelink":"http://www.sparklebox.co.uk/wp-content/uploads/1-1231.jpg","fieldhelp":"The second number to add","formhelp":"This example shows how to add two numbers","processimagelink":"https://i.stack.imgur.com/MjNuE.gif","processlink":"https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers"},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"number","validate":{"required":false,"min":0,"max":9999,"step":"any","integer":"","multiple":"","custom":""},"clearOnHide":true,"hidden":false,"persistent":true,"protected":false,"defaultValue":"","suffix":"","prefix":"","placeholder":"","key":"b","label":"Number 2","inputType":"number","tableView":true,"input":true,"labelPosition":"top"}]}],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"columns","key":"columns","tableView":false,"input":false},{"hideLabel":false,"custom":"function addtwonumbers(url,formdata){\n   executeAjaxRequestWithAdalLogic(ADAL.config.clientId,addtwonumbersnoadal,url,formdata);\n}\n\nfunction addtwonumbersnoadal(token,url,formdata) {\n   var settings = {\n     \"crossDomain\": true,     \n     \"url\": url,\n     \"timeout\":30000,\n     \"method\": \"POST\",\n     \"headers\": {\n       \"content-type\": \"application/json\",\n       \"authorization\": \"Bearer \"+token,\n       \"cache-control\": \"no-cache\"\n     },\n     \"data\": JSON.stringify(formdata),\n     \"dataType\": 'json',\n     \"contentType\": 'application/json'                          \n   }\n\n   $.ajax(settings).done(function (data,textStatus,request) {\n      document.getElementById('mymessage').innerHTML='Calculation successfully performed!';\n      //console.log('data='+JSON.stringify(data));\n      //console.log('formdata='+JSON.stringify(formdata));\n      var datamerged = $.extend(formdata.data,data.data);\n      var datamergedstring = JSON.stringify(datamerged);\n      //console.log('datamerged='+datamergedstring);\n      var initjson = JSON.parse('{\"data\":'+datamergedstring+'}');\n      \n      form.submission = initjson;      \n   }).fail(function (err, textStatus, errorThrown) {\n      document.getElementById('mymessage').innerHTML='Failed to calculate two numbers!';\n      console.log(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n      alert(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n   });\n}\n\naddtwonumbers(form.submission.data['API_add_url'],{\"data\":form.submission.data});","input":true,"label":"Add two numbers","tableView":false,"key":"addtwonumbers","size":"md","leftIcon":"","rightIcon":"","block":false,"action":"custom","disableOnInvalid":false,"theme":"primary","type":"button","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""},"event":"add2numbers","lockKey":true},{"hideLabel":false,"input":true,"tableView":true,"inputType":"number","label":"Result","key":"c","placeholder":"","prefix":"","suffix":"","defaultValue":"","protected":false,"persistent":true,"hidden":false,"clearOnHide":true,"validate":{"custom":"","multiple":"","integer":"","step":"any","max":"","min":"","required":false},"type":"number","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""},"lockKey":true,"disabled":true,"labelPosition":"top"},{"hideLabel":false,"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"button","theme":"success","disableOnInvalid":false,"action":"submit","block":false,"rightIcon":"","leftIcon":"","size":"md","key":"submit","tableView":false,"label":"Do all the crazy things in green","input":true}],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Complete Test","input":false,"key":"panel"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Encryption","input":false,"key":"panel27"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel24","input":false,"title":"All form.io Controls","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Current User","input":false,"key":"panel21"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Branding","input":false,"key":"panel20"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Language","input":false,"key":"panel19"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Header Features","input":false,"key":"panel18"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel25","input":false,"title":"CDN Content","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"CDN Token","input":false,"key":"panel2"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Event Grid","input":false,"key":"panel3"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Service Bus","input":false,"key":"panel23"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Mail","input":false,"key":"panel4"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"PDF","input":false,"key":"panel5"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"SMS","input":false,"key":"panel6"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"WhatsApp","input":false,"key":"panel7"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Slack","input":false,"key":"panel9"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Teams","input":false,"key":"panel10"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Excel Calculation","input":false,"key":"panel8"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"WebBase Cache","input":false,"key":"panel11"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"SQL Server","input":false,"key":"panel12"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Preview","input":false,"key":"panel15"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"DokStore","input":false,"key":"panel14"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"CosmosDB","input":false,"key":"panel13"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Polizze erzeugen","input":false,"key":"panel16"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Schaden erzeugen","input":false,"key":"panel17"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel26","input":false,"title":"Dokument ablegen","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"In context translation","input":false,"key":"panel22"}],"created":"2017-11-12T12:49:28.153Z","revisions":"","_vid":0,"_id":"5a08435835677f0001af052d","machineName":"nezcjzowfnfwzny:end2end","modified":"2018-02-02T02:51:31.574Z","title":"Formviewer for MS Azure and Office 365","display":"form","name":"end2end","path":"end2end","project":"5a05516e35677f0001aeef6e","properties":{"formtitle":"Tog Formviewer"}};
 
-/**
- * Indicates if form is destroyed (or initially non-existing)
- */
-var formDestroyed = true;
-
-/**
- * The response from the server when doing Loading or Event actions. It has the same structure as TogFormViewer.getAppInfo() object.
- */
-var appInfoObjFromServer = null;
-
 function resetFormData()
 {
     appFormDataObj = {};
@@ -51,7 +41,6 @@ function resetAppConfiguration()
         themes: "",
         userlangs: "",
         timezones: "",
-        onlinemode: false,
         display: "form",
         formtitle: "Tog Formviewer",
         formhelp: "",
@@ -111,59 +100,40 @@ function resetAppConfiguration()
         toggleMenu: false,
         triggerResizeChange: false,
         defaultLanguage: "",
-        defaultTimeZone: "",
-        customScript: ""
+        defaultTimeZone: ""
     };
-    appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
 }
 
-function initAfterADALSetup()
-{
-    // do not execute this if the context is an iFrame - this is used for ADAL only logic
-    if (isIframe()) {
-        return;
-    }
-    // set query strings into appURLQueryParameters
-    appURLQueryParameters = parse_query_string(window.location.search.substring(1));
-    // set query strings into appFormDataObj
-    appFormDataObj = parse_query_string(window.location.search.substring(1));
-    
-    beginConfigurationProcess();
-}
-
-function beginConfigurationProcess() {
-    resetAppConfiguration();
-    if (typeof appObj === "undefined" || appObj==null) {
+(
+    function ()
+    {
+        resetAppConfiguration();
+        // set query strings into appURLQueryParameters
+        appURLQueryParameters = parse_query_string(window.location.search.substring(1));
+        // set query strings into appFormDataObj
+        appFormDataObj = parse_query_string(window.location.search.substring(1));
         var appDef = appConfiguration.appDefPath;
-    
-        var appDefFromServer = checkForResolvedPropertyFromTheServer("appDefPath");
-        if (appDefFromServer!=null) {
-            appDef = appConfiguration.appDefPath = appDefFromServer;
-        } else {
-            // Check if we have an URI paramater which specifies
-            // a path to the app configuration. If so we'll use it.
-            var appRegex = new RegExp("[?&]app(=([^&#]*)|&|#|$)");
-            var appDefParam = appRegex.exec(window.location.href);
-            if (appDefParam && appDefParam[2])
+        
+        // Check if we have an URI paramater which specifies
+        // a path to the app configuration. If so we'll use it.
+        var appRegex = new RegExp("[?&]app(=([^&#]*)|&|#|$)");
+        var appDefParam = appRegex.exec(window.location.href);
+        if (appDefParam && appDefParam[2])
+        {
+            var appUriParam = decodeURIComponent(appDefParam[2].replace(/\+/g, " "));
+            if (appUriParam === "/")
             {
-                var appUriParam = decodeURIComponent(appDefParam[2].replace(/\+/g, " "));
-                if (appUriParam === "/")
-                {
-                    appDef = appConfiguration.appDefPath = "../appcnfs/app.json.js";
-                }
-                else
-                {
-                    appDef = appConfiguration.appDefPath = "../appcnfs/" + appUriParam + "/app.json.js";
-                }
-            }        
+                appDef = appConfiguration.appDefPath = "../appcnfs/app.json.js";
+            }
+            else
+            {
+                appDef = appConfiguration.appDefPath = "../appcnfs/" + appUriParam + "/app.json.js";
+            }
         }
         
-        loadScript(appDef, checkAppConfig);
+        loadScript(appDef, checkAppCofig);
     }
-    else {
-        checkAppConfig();
-    }    
-}
+)();
 
 /**
  * Loads script from specified URL by creating a new script element and appending it to the head part of the html.
@@ -201,26 +171,18 @@ function checkForUrlParameter(parameterName)
 }
 
 /**
- * Checks if there is a resolved property from the server
- * @param {string} parameterName  parameter name whose existence should be checked
- */
-function checkForResolvedPropertyFromTheServer(parameterName)
-{
-    var resolvedPropertiesObjFromServer = appInfoObjFromServer!=null ? appInfoObjFromServer.resolvedProperties : null;
-    return resolvedPropertiesObjFromServer && resolvedPropertiesObjFromServer.hasOwnProperty(parameterName) && resolvedPropertiesObjFromServer[parameterName]!==null ? resolvedPropertiesObjFromServer[parameterName] : null;
-}
-
-/**
  * Checks if app config is already defined. If so loads other definitions.
  * Otherwise looks for the app configuration on another hardcoded location.
  */
-function checkAppConfig()
+function checkAppCofig()
 {
+    var appDefinition = document.getElementById("appdef");
+    
     // Check if appObj is defined. If not try with a new hardcoded value
     if (typeof appObj === "undefined")
     {
         appConfiguration.appDefPath = "./defs/app.json.js";
-        loadScript(appConfiguration.appDefPath, loadFormDefinition);
+        loadScript("./defs/app.json.js", loadFormDefinition);
     }
     else
     {
@@ -229,95 +191,49 @@ function checkAppConfig()
 }
 
 /**
- * Generalized code for handling basic configuration parameters (form, brand, customization and header).
- */
-function getURIParamForConfiguration(formAndAppObjPropertyName,paramName,appConfigurationParamName,paramFolderName,paramFileName,updateConfiguration) {
-    var paramDef = null;
-    
-    // Check if we have an URI paramater which specifies
-    // a path to the brand definition. If so we'll use it.
-    var paramRegex = new RegExp("[?&]"+paramName+"(=([^&#]*)|&|#|$)")
-    var paramDefParam = paramRegex.exec(window.location.href);
-    
-    if (paramDefParam && paramDefParam[2])
-    {
-        var paramUriParam = decodeURIComponent(paramDefParam[2].replace(/\+/g, " "));
-        if (paramUriParam === "/")
-        {
-            paramDef = "../"+paramFolderName+"/"+paramFileName+".json.js";
-        }
-        else if ((paramUriParam.startsWith && (paramUriParam.startsWith("http://") || paramUriParam.startsWith("https://")))
-            || (paramUriParam.indexOf && (paramUriParam.indexOf("http://") === 0 || paramUriParam.indexOf("https://") === 0)))
-        {
-            paramDef = paramUriParam;
-        }
-        
-        else
-        {
-            paramDef = "../"+paramFolderName+"/" + paramUriParam + "/"+paramFileName+".json.js";
-        }
-    }
-    if (paramName!='form' && paramDef==null && typeof formObj !== 'undefined' && formObj != null && formObj.hasOwnProperty("properties"))
-    {
-        // We have a form defition loaded so we will use it to get paths for other definition files
-        // If we have brand definition already defined in query parameter we will use it.
-        // Otherwise we use the value from the form definition
-        if (formObj.properties[formAndAppObjPropertyName])
-        {
-            paramDef = formObj.properties[formAndAppObjPropertyName];
-        }
-    }
-    if (paramDef==null && typeof appObj !== 'undefined')
-    {
-        // We have found app.json.js so we will use it to load other definitions
-        // If we have definition already defined in query parameter or in form definition
-        // we will use it. Otherwise we use the value from the app.json.js
-        if (appObj[formAndAppObjPropertyName])
-        {
-            paramDef = appObj[formAndAppObjPropertyName];
-        }
-    }
-    
-    if (updateConfiguration && paramDef!=null) {
-        appConfiguration[appConfigurationParamName] = paramDef;
-    }        
-    
-    return paramDef;
-}
-
-/**
  * Loads form definition, then loads brand, customization and header definitions
  * and sets up the app once everything is loaded including the document itself.
  */
 function loadFormDefinition()
 {
-    console.log("Loading form definition");
-    if (appInfoObjFromServer!=null && appInfoObjFromServer.formObj!=null) {
-        formObj = appInfoObjFromServer.formObj;
-    }
-    var formDefFromServer = checkForResolvedPropertyFromTheServer("formDefPath");
-    if (formDefFromServer!=null) {
-        appConfiguration.formDefPath = formDefFromServer;
-    }
-    if (typeof formObj === "undefined" || formObj==null) {
-        var formDef = appConfiguration.formDefPath;
-        if (formDefFromServer==null) {
-            formDef = appConfiguration.formDefPath;
-            // Resolve form parameter, check if we have an URI paramater which specifies
-            // a path to the form definition. If so we'll use it. Otherwise, check appObj.
-            var formDefTemp = getURIParamForConfiguration("formdefinition","form","formDefPath","forms","form",true);
-            if (formDefTemp!=null) {
-                formDef = formDefTemp;
-            }
-        } else {
-            formDef = formDefFromServer;
+    var formDef = appConfiguration.formDefPath;
+    
+    // Check if we have an URI paramater which specifies
+    // a path to the form definition. If so we'll use it.
+    var formRegex = new RegExp("[?&]form(=([^&#]*)|&|#|$)");
+    var formDefParam = formRegex.exec(window.location.href);
+    var formSet = false;
+    if (formDefParam && formDefParam[2])
+    {
+        var formUriParam = decodeURIComponent(formDefParam[2].replace(/\+/g, " "));
+        if (formUriParam === "/")
+        {
+            formDef = appConfiguration.formDefPath = "../forms/form.json.js";
         }
-        appConfiguration.formDefPath = formDef;        
+        else if ((formUriParam.startsWith && (formUriParam.startsWith("http://") || formUriParam.startsWith("https://")))
+            || (formUriParam.indexOf && (formUriParam.indexOf("http://") === 0 || formUriParam.indexOf("https://") === 0)))
+        {
+            formDef = appConfiguration.formDefPath = formUriParam;
+        }
+        else
+        {
+            formDef = appConfiguration.formDefPath = "../forms/" + formUriParam + "/form.json.js";
+        }
         
-        loadScript(formDef, formObjLoaded, loadDefaultForm);
-    } else {
-        formObjLoaded();
+        formSet = true;
     }
+    
+    if (typeof appObj !== 'undefined')
+    {
+        // We have found app.json.js so we will use it to load other definitions
+        // If we have form definition already defined in query parameter we will use it
+        if (!formSet && appObj["formdefinition"])
+        {
+            formDef = appConfiguration.formDefPath = appObj["formdefinition"];
+        }
+    }
+    
+    loadScript(formDef, formObjLoaded, loadDefaultForm);
 }
 
 /**
@@ -336,10 +252,7 @@ function formObjLoaded()
 function setupFormConfiguration()
 {
     // Set up form display mode
-    var formDisplay = checkForResolvedPropertyFromTheServer("display");
-    if (!formDisplay) {
-        formDisplay = checkForUrlParameter("display");
-    }
+    var formDisplay = checkForUrlParameter("display");
     if (formDisplay)
     {
         appConfiguration.display = formDisplay;
@@ -356,10 +269,7 @@ function setupFormConfiguration()
     }
     
     // Set up the header title
-    var titleUrl = checkForResolvedPropertyFromTheServer("title");
-    if (!titleUrl) {
-        titleUrl = checkForUrlParameter("title");
-    }    
+    var titleUrl = checkForUrlParameter("title");
     if (titleUrl)
     {
         appConfiguration.title = titleUrl;
@@ -390,9 +300,6 @@ function setupFormConfiguration()
     
     // Set up default e-learning image in help menu (can be overridden with component "elearninglink" property)
     resolveStringOrBooleanParameter(false,"elearninglink","elearninglink",formObj,null,null,false,appConfiguration.elearninglink); 
-    
-    // If the customScript definition path has been specified
-    resolveStringOrBooleanParameter(false,"customScript","customScript",formObj,appObj,null,true,appConfiguration.customScript);    
 }
 
 /**
@@ -419,96 +326,145 @@ function setDefaultForm()
  */
 function loadConfigurations()
 {
-    console.log("Loading configurations");
     var brandDef;
     var customizationDef;
     var headerConfig;
-
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validBrandObj==null) && (typeof brandObj === "undefined" || brandObj==null)) {
-        brandDef = checkForResolvedPropertyFromTheServer("brandDefPath");
-        if (brandDef!=null) {
-            appConfiguration.brandDefPath = brandDef;
-        }
-        else {
-            // Check if we have an URI paramater which specifies
-            // a path to the brand definition. If so we'll use it.
-            // Otherwise, if we have a form defition loaded so we will use it to get paths for other definition files
-            // If not found in form definition, we will search for it in app.json.js
-            brandDef = getURIParamForConfiguration("branddefinition","brand","brandDefPath","brands","brand",true);
-        }
-        if (brandDef)
-        {
-            loadScript(brandDef, brandObjLoaded, loadDefaultBrand);
-        }
-        else 
-        {
-            loadDefaultBrand();
-        }
-    } 
-    else 
-    {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validBrandObj!=null) {
-            brandObj = appInfoObjFromServer.validBrandObj;
-        }
-        brandObjLoaded();
-    }
     
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validCustomizationObj==null) && typeof customizationObj === "undefined" || customizationObj==null) {
-        customizationDef = checkForResolvedPropertyFromTheServer("customizationDefPath");
-        if (customizationDef!=null) {
-            appConfiguration.customizationDefPath = customizationDef;
-        }
-        else {
-            // Check if we have an URI paramater which specifies
-            // a path to the customization definition. If so we'll use it.
-            // Otherwise, if we have a form defition loaded so we will use it to get paths for other definition files
-            // If not found in form definition, we will search for it in app.json.js
-            customizationDef = getURIParamForConfiguration("customizationdefinition","cstmz","customizationDefPath","cstmz","customization",true);
-        }
-        if (customizationDef)
+    // Check if we have an URI paramater which specifies
+    // a path to the brand definition. If so we'll use it.
+    var brandRegex = new RegExp("[?&]brand(=([^&#]*)|&|#|$)")
+    var brandDefParam = brandRegex.exec(window.location.href);
+    var brandSet = false;
+    if (brandDefParam && brandDefParam[2])
+    {
+        var brandUriParam = decodeURIComponent(brandDefParam[2].replace(/\+/g, " "));
+        if (brandUriParam === "/")
         {
-            loadScript(customizationDef, customizationObjLoaded, loadDefaultCustomization);
+            brandDef = appConfiguration.brandDefPath = "../brands/brand.json.js";
         }
         else
         {
-            loadDefaultCustomization();
+            brandDef = appConfiguration.brandDefPath = "../brands/" + brandUriParam + "/brand.json.js";
         }
+        
+        brandSet = true;
+    }
+    
+    // Check if we have an URI paramater which specifies
+    // a path to the customization definition. If so we'll use it.
+    var cstmzRegex = new RegExp("[?&]cstmz(=([^&#]*)|&|#|$)")
+    var cstmzDefParam = cstmzRegex.exec(window.location.href);
+    var cstmzSet = false;
+    if (cstmzDefParam && cstmzDefParam[2])
+    {
+        var cstmzUriParam = decodeURIComponent(cstmzDefParam[2].replace(/\+/g, " "));
+        if (cstmzUriParam === "/")
+        {
+            customizationDef = appConfiguration.customizationDefPath = "../cstmzs/customization.json.js";
+        }
+        else
+        {
+            customizationDef = appConfiguration.customizationDefPath = "../cstmzs/" + cstmzUriParam + "/customization.json.js";
+        }
+        
+        cstmzSet = true;
+    }
+            
+    // Check if we have an URI paramater which specifies
+    // a path to the header configuration. If so we'll use it.
+    var hdrcnfRegex = new RegExp("[?&]hdrcnf(=([^&#]*)|&|#|$)")
+    var hdrcnfDefParam = hdrcnfRegex.exec(window.location.href);
+    var hdrcnfSet = false;
+    if (hdrcnfDefParam && hdrcnfDefParam[2])
+    {
+        var hdrcnfUriParam = decodeURIComponent(hdrcnfDefParam[2].replace(/\+/g, " "));
+        if (hdrcnfUriParam === "/")
+        {
+            headerConfig = appConfiguration.headerConfPath = "../hdrcnfs/header.json.js";
+        }
+        else
+        {
+            headerConfig = appConfiguration.headerConfPath = "../hdrcnfs/" + hdrcnfUriParam + "/header.json.js";
+        }
+        
+        hdrcnfSet = true;
+    }
+    
+    if (typeof formObj !== 'undefined' && formObj != null && formObj.hasOwnProperty("properties"))
+    {
+        // We have a form defition loaded so we will use it to get paths for other definition files
+        // If we have brand definition already defined in query parameter we will use it
+        if (!brandSet && formObj.properties["branddefinition"])
+        {
+            brandDef = appConfiguration.brandDefPath = formObj.properties["branddefinition"];
+            brandSet = true;
+        }
+        
+        // If we have customization definition already defined in query parameter we will use it
+        if (!cstmzSet && formObj.properties["customizationdefinition"])
+        {
+            customizationDef = appConfiguration.customizationDefPath = formObj.properties["customizationdefinition"];
+            cstmzSet = true;
+        }
+        
+        // If we have header definition already defined in query parameter we will use it
+        if (!hdrcnfSet && formObj.properties["headerconfiguration"])
+        {
+            headerConfig = appConfiguration.headerConfPath = formObj.properties["headerconfiguration"];
+            hdrcnfSet = true;
+        }
+    }
+    
+    if (typeof appObj !== 'undefined')
+    {
+        // We have found app.json.js so we will use it to load other definitions
+        // If we have brand definition already defined in query parameter or in form definition
+        // we will use it. Otherwise we use the value from the app.json.js
+        if (!brandSet && appObj["branddefinition"])
+        {
+            brandDef = appConfiguration.brandDefPath = appObj["branddefinition"];
+        }
+        
+        // If we have customization definition already defined in query parameter or in form
+        // definition we will use it. Otherwise we use the value from the app.json.js
+        if (!cstmzSet && appObj["customizationdefinition"])
+        {
+            customizationDef = appConfiguration.customizationDefPath = appObj["customizationdefinition"];
+        }
+        
+        // If we have header configuration already defined in query parameter or in form definition
+        // we will use it. Otherwise we use the value from the app.json.js
+        if (!hdrcnfSet && appObj["headerconfiguration"])
+        {
+            headerConfig = appConfiguration.headerConfPath = appObj["headerconfiguration"];
+        }
+    }
+    
+    if (brandDef)
+    {
+        loadScript(brandDef, brandObjLoaded, loadDefaultBrand);
+    }
+    else 
+    {
+        loadDefaultBrand();
+    }
+    
+    if (customizationDef)
+    {
+        loadScript(customizationDef, customizationObjLoaded, loadDefaultCustomization);
     }
     else
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validCustomizationObj!=null) {
-            customizationObj = appInfoObjFromServer.validCustomizationObj;
-        }
-        customizationObjLoaded();
+        loadDefaultCustomization();
     }
-
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validHeaderObj==null) && typeof headerObj === "undefined" || headerObj==null) {
-        headerConfig = checkForResolvedPropertyFromTheServer("headerConfPath");
-        if (headerConfig!=null) {
-            appConfiguration.headerConfPath = headerConfig;
-        }
-        else {
-            // Check if we have an URI paramater which specifies
-            // a path to the header definition. If so we'll use it.
-            // Otherwise, if we have a form defition loaded so we will use it to get paths for other definition files
-            // If not found in form definition, we will search for it in app.json.js
-            headerConfig = getURIParamForConfiguration("headerconfiguration","hdrcnf","headerConfPath","hdrcnfs","header",true);
-        }
-        if (headerConfig)
-        {
-            loadScript(headerConfig, headerObjLoaded, loadDefaultHeader);
-        }
-        else
-        {
-            loadDefaultHeader();
-        }
-    }
-    else 
+    
+    if (headerConfig)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validHeaderObj!=null) {
-            headerObj = appInfoObjFromServer.validHeaderObj;
-        }
-        headerObjLoaded();
+        loadScript(headerConfig, headerObjLoaded, loadDefaultHeader);
+    }
+    else
+    {
+        loadDefaultHeader();
     }
 }
 
@@ -519,7 +475,6 @@ function loadConfigurations()
 function brandObjLoaded()
 {
     setupBrandConfiguration();
-    console.log("CFAS brand");
     checkForAppSetup();
 }
 
@@ -557,7 +512,6 @@ function loadDefaultBrand()
 function customizationObjLoaded()
 {
     setupCustomizationConfiguration();
-    console.log("CFAS cust");
     checkForAppSetup();
 }
 
@@ -589,7 +543,6 @@ function loadDefaultCustomization()
 function headerObjLoaded()
 {
     setupHeaderConfiguration();
-    console.log("CFAS hdr");
     checkForAppSetup();
 }
 
@@ -608,16 +561,12 @@ function setupHeaderConfiguration()
     resolveStringOrBooleanParameter(true,"mailbox photo","mailboxPhoto",formObj,headerObj,null,true,appConfiguration.mailboxPhoto); 
     
     // Set up the form width percent
-    var formWidthPercentUrlOrFromServer = checkForResolvedPropertyFromTheServer("formWidthPercent");
-    
-    if (formWidthPercentUrlOrFromServer==null) {
-        formWidthPercentUrlOrFromServer = checkForUrlParameter("form width percent");
-    }
-    if (formWidthPercentUrlOrFromServer)
+    var formWidthPercentUrl = checkForUrlParameter("form width percent");
+    if (formWidthPercentUrl)
     {
-        if (!isNaN(formWidthPercentUrlOrFromServer) && 0.1 < formWidthPercentUrlOrFromServer && formWidthPercentUrlOrFromServer <= 100)
+        if (!isNaN(formWidthPercentUrl) && 0.1 < formWidthPercentUrl && formWidthPercentUrl <= 100)
         {
-            appConfiguration.formWidthPercent = formWidthPercentUrlOrFromServer;
+            appConfiguration.formWidthPercent = formWidthPercentUrl;
         }
     }
     else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("form width percent"))
@@ -669,13 +618,8 @@ function setupHeaderConfiguration()
     // Check if we should show the PhraseApp settings
     var hasPhraseAppSettings = false;
     var phraseAppSettingsOn = false;
-    var hasPhraseAppSettingsFromServer = checkForResolvedPropertyFromTheServer("phraseApp");
     var hasPhraseAppSettingsUrl = checkForUrlParameter("phraseapp");
-    if (hasPhraseAppSettingsFromServer === "false" || hasPhraseAppSettingsFromServer === "true" || hasPhraseAppSettingsFromServer === "on" || hasPhraseAppSettingsFromServer === "off")
-    {
-        appConfiguration.phraseApp = hasPhraseAppSettingsFromServer;
-    }
-    else if (hasPhraseAppSettingsUrl === "false" || hasPhraseAppSettingsUrl === "true" || hasPhraseAppSettingsUrl === "on" || hasPhraseAppSettingsUrl === "off")
+    if (hasPhraseAppSettingsUrl === "false" || hasPhraseAppSettingsUrl === "true" || hasPhraseAppSettingsUrl === "on" || hasPhraseAppSettingsUrl === "off")
     {
         appConfiguration.phraseApp = hasPhraseAppSettingsUrl;
     }
@@ -703,24 +647,18 @@ function setupHeaderConfiguration()
     
     // Make sure that we have a home parameter and if there is an additional parameter(relativepath) create complete feedback url
     resolveStringOrBooleanParameter(false,"Appl-Home","home",null,null,null,true,appConfiguration.home); 
+    var hasFeedbackUrlParam = checkForUrlParameter('feedbackurl');
     resolveStringOrBooleanParameter(false,"feedbackurl","feedbackurl",formObj,headerObj,null,true,appConfiguration.feedbackurl); 
-
-    var feedbackUrlAbsolutePath = checkForResolvedPropertyFromTheServer("feedbackUrlAbsolutePath");
-    if (feedbackUrlAbsolutePath!=null) 
+    
+    
+    if (appConfiguration.home && appConfiguration.feedbackurl) 
     {
-        appConfiguration.feedbackUrlAbsolutePath = feedbackUrlAbsolutePath;
-    } 
-    else 
-    {
-        if (appConfiguration.home && appConfiguration.feedbackurl) 
-        {
-            appConfiguration.feedbackUrlAbsolutePath = appConfiguration.home + "/" + appConfiguration.feedbackurl; 
-        }
-        else if (appConfiguration.home && !appConfiguration.feedbackurl)
-        {
-            appConfiguration.feedbackUrlAbsolutePath = appConfiguration.home + "/Feedback";
-        }    
+        appConfiguration.feedbackUrlAbsolutePath = appConfiguration.home + "/" + appConfiguration.feedbackurl; 
     }
+    else if (appConfiguration.home && !appConfiguration.feedbackurl)
+    {
+        appConfiguration.feedbackUrlAbsolutePath = appConfiguration.home + "/Feedback";
+    }    
 
     // Check if we should use outlook mailbox settings for language and time zone
     resolveStringOrBooleanParameter(true,"use outlook settings","useOutlookSettings",formObj,headerObj,null,true,appConfiguration.useOutlookSettings); 
@@ -790,15 +728,12 @@ function setupHeaderConfiguration()
     resolveStringOrBooleanParameter(false, "map center pushpin description","mapCenterPushpinDescription",formObj,headerObj,null,true,appConfiguration.mapCenterPushpinDescription);
     
     // Set up map center latitude
-    var mapCenterLatitudeUrlOrFromServer = checkForResolvedPropertyFromTheServer("mapCenterLatitude");    
-    if (mapCenterLatitudeUrlOrFromServer==null) {
-        mapCenterLatitudeUrlOrFromServer = checkForUrlParameter("map center latitude");
-    }
-    if (mapCenterLatitudeUrlOrFromServer)
+    var mapCenterLatitudeUrl = checkForUrlParameter("map center latitude");
+    if (mapCenterLatitudeUrl)
     {
-        if (!isNaN(mapCenterLatitudeUrlOrFromServer))
+        if (!isNaN(mapCenterLatitudeUrl))
         {
-            appConfiguration.mapCenterLatitude = mapCenterLatitudeUrlOrFromServer;
+            appConfiguration.mapCenterLatitude = mapCenterLatitudeUrl;
         }
     }
     else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties")
@@ -818,15 +753,12 @@ function setupHeaderConfiguration()
     }
     
     // Set up map center longitude
-    var mapCenterLongitudeUrlOrFromServer = checkForResolvedPropertyFromTheServer("mapCenterLongitude");
-    if (mapCenterLongitudeUrlOrFromServer==null) {
-        mapCenterLongitudeUrlOrFromServer = checkForUrlParameter("map center longitude");
-    }
-    if (mapCenterLongitudeUrlOrFromServer)
+    var mapCenterLongitudeUrl = checkForUrlParameter("map center longitude");
+    if (mapCenterLongitudeUrl)
     {
-        if (!isNaN(mapCenterLongitudeUrlOrFromServer))
+        if (!isNaN(mapCenterLongitudeUrl))
         {
-            appConfiguration.mapCenterLongitude = mapCenterLongitudeUrlOrFromServer;
+            appConfiguration.mapCenterLongitude = mapCenterLongitudeUrl;
         }
     }
     else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties")
@@ -867,16 +799,9 @@ function setupHeaderConfiguration()
 function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationParamName,firstObj,secondObj,thirdObj,checkUrlParameter,defaultValue) 
 {
     var paramVal = defaultValue;
-    var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
-    
     var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
     var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
-    
-    if (paramValFromRPO!=null)
-    {
-        paramVal = paramValFromRPO;
-    }
-    else if (paramValFromUrl && boolValCorrect)
+    if (paramValFromUrl && boolValCorrect)
     {
         if (isBoolean) {
             paramVal =  (paramValFromUrl === "true");
@@ -897,11 +822,6 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
         paramVal  = thirdObj[paramName];
     }
     appConfiguration[appConfigurationParamName] = paramVal;
-    
-//    var msg = 'rsobp[isb='+isBoolean+',pn='+paramName+',acpn='+appConfigurationParamName+',fo='+firstObj+',so='+secondObj+',cup='+checkUrlParameter+',dv='+defaultValue+']';
-//    console.log(msg);
-//    console.log('r='+paramVal);
-
 }
 
 /**
@@ -960,7 +880,6 @@ function themesLoaded() {
     setThemesConfiguration();
     
     // Check if anything else should be loaded
-    console.log("CFAS thms");
     checkForAppSetup();
 }
 
@@ -969,7 +888,7 @@ function themesLoaded() {
  */
 function setThemesConfiguration()
 {
-    // Update the themesMap
+    // Update the themesMap and appConfiguration to override the hardcoded values
     themesMap = themesObj;
 }
 
@@ -991,13 +910,11 @@ function loadDefaultThemes()
 /**
  * Callback executed when userlangs.json.js has been loaded
  */
-function languagesLoaded() 
-{
+function languagesLoaded() {
     
     setLanguagesConfiguration();
     
     // Check if anything else should be loaded
-    console.log("CFAS lang");
     checkForAppSetup();
 }
 
@@ -1026,24 +943,6 @@ function loadDefaultLanguages()
 }
 
 /**
- * Flag which indicates that customScript has been loaded
- */
-var customScriptLoadedFlag = false;
-
-/**
- * Callback executed when customScript has been loaded
- */
-function customScriptLoaded() 
-{
-    
-    customScriptLoadedFlag = true;
-    
-    // Check if anything else should be loaded
-    console.log("CFAS cust script");
-    checkForAppSetup();
-}
-
-/**
  * Flag which indicates if the themes definition (themes.json.js) loading has been started
  */
 var themeLoadStarted = false;
@@ -1059,82 +958,53 @@ var languageLoadStarted = false;
 var timeZonesLoadStarted = false;
 
 /**
- * Flag which indicates if the customScript definition loading has been started
- */
-var customScriptLoadStarted = false;
-
-/**
  * Checks if all definition files has been loaded.
  * If so adds the app setup function as listener for the window load event
  * or runs the app setup if the window load event is already fired.
  */
 function checkForAppSetup()
 {
-    console.log("Checking for app setup");
     // Check if the themes.json.js should be loaded
     if (!themeLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.themesObj!=null) {
-            themesObj = appInfoObjFromServer.themesObj;
-            setThemesConfiguration();
-        } else {
-            if (appConfiguration.themes)
-            {
-                loadScript(appConfiguration.themes, themesLoaded, loadDefaultThemes);
-            }            
+        if (appConfiguration.themes)
+        {
+            loadScript(appConfiguration.themes, themesLoaded, loadDefaultThemes);
         }
+        
         themeLoadStarted = true;
     }
 	
 	// Check if the userlangs.json.js should be loaded
     if (!languageLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.userLangsObj!=null) {
-            userLangsObj = appInfoObjFromServer.userLangsObj;
-            setLanguagesConfiguration();
-        } else {
-            if (appConfiguration.userlangs)
-            {
-                loadScript(appConfiguration.userlangs, languagesLoaded, loadDefaultLanguages);
-            }
-        }        
+        if (appConfiguration.userlangs)
+        {
+            loadScript(appConfiguration.userlangs, languagesLoaded, loadDefaultLanguages);
+        }
+        
         languageLoadStarted = true;
     }
     
     // Check if the timezones.json.js should be loaded
     if (!timeZonesLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.timeZonesArr!=null) {
-            timeZonesArr = appInfoObjFromServer.timeZonesArr;
-        } else {
-            if (appConfiguration.timezones)
-            {                
-                loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();});
-            }
-        }        
+        if (appConfiguration.timezones)
+        {
+            loadScript(appConfiguration.timezones, checkForAppSetup);
+        }
+        
         timeZonesLoadStarted = true;
     }
-
-    // Check if the file, which path is specified at customScript parameter, should be loaded
-    if (!customScriptLoadStarted && typeof appObj !== 'undefined' && appObj != null && typeof formObj !== 'undefined' && formObj != null)
-    {
-        if (appConfiguration.customScript)
-        {
-            loadScript(appConfiguration.customScript, customScriptLoaded);
-        }        
-        customScriptLoadStarted = true;
-    }
-        
-    if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
-        && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
+    
+    if (typeof headerObj !== 'undefined' && typeof customizationObj !== 'undefined' && typeof brandObj !== 'undefined' && typeof formObj !== 'undefined'
+        && (typeof themesObj !== 'undefined' || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"]))))
-		&& (typeof userLangsObj !== 'undefined' && userLangsObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["userlangs"])
+		&& (typeof userLangsObj !== 'undefined' || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["userlangs"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["userlangs"]))))
-        && (typeof timeZonesArr !== 'undefined' && timeZonesArr!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["timezones"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"]))))
-        && (customScriptLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"])))))
-    {        
+        && (typeof timeZonesArr !== 'undefined' || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["timezones"])
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"])))))
+    {
         if (document.readyState === 'complete')
         {
             checkForLoadingCallback();
@@ -1158,57 +1028,35 @@ function checkForAppSetup()
  * If so performs the call and waits for a response. When the response is received uses returned data to
  * set up the APP. Otherwise just sets up the APP.
  */
-function checkForLoadingCallback()
+function checkForLoadingCallback(cnt)
 {
-    console.log('cflc, ah='+appConfiguration.home+', AC='+JSON.stringify(appConfiguration));
     if (!appConfiguration.home)
     {
         // We don't have the base URL for the API call so we don't perform a call
-        appInfoObjFromServer = null;
-        if (typeof formioForm !== 'undefined') {
-            formioForm.destroy();
-            formDestroyed = true;
-        }        
         setupApp();
+        
         return;
     }
-
     
-    var formChanged = appInfoObjFromServer!=null && appInfoObjFromServer.formChanged!=null && appInfoObjFromServer.formChanged;
-    var callbackCount = appInfoObjFromServer!=null && appInfoObjFromServer.callbackCount!=null ? appInfoObjFromServer.callbackCount+1 : 1;
-    // appInfoObjFromServer.callbackCount is set only inside handleServerResponseForLoadingAndOtherActions function
-    var doLoadingCallback = appConfiguration.actionLoading && (appInfoObjFromServer==null || appInfoObjFromServer.callbackCount==null || callbackCount<4 && formChanged);
-    
-    console.log("DLC="+doLoadingCallback+', fc='+formChanged+', cc='+callbackCount+', aiofs='+appInfoObjFromServer+', aiofscbc='+(appInfoObjFromServer!=null ? appInfoObjFromServer.callbackCount : null));
-    formChanged = formChanged || callbackCount>1;
     // We found home URL and it is a base address for our call
-    // Now we need to find a relative path    
-    if (doLoadingCallback)
+    // Now we need to find a relative path
+    
+    if (appConfiguration.actionLoading)
     {
         // Replace placeholders in relative path with available settings
         var loadAct = handlePlaceholders(appConfiguration.actionLoading);
         
         var url = appConfiguration.home + "/" + loadAct;
-
-        performLoadingCallback(url,callbackCount);
+        console.log('cntt='+(typeof cnt)+', cnt='+cnt);        
+        var isNum = (typeof cnt == 'number');
+        if (!isNum) {
+            cnt = 1;
+        }
+        performLoadingCallback(url,cnt);
     }
     else
     {
-        appInfoObjFromServer = null;
-        console.log('fd='+formDestroyed+', fc='+formChanged);
-        if (!formDestroyed && !formChanged) {
-            console.log('setting only submission');
-            formioForm.submission = {"data":appFormDataObj};
-            hideSpinner();
-        } else {            
-            if (typeof formioForm !== 'undefined') {
-                console.log('destroying form from cflc');
-                formioForm.destroy();
-                formDestroyed = true;
-            }
-            console.log('setting app');
-            setupApp();
-        }
+        setupApp();
     }
 }
 
@@ -1239,8 +1087,7 @@ function performLoadingCallback(url,cnt)
     if (typeof ADAL!== 'undefined' && ADAL) {
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"callbackCount":cnt},onsuccess_loading,onfailure_loading);
     } else {
-        //alert("It is not possible to perform loading because user is not logged-in!");
-        console.log("It is not possible to perform loading because user is not logged-in!");
+        alert("It is not possible to perform loading because user is not logged-in!");
         setupApp();
     }    
 }
@@ -1249,145 +1096,31 @@ function performLoadingCallback(url,cnt)
  * This function is executed on successful call to Loading API. If form definition changed, it will call again Loading API...but Loading API can be called max 3 times.
  */
 function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textStatus,request) {
-    var msgPart = "loading operation for url '"+url+"', attempt number "+additionalConfiguration.callbackCount;
-    console.log("Successfully executed "+msgPart+".");
-    additionalConfiguration.isLoading = true;
-    handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
-}
-
-function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
-   appInfoObjFromServer = data.appInfo;
-   //appInfoObjFromServer = {};
-   //appInfoObjFromServer.resolvedProperties = JSON.parse(JSON.stringify(appConfiguration));
-   if (appInfoObjFromServer!=null) {
-       //appInfoObjFromServer.formObj.title = "FT "+Math.floor((Math.random()*1000)+1);
-       var resolvedPropertiesObjFromServer = appInfoObjFromServer.resolvedProperties;
-       if (resolvedPropertiesObjFromServer==null) {
-           resolvedPropertiesObjFromServer = {};
-       }
-       // if server decided that the user should go offline, set ADAL to null
-       if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
-          ADAL = null;
-       }
-       appInfoObjFromServer.callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 1;
-       
-       //console.log('DATA received ='+JSON.stringify(data));
-       console.log('oldform='+appConfiguration.formDefPath);
-       console.log('newform='+resolvedPropertiesObjFromServer.formDefPath);
-       var appDefChanged = resolvedPropertiesObjFromServer.appDefPath!=null && appConfiguration.appDefPath!=resolvedPropertiesObjFromServer.appDefPath;
-       console.log('adch='+appDefChanged);
-       var formChanged = appInfoObjFromServer.formObj!=null && JSON.stringify(formObj)!==JSON.stringify(appInfoObjFromServer.formObj);
-       formChanged = formChanged || resolvedPropertiesObjFromServer.formDefPath!=null && appConfiguration.formDefPath!=resolvedPropertiesObjFromServer.formDefPath;
-       console.log('fch='+formChanged);
-       var brandChanged = resolvedPropertiesObjFromServer.brandDefPath!=null && appConfiguration.brandDefPath!=resolvedPropertiesObjFromServer.brandDefPath;
-       console.log('bch='+brandChanged);
-       var customizationChanged = resolvedPropertiesObjFromServer.customizationDefPath!=null && appConfiguration.customizationDefPath!=resolvedPropertiesObjFromServer.customizationDefPath;
-       console.log('cch='+customizationChanged);
-       var headerChanged = resolvedPropertiesObjFromServer.headerConfPath!=null && appConfiguration.headerConfPath!=resolvedPropertiesObjFromServer.headerConfPath;
-       console.log('hch='+headerChanged);
-       var themesChanged = resolvedPropertiesObjFromServer.themes!=null && appConfiguration.themes!=resolvedPropertiesObjFromServer.themes || appInfoObjFromServer.themesObj!=null && JSON.stringify(themesObj)!==JSON.stringify(appInfoObjFromServer.themesObj);       
-       console.log('thc='+themesChanged);
-       var userLangsChanged = resolvedPropertiesObjFromServer.userlangs!=null && appConfiguration.userlangs!=resolvedPropertiesObjFromServer.userlangs || appInfoObjFromServer.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.userLangsObj);
-       console.log('ulc='+userLangsChanged);
-       var timeZonesChanged = resolvedPropertiesObjFromServer.timezones!=null && appConfiguration.timezones!=resolvedPropertiesObjFromServer.timezones || appInfoObjFromServer.timeZonesArr!=null && JSON.stringify(timeZonesArr)!==JSON.stringify(appInfoObjFromServer.timeZonesArr);
-       console.log('tzch='+timeZonesChanged);
-       var customScriptChanged = resolvedPropertiesObjFromServer.customScript!=null && appConfiguration.customScript!=resolvedPropertiesObjFromServer.customScript;
-       console.log('csch='+customScriptChanged);
-              
-       appInfoObjFromServer.formChanged = formChanged;
-       
-       appFormDataObj = appInfoObjFromServer.dataObj == null ? appFormDataObj : appInfoObjFromServer.dataObj;
-       //console.log('form DATA merged ='+JSON.stringify(appFormDataObj));
-       //console.log('configuration DATA merged ='+JSON.stringify(appConfiguration));
-       
-       appInfoObjFromServer.validBrandObj = brandObj;
-       appInfoObjFromServer.validCustomizationObj = customizationObj;
-       appInfoObjFromServer.validHeaderObj = headerObj;
-       brandObj = null;
-       customizationObj = null;
-       headerObj = null;
-       if (appDefChanged) {
-          appObj = null;
-          headerObj = null;
-          appInfoObjFromServer.validHeaderObj = null;
-          customizationObj = null;
-          appInfoObjFromServer.validCustomizationObj = null;
-          brandObj = null;
-          appInfoObjFromServer.validBrandObj = null;
-          formDestroyed = true;
-          formObj = null;
-          themesObj = null;
-          userLangsObj = null;
-          timeZonesArr = null;
-          themeLoadStarted = false;
-          languageLoadStarted = false;
-          timeZonesLoadStarted = false;
-          customScriptLoadStarted = false;
-          customScriptLoadedFlag = false;
-       }
-       if (formChanged) {
-          formDestroyed = true;
-          formObj = null;
-          headerObj = null;
-          appInfoObjFromServer.validHeaderObj = null;
-          customizationObj = null;
-          appInfoObjFromServer.validCustomizationObj = null;
-          brandObj = null;
-          appInfoObjFromServer.validBrandObj = null;
-          themesObj = null;
-          userLangsObj = null;
-          timeZonesArr = null;
-          themeLoadStarted = false;
-          languageLoadStarted = false;
-          timeZonesLoadStarted = false;
-       }
-       if (brandChanged) {
-          brandObj = null;
-          appInfoObjFromServer.validBrandObj = null;
-       }
-       if (customizationChanged) {
-          customizationObj = null;
-          appInfoObjFromServer.validCustomizationObj = null;
-       }
-       if (headerChanged) {
-          headerObj = null;
-          appInfoObjFromServer.validHeaderObj = null;
-          themesObj = null;
-          userLangsObj = null;
-          timeZonesArr = null;
-          themeLoadStarted = false;
-          languageLoadStarted = false;
-          timeZonesLoadStarted = false;
-       }
-       if (themesChanged) {
-          themesObj = null;
-          themeLoadStarted = false;
-       }
-       if (userLangsChanged) {
-          userLangsObj = null;
-          languageLoadStarted = false;
-       }
-       if (timeZonesChanged) {
-          timeZonesArr = null;
-          timeZonesLoadStarted = false;
-       }
-       if (customScriptChanged) {
-          customScriptLoadStarted = false;
-          customScriptLoaded = false;
-       }
-       
-       beginConfigurationProcess();
-   } else {
-       appInfoObjFromServer = null;
-       console.log('fd='+formDestroyed);
-       if (!formDestroyed) {
-           console.log('setting only submission');
-           formioForm.submission = {"data":appFormDataObj};
-           hideSpinner();
-       } else {            
-           setupApp();
-       }
+   var msgPart = "loading operation for url '"+url+"', attempt number "+additionalConfiguration.callbackCount;
+   console.log("Successfully executed "+msgPart+".");
+   //console.log('DATA received ='+JSON.stringify(data));
+   console.log('oldform='+appConfiguration.formDefPath);
+   console.log('newform='+(data.appInfo && data.appInfo.resolvedProperties ? data.appInfo.resolvedProperties.formDefPath : ""));
+   var formDidntChange = data.appInfo==null || data.appInfo.formObj==null || JSON.stringify(formObj)===JSON.stringify(data.appInfo.formObj);
+   var formPathDidntChange = data.appInfo==null || data.appInfo.resolvedProperties==null || data.appInfo.resolvedProperties.formDefPath==null || appConfiguration.formDefPath===data.appInfo.resolvedProperties.formDefPath;
+   appFormDataObj = data.appInfo== null || data.appInfo.dataObj == null ? appFormDataObj : data.appInfo.dataObj;
+   //console.log('form DATA merged ='+JSON.stringify(appFormDataObj));
+   if (data.appInfo!=null && data.appInfo.resolvedProperties!=null) {
+      appConfiguration = $.extend(appConfiguration,data.appInfo.resolvedProperties);
    }
+   //console.log('configuration DATA merged ='+JSON.stringify(appConfiguration));
+    if (additionalConfiguration.callbackCount<3) {
+        if (!formDidntChange) {
+            performLoadingCallback(url,additionalConfiguration.callbackCount+1);
+            return;
+        } else if (!formPathDidntChange) {
+            // Load new form definition
+            console.log('loading form '+appConfiguration.formDefPath);
+            loadScript(appConfiguration.formDefPath, function(){formUpdated(function(){performLoadingCallback(url,additionalConfiguration.callbackCount+1);},appFormDataObj);}, updateFormFailed);
+            return;
+        }
+   }
+   setupApp();
 }
 
 function onfailure_loading(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
@@ -1409,32 +1142,9 @@ function updateFormDefinition(formPath,data)
     {
         absolutePath = appConfiguration.formDefPath = "../forms/" + formPath + "/form.json.js";
     }
-
-    // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
-    if (data) {
-        appFormDataObj = data;
-    }
     
-    // This is a hack - using the same logic as when we are getting updated appInfo from server
-    appInfoObjFromServer = {
-        "resolvedProperties" : {
-            "formDefPath" : absolutePath
-        }
-    };
-    
-    formDestroyed = true;
-    formObj = null;
-    headerObj = null;
-    customizationObj = null;
-    brandObj = null;
-    themesObj = null;
-    userLangsObj = null;
-    timeZonesArr = null;
-    themeLoadStarted = false;
-    languageLoadStarted = false;
-    timeZonesLoadStarted = false;    
-
-    beginConfigurationProcess();
+    // Load new form definition
+    loadScript(absolutePath, function(){formUpdated(checkForLoadingCallback,data);}, updateFormFailed);
 }
 
 /**
@@ -1447,7 +1157,6 @@ function reloadFormDefinition()
     
     // Update the form
     formioForm.destroy();
-    formDestroyed = true;
     setupAppForUpdatedForm();
 }
 
@@ -1457,6 +1166,46 @@ function reloadFormDefinition()
 function setupAppForUpdatedForm() 
 {
     generateForm(showFormWithUnchagedData);
+}
+
+/**
+ * Runs when a new form definition has been loaded. Updates rendered form and header properties.
+ * Applies updated properties to the layout. Optionally initializes the form with the data.
+ */
+function formUpdated(fnc2exec,data)
+{
+    var fdp = appConfiguration.formDefPath;
+    
+    resetAppConfiguration();
+    resetFormData();
+    
+    // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
+    if (data) {
+        appFormDataObj = data;
+    }
+    
+    // Update header properties
+    setupFormConfiguration();
+    setupBrandConfiguration();
+    setupCustomizationConfiguration();
+    setupHeaderConfiguration();
+
+    appConfiguration.formDefPath = fdp;
+    // Update the form
+    if (typeof formioForm !== 'undefined') {
+        formioForm.destroy();
+    }
+    fnc2exec();
+    //setupApp();
+}
+
+/**
+ * Runs when a new form definition fails to load. Hides the spinner and shows the old form again.
+ */
+function updateFormFailed()
+{
+    // First show the spinner
+    hideSpinner();
 }
 
 function hideSpinner() {
@@ -1473,7 +1222,6 @@ function showSpinner() {
 
 var TogFormViewer =
 {
-    jumpWidth : 767,
     FormioPlugIn:
     {
         setProperty: function(propName, propValue)
@@ -1535,7 +1283,7 @@ var TogFormViewer =
             // in Bootstrap
             if (propName === "jumpWidth")
             {
-                return this.jumpWidth;
+                return 767;
             }
         }
     },
@@ -1709,13 +1457,13 @@ var TogFormViewer =
                 "navigator.appCodeName" : navigator.appCodeName,
                 "navigator.cookieEnabled" : navigator.cookieEnabled
             },
-            "deviceInfo" : {
+            deviceInfo : {
             },
             "currentUser" : currentUser,
             "runtimeProperties" : {
-                "tenantId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.tenant),
-                "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
-                "jumpWidth" : this.jumpWidth,
+                "tenantId" : (ADAL==null ? "" : ADAL.config.tenant),
+                "appRegAppId" : (ADAL==null ? "" : ADAL.config.clientId),
+                "jumpWidth" : 767,
                 "browserInfo" : {
                     "width" : $(window).width(),
                     "height" : $(window).height()
@@ -1804,6 +1552,10 @@ var TogFormViewer =
         if (!target) {
             target = "_blank";
         }
+        /*if (true){
+            window.open("mailto:sasa@gmail.com?cc=alfred@gmail.com&bcc=vladimir@gmail.com&subject=must do this&body="+encodeURIComponent("This is the content of what we should do!"),"_self");
+            return;
+        }*/
         var showDataWindow = window.open("",target);
         var xmlDoc = _convertJSON2XML("data", null, formioForm.submission.data, null, null);
         if (xslPrePathOrURL) {
@@ -1888,8 +1640,36 @@ function xsltLoadOK(xmlDoc,xsltPathOrUrl,showDataWindow) {
             xsltProcessor.importStylesheet(xsltDoc);
             var resultDoc = xsltProcessor.transformToDocument(xmlDoc);
             resultXml = new XMLSerializer().serializeToString(resultDoc);
+            //resultXml = resultXml.trim();
+            //resultXml='\uFEFF<?xml version="1.0" encoding="utf-8" ?>'+resultXml
+            console.log('rxml1='+resultXml);
+            
+            
+            //var resultDoc2 = parseXmlStringForTransformation(xmlObj);
+            //console.log('xmldoc='+new XMLSerializer().serializeToString(xmlDoc));
+            var xsltProcessor2 = new XSLTProcessor();
+            //console.log('xslt2='+xsltObj2);
+            var xsltDoc2 = parseXmlStringForTransformation(xsltObj2);
+            xsltProcessor2.importStylesheet(xsltDoc2);
+            var resultDoc2 = xsltProcessor2.transformToDocument(resultDoc);
+            console.log("TOF RES = "+(typeof resultDoc2));
+            
+            resultXml = new XMLSerializer().serializeToString(resultDoc2);            
+            console.log('rxml2='+resultXml);
+            var xsltProcessor3 = new XSLTProcessor();
+            var xsltDoc3 = parseXmlStringForTransformation(xsltObjFO2HTML);
+            xsltProcessor3.importStylesheet(xsltDoc3);
+            var resultDoc3 = xsltProcessor3.transformToDocument(resultDoc2);
+            resultXml = new XMLSerializer().serializeToString(resultDoc3);
+            //resultXml = resultDoc3;
+            console.log("rxml3="+resultXml);
+            
         }
-        _showData(showDataWindow,formatXml(resultXml),"Form submission data - XML (with (pre)transformation '"+xsltPathOrUrl+"')");
+    showDataWindow.document.open();
+    showDataWindow.document.write(resultXml);
+    showDataWindow.document.close(); 
+    showDataWindow.focus();
+        //_showData(showDataWindow,formatXml(resultXml),"Form submission data - XML (with (pre)transformation '"+xsltPathOrUrl+"')");
    } catch (err) {
       showDataWindow.close();
       var msg = "Error occurred when doing xsl transformation "+xsltPathOrUrl+"!";

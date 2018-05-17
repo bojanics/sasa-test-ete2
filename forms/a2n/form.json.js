@@ -326,6 +326,273 @@ var formObj={
 		},
 		"isNew": false
 	},    
+{
+		"input": true,
+		"tree": true,
+		"components": [{
+			"autofocus": false,
+			"input": true,
+			"inputType": "checkbox",
+			"tableView": true,
+			"label": "containerCheckboxField",
+			"dataGridLabel": false,
+			"key": "containerCheckboxField",
+			"defaultValue": false,
+			"protected": false,
+			"persistent": true,
+			"hidden": false,
+			"name": "",
+			"value": "",
+			"clearOnHide": true,
+			"validate": {
+				"required": false
+			},
+			"type": "checkbox",
+			"labelPosition": "right",
+			"hideLabel": true,
+			"tags": [],
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"properties": {
+				
+			}
+		},
+		{
+			"autofocus": false,
+			"input": true,
+			"tableView": true,
+			"inputType": "text",
+			"inputMask": "",
+			"label": "Text",
+			"key": "containerText",
+			"placeholder": "",
+			"prefix": "",
+			"suffix": "",
+			"multiple": false,
+			"defaultValue": "",
+			"protected": false,
+			"unique": false,
+			"persistent": true,
+			"hidden": false,
+			"clearOnHide": true,
+			"spellcheck": true,
+			"validate": {
+				"required": false,
+				"minLength": "",
+				"maxLength": "",
+				"pattern": "",
+				"custom": "",
+				"customPrivate": false
+			},
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"type": "textfield",
+			"labelPosition": "top",
+			"tags": [],
+			"properties": {
+				
+			}
+		},
+		{
+			"autofocus": false,
+			"input": true,
+			"tableView": true,
+			"inputType": "number",
+			"label": "Number",
+			"key": "containerNumber",
+			"placeholder": "",
+			"prefix": "",
+			"suffix": "",
+			"defaultValue": "",
+			"protected": false,
+			"persistent": true,
+			"hidden": false,
+			"clearOnHide": true,
+			"validate": {
+				"required": false,
+				"min": "",
+				"max": "",
+				"step": "any",
+				"integer": "",
+				"multiple": "",
+				"custom": ""
+			},
+			"type": "number",
+			"labelPosition": "top",
+			"tags": [],
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"properties": {
+				
+			}
+		}],
+		"tableView": true,
+		"label": "container",
+		"key": "container",
+		"protected": false,
+		"persistent": true,
+		"clearOnHide": true,
+		"type": "container",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"hideLabel": true
+	},    
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Result",
+		"key": "c",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true,
+		"disabled": true,
+		"isNew": false
+	},    
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Load form",
+		"tableView": false,
+		"key": "loadform",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.loadForm('shwdata',{'a':3,'b':5});"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Reset form",
+		"tableView": false,
+		"key": "resetform",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "formioForm.submission={'data':{}};"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Calculate(local)",
+		"tableView": false,
+		"key": "calculate1",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.calculate('../calc/calc_v12ab.js');",
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Calculate(remote)",
+		"tableView": false,
+		"key": "calculate2",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.calculate('https://sasa-test-misc-wap.azurewebsites.net/calc/calc_amulbintoc.js');",
+	},
 	{
 		"autofocus": false,
 		"input": true,
@@ -355,7 +622,7 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
-		"label": "show data",
+		"label": "Show data (JSON)",
 		"tableView": false,
 		"key": "showdata",
 		"size": "md",
@@ -380,7 +647,7 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
-		"label": "show data2",
+		"label": "show data (JSON window)",
 		"tableView": false,
 		"key": "showdata2",
 		"size": "md",
@@ -400,8 +667,83 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showData('showdatawindow');"
+      "custom": "TogFormViewer.showData('jsonsdwin');"
 	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "show data (XML plain)",
+		"tableView": false,
+		"key": "showdata3",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showDataXML('xmlsdwin');"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "show data (XML pre xsl)",
+		"tableView": false,
+		"key": "showdata4",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showDataXML('xmlsdwin','../xslt/defaultPre.xsl.js');"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "show data (XML pre xsl remote)",
+		"tableView": false,
+		"key": "showdata5",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showDataXML('xmlsdwin','http://sasa-formio-pdf.azurewebsites.net/xsl/defaultPre.xsl.js');"
+	},    
 	{
 		"autofocus": false,
 		"input": true,
@@ -425,7 +767,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.openFile(escape('../docs/Leave#Request.pdf'),'myfile.pdf');",
+      "custom": "TogFormViewer.openFile('../docs/Leave#Request.pdf','myfile.pdf');",
       "custom2": "TogFormViewer.openFile('http://sasaboy-asus:8080/sleasing.pdf','myfile.pdf');",
       "custom3": "TogFormViewer.openFile('http://sasaboy-asus:8080/sleasing.pdf');"
 	},
@@ -477,7 +819,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.openFile(escape('../docs/Leave#Request.jpg'),'myfile.jpg');"
+      "custom": "TogFormViewer.openFile('../docs/Leave Request.jpg','myfile.jpg');"
 	},
 	{
 		"autofocus": false,
@@ -527,7 +869,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom" : "TogFormViewer.downloadFile(escape('../docs/Leave#request.pdf'),'myfile.pdf');"
+      "custom" : "TogFormViewer.downloadFile(escape('../docs/Leave#request.pdf'));"
 	},
 	{
 		"autofocus": false,
@@ -552,7 +894,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom" : "TogFormViewer.downloadFile(escape('../docs/Leave#Request.txt'),'myfile.txt');"
+      "custom" : "TogFormViewer.downloadFile(escape('../docs/Leave#Request.txt'),'mytxtfile.txt');"
 	},
 	{
 		"autofocus": false,
@@ -577,10 +919,10 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom1" : "TogFormViewer.downloadFile(escape('../docs/Leave#Request.jpg'),'myfile.jpg');",
+      "custom" : "TogFormViewer.downloadFile(escape('../docs/Leave#Request.jpg'),'myjpgfile');",
       "custom2" : "TogFormViewer.downloadFile('../docs/greco-erste.png','myfile.png');",
       "custom3" : "TogFormViewer.downloadFile('http://sasa-formio-pdf.azurewebsites.net/img/greco-erste.png','myfile.png');",
-      "custom" : "TogFormViewer.downloadFile('http://sasaboy-asus:8080/xsl/images/VMG_Logo.jpg','myfile.jpg');"
+      "custom4" : "TogFormViewer.downloadFile('http://sasaboy-asus:8080/xsl/images/VMG_Logo.jpg','myfile.jpg');"
 	},
 	{
 		"autofocus": false,
@@ -605,7 +947,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom" : "TogFormViewer.downloadFile('../docs/Leave request.zip','myfile.zip');"
+      "custom" : "TogFormViewer.downloadFile('../docs/Leave request.zip','myzipfile.zip');"
 	},
 	{
 		"autofocus": false,
@@ -687,45 +1029,6 @@ var formObj={
 			
 		},
       "custom": "TogFormViewer.calculate('https://sasaboy-asus:8444/calc/calc_v12ab.js')"
-	},
-	{
-		"autofocus": false,
-		"input": true,
-		"tableView": true,
-		"inputType": "number",
-		"label": "Result",
-		"key": "c",
-		"placeholder": "",
-		"prefix": "",
-		"suffix": "",
-		"defaultValue": "",
-		"protected": false,
-		"persistent": true,
-		"hidden": false,
-		"clearOnHide": true,
-		"validate": {
-			"required": false,
-			"min": "",
-			"max": "",
-			"step": "any",
-			"integer": "",
-			"multiple": "",
-			"custom": ""
-		},
-		"type": "number",
-		"labelPosition": "top",
-		"tags": [],
-		"conditional": {
-			"show": "",
-			"when": null,
-			"eq": ""
-		},
-		"properties": {
-			
-		},
-		"lockKey": true,
-		"disabled": true,
-		"isNew": false
 	}],
 	"revisions": "",
 	"_vid": 0,
@@ -757,6 +1060,7 @@ var formObj={
     "processimagelink": "../logos/process.png",
     "loadingScriptS": "alert('ssa');",
     "loadingScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
-    "loadingScript": "TogFormViewer.loadData('../data/datasmall.json.js');",
+    "loadingScript3": "TogFormViewer.loadData('../data/datasmall.json.js');",
+    "loadingScript4": "TogFormViewer.loadData('../data/datagrid.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",    
   }   
 };

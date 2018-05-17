@@ -180,11 +180,20 @@ function getFunctionName(funct) {
    }
 }
 
-function getmailboxsettingsdata(url) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com",getdatanoadalmailboxsettings,url);
+/**
+ * Queries for mailbox settings (language and time zone)
+ * @param {string} url Microsoft API function URL for getting user mailbox settings.
+ *        If we use Microsoft Graph API Beta it is https://graph.microsoft.com/beta/me/mailboxSettings
+ * @param {function} onsuccesscallback called when language and time zone settings has been successfully
+ *        retreived passing language and time zone aliases as arguments
+ * @param {function} onfailurecallback optional callback called when we recieve an error from Microsoft
+ *        API function or get no data
+ */
+function getmailboxsettingsdata(url, onsuccesscallback, onfailurecallback) {
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadalmailboxsettings, url, {}, {}, oncsuccesscallback, onfailurecallback);
 }
 
-function getdatanoadalmailboxsettings(token,url) {
+function getdatanoadalmailboxsettings(token, url, data, conf, onsuccesscallback, onfailurecallback) {
     var settings = {
         "crossDomain": true,
         "url": url,
@@ -193,39 +202,39 @@ function getdatanoadalmailboxsettings(token,url) {
         "headers": {
             "Authorization": "Bearer " + token
         }
-    }
+    };
     
     $.ajax(settings).done(function (data,textStatus,request) {
         console.log('getmailboxsettingsdata call successfully executed');
-        if (data && data["language"] && data["language"]["locale"]) {
-            languageSelector.selectedLanguage = convertGraphLanguage(data["language"]["locale"]);
+        if (data) {
+            onsuccesscallback((data["language"] ? data["language"]["locale"] : null), data["timeZone"]);
+        } else if (onfailurecallback) {
+            onfailurecallback();
         }
         
-        console.log("Selected language="+languageSelector.selectedLanguage);
-        
-        if (data && data["timeZone"]) {
-            setInitialTimeZone(data["timeZone"]);
-            console.log("User's current time zone alias: " + data["timeZone"]);
-        } else {
-            console.log("User's current time zone hasn't been received.");
-        }
-        
-        // Translate the page
-        setupPredefinedLanguage();
         console.log('Data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
     }).fail(function (err, textStatus, errorThrown) {
         mailboxSettingsAvailable = false;
-        applyTranslation();
         console.log('getmailboxsettingsdata call failed');
         console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
+        if (onfailurecallback) {
+            onfailurecallback();
+        }
     });
 }
 
-function getSupportedTimeZones() {
+/**
+ * Queries Microsoft Graph API for supported time zones in the user mailbox
+ * @param {function} onsuccesscallback called when supported time zones has been successfully
+ *        retreived passing supported time zones as arguments
+ * @param {function} onfailurecallback optional callback called when we recieve an error from Microsoft
+ *        Graph API function or get no data
+ */
+function getSupportedTimeZones(onsuccesscallback, onfailurecallback) {
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getDataOnAdalSupportedTimeZones, 'https://graph.microsoft.com/beta/me/outlook/supportedTimeZones');
 }
 
-function getDataOnAdalSupportedTimeZones(token, url) {
+function getDataOnAdalSupportedTimeZones(token, url, onsuccesscallback, onfailurecallback) {
     var settings = {
         "crossDomain": true,
         "url": url,
@@ -234,20 +243,26 @@ function getDataOnAdalSupportedTimeZones(token, url) {
         "headers": {
             "Authorization": "Bearer " + token
         }
-    }
+    };
     
     $.ajax(settings).done(function (data, textStatus, request) {
         console.log('getSupportedTimeZones call successfully executed');
         if (data && data["value"]) {
-            setSupportedTimeZones(data["value"]);
+            onsuccesscallback(data["value"]);
             console.log('Supported time zones successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
         } else {
             console.log("Invalid response format!");
+            if (onfailurecallback) {
+                onfailurecallback();
+            }
         }
     }).fail(function (err, textStatus, errorThrown) {
         mailboxSettingsAvailable = false;
         console.log('getSupportedTimeZones call failed');
         console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
+        if (onfailurecallback) {
+            onfailurecallback();
+        }
     });
 }
 
@@ -266,7 +281,7 @@ function patchdatanoadal(token, url, payload) {
         },
         "data": JSON.stringify(payload),
         "contentType": "application/json"
-    }
+    };
     
     $.ajax(settings).done(function (data,textStatus,request) {
         console.log('patchmailboxsettingsdata call successfully executed');
@@ -290,7 +305,7 @@ function getdatanoadalphotometadata(token,url) {
         "headers": {
             "Authorization": "Bearer " + token
         }
-    }
+    };
     
     $.ajax(settings).done(function (data,textStatus,request) {
         console.log('getuserphotometadata call successfully executed');
@@ -465,12 +480,13 @@ function postfeedbackformadal(token, url, payload) {
     });  
 }
 
-function getUserPropertyExtensions(fetchLTZ) {
+function getUserPropertyExtensions(fetchLTZ, onsuccesscallback, onfailurecallback) {
     var additionalConfiguration = {
         fetchLTZ: fetchLTZ,
         justCheck: false
     };
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {}, additionalConfiguration,null,null,
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {},
+        additionalConfiguration, onsuccesscallback, onfailurecallback,
         (fetchLTZ ? function() {
             userPropertyExtensionExists = false;
             userPropertyExtensionsAvailable = false;
@@ -478,7 +494,7 @@ function getUserPropertyExtensions(fetchLTZ) {
             applyTranslation();
         } : function() {
             userPropertyExtensionExists = false;
-        userPropertyExtensionsAvailable = false;
+            userPropertyExtensionsAvailable = false;
             setupStyle(false);
         })
     );
@@ -496,8 +512,10 @@ function getUserPropertyExtensions(fetchLTZ) {
  *     {function} callbackfunc A function which will be called after a success response from the API has been received.
  *     {any} callbackParam1 The first parameter which will be passed to the callback function.
  *     {any} callbackParam2 The second parameter which will be passed to the callback function.
+ * @param {function} onsuccesscallback optional called when user property extensions have been successfully retreived
+ * @param {function} onfailurecallback optional callback called when we recieve an error from Microsoft Graph API function or get no data
  */
-function getdatanoadaluserpropertyextensions(token, url, payload, configuration) {
+function getdatanoadaluserpropertyextensions(token, url, payload, configuration, onsuccesscallback, onfailurecallback) {
     var settings = {
         "crossDomain": true,
         "url": url,
@@ -506,7 +524,7 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration)
         "headers": {
             "Authorization": "Bearer " + token
         }
-    }
+    };
     
     $.ajax(settings).done(function (data,textStatus,request) {
         console.log('getUserPropertyExtensions call successfully executed');
@@ -521,10 +539,7 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration)
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].language) {
                     languagePropertyExtensionExists = true;
                     if (configuration.fetchLTZ && !configuration.justCheck) {
-                        languageSelector.selectedLanguage = data.extensions[i].language;
-                    
-                        // Translate the page
-                        setupPredefinedLanguage();
+                        preparePredefinedLanguage(data.extensions[i].language);
                         console.log("Current user's language: " + languageSelector.selectedLanguage);
                     } else {
                         languagePropertyExtension = data.extensions[i].language;
@@ -561,7 +576,11 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration)
             }
             
             if (!languagePropertyExtensionExists && configuration.fetchLTZ && !configuration.justCheck) {
-                applyTranslation();
+                languageSelector.languageInitialized = true;
+            }
+            
+            if (!timeZonePropertyExtensionExists && configuration.fetchLTZ && !configuration.justCheck) {
+                timeZoneSelector.timeZoneInitialized = true;
             }
             
             if (!themePropertyExtensionExists && !configuration.justCheck) {
@@ -570,12 +589,17 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration)
         } else if (!configuration.justCheck) {
             setupStyle(false);
             if (configuration.fetchLTZ) {
-                applyTranslation();
+                languageSelector.languageInitialized = true;
+                timeZoneSelector.timeZoneInitialized = true;
             }
         }
         
         if (typeof configuration.callbackfunc !== 'undefined') {
             configuration.callbackfunc(configuration.callbackParam1, configuration.callbackParam2);
+        }
+        
+        if (onsuccesscallback) {
+            onsuccesscallback();
         }
         
         console.log('Data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
@@ -591,6 +615,9 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration)
         
         console.log('getUserPropertyExtensions call failed');
         console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
+        if (onfailurecallback) {
+            onfailurecallback();
+        }
     });
 }
 
@@ -703,7 +730,7 @@ function patchUserPropertyExtensionOnAdal(token, url, payload) {
         },
         "data": JSON.stringify(payload),
         "contentType": "application/json"
-    }
+    };
     
     $.ajax(settings).done(function (data,textStatus,request) {
         console.log('patchUserPropertyExtensionOnAdal call successfully executed');

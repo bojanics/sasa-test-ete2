@@ -24,10 +24,6 @@ var calculationResultSet = false;
  */
 var defaultFormObj = {"type":"form","tags":[],"access":[{"roles":["5a05516e35677f0001aeef6f","5a05516e35677f0001aeef70","5a05516e35677f0001aeef71"],"type":"read_all"}],"submissionAccess":[],"owner":"594fd15f7684cc005c2280ae","components":[{"hideLabel":false,"clearOnHide":false,"components":[{"hideLabel":false,"clearOnHide":false,"columns":[{"pull":0,"push":0,"offset":0,"width":6,"components":[{"hideLabel":false,"lockKey":true,"properties":{"formhelp":"This example shows how to add two numbers","fieldhelp":"The first number to add","elearninglink":"https://en.wikipedia.org/wiki/Operation_(mathematics)","elearningimagelink":"http://www.sparklebox.co.uk/wp-content/uploads/1-1231.jpg","processimagelink":"https://i.stack.imgur.com/MjNuE.gif","processlink":"https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers"},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"number","validate":{"required":false,"min":0,"max":9999,"step":"any","integer":"","multiple":"","custom":""},"clearOnHide":true,"hidden":false,"persistent":true,"protected":false,"defaultValue":"","suffix":"","prefix":"","placeholder":"","key":"a","label":"Number 1","inputType":"number","tableView":true,"input":true,"labelPosition":"top"}]},{"pull":0,"push":0,"offset":0,"width":6,"components":[{"hideLabel":false,"lockKey":true,"properties":{"elearninglink":"https://en.wikipedia.org/wiki/Operation_(mathematics)","elearningimagelink":"http://www.sparklebox.co.uk/wp-content/uploads/1-1231.jpg","fieldhelp":"The second number to add","formhelp":"This example shows how to add two numbers","processimagelink":"https://i.stack.imgur.com/MjNuE.gif","processlink":"https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers"},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"number","validate":{"required":false,"min":0,"max":9999,"step":"any","integer":"","multiple":"","custom":""},"clearOnHide":true,"hidden":false,"persistent":true,"protected":false,"defaultValue":"","suffix":"","prefix":"","placeholder":"","key":"b","label":"Number 2","inputType":"number","tableView":true,"input":true,"labelPosition":"top"}]}],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"columns","key":"columns","tableView":false,"input":false},{"hideLabel":false,"custom":"function addtwonumbers(url,formdata){\n   executeAjaxRequestWithAdalLogic(ADAL.config.clientId,addtwonumbersnoadal,url,formdata);\n}\n\nfunction addtwonumbersnoadal(token,url,formdata) {\n   var settings = {\n     \"crossDomain\": true,     \n     \"url\": url,\n     \"timeout\":30000,\n     \"method\": \"POST\",\n     \"headers\": {\n       \"content-type\": \"application/json\",\n       \"authorization\": \"Bearer \"+token,\n       \"cache-control\": \"no-cache\"\n     },\n     \"data\": JSON.stringify(formdata),\n     \"dataType\": 'json',\n     \"contentType\": 'application/json'                          \n   }\n\n   $.ajax(settings).done(function (data,textStatus,request) {\n      document.getElementById('mymessage').innerHTML='Calculation successfully performed!';\n      //console.log('data='+JSON.stringify(data));\n      //console.log('formdata='+JSON.stringify(formdata));\n      var datamerged = $.extend(formdata.data,data.data);\n      var datamergedstring = JSON.stringify(datamerged);\n      //console.log('datamerged='+datamergedstring);\n      var initjson = JSON.parse('{\"data\":'+datamergedstring+'}');\n      \n      form.submission = initjson;      \n   }).fail(function (err, textStatus, errorThrown) {\n      document.getElementById('mymessage').innerHTML='Failed to calculate two numbers!';\n      console.log(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n      alert(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n   });\n}\n\naddtwonumbers(form.submission.data['API_add_url'],{\"data\":form.submission.data});","input":true,"label":"Add two numbers","tableView":false,"key":"addtwonumbers","size":"md","leftIcon":"","rightIcon":"","block":false,"action":"custom","disableOnInvalid":false,"theme":"primary","type":"button","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""},"event":"add2numbers","lockKey":true},{"hideLabel":false,"input":true,"tableView":true,"inputType":"number","label":"Result","key":"c","placeholder":"","prefix":"","suffix":"","defaultValue":"","protected":false,"persistent":true,"hidden":false,"clearOnHide":true,"validate":{"custom":"","multiple":"","integer":"","step":"any","max":"","min":"","required":false},"type":"number","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""},"lockKey":true,"disabled":true,"labelPosition":"top"},{"hideLabel":false,"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"button","theme":"success","disableOnInvalid":false,"action":"submit","block":false,"rightIcon":"","leftIcon":"","size":"md","key":"submit","tableView":false,"label":"Do all the crazy things in green","input":true}],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Complete Test","input":false,"key":"panel"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Encryption","input":false,"key":"panel27"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel24","input":false,"title":"All form.io Controls","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Current User","input":false,"key":"panel21"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Branding","input":false,"key":"panel20"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Language","input":false,"key":"panel19"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Header Features","input":false,"key":"panel18"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel25","input":false,"title":"CDN Content","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"CDN Token","input":false,"key":"panel2"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Event Grid","input":false,"key":"panel3"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Service Bus","input":false,"key":"panel23"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Mail","input":false,"key":"panel4"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"PDF","input":false,"key":"panel5"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"SMS","input":false,"key":"panel6"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"WhatsApp","input":false,"key":"panel7"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Slack","input":false,"key":"panel9"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Teams","input":false,"key":"panel10"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Excel Calculation","input":false,"key":"panel8"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"WebBase Cache","input":false,"key":"panel11"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"SQL Server","input":false,"key":"panel12"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Preview","input":false,"key":"panel15"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"DokStore","input":false,"key":"panel14"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"CosmosDB","input":false,"key":"panel13"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Polizze erzeugen","input":false,"key":"panel16"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Schaden erzeugen","input":false,"key":"panel17"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel26","input":false,"title":"Dokument ablegen","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"In context translation","input":false,"key":"panel22"}],"created":"2017-11-12T12:49:28.153Z","revisions":"","_vid":0,"_id":"5a08435835677f0001af052d","machineName":"nezcjzowfnfwzny:end2end","modified":"2018-02-02T02:51:31.574Z","title":"Formviewer for MS Azure and Office 365","display":"form","name":"end2end","path":"end2end","project":"5a05516e35677f0001aeef6e","properties":{"formtitle":"Tog Formviewer"}};
 
-/**
- * Indicates if form is destroyed (or initially non-existing)
- */
-var formDestroyed = true;
 
 /**
  * The response from the server when doing Loading or Event actions. It has the same structure as TogFormViewer.getAppInfo() object.
@@ -51,7 +47,6 @@ function resetAppConfiguration()
         themes: "",
         userlangs: "",
         timezones: "",
-        onlinemode: false,
         display: "form",
         formtitle: "Tog Formviewer",
         formhelp: "",
@@ -114,7 +109,6 @@ function resetAppConfiguration()
         defaultTimeZone: "",
         customScript: ""
     };
-    appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
 }
 
 function initAfterADALSetup()
@@ -123,46 +117,31 @@ function initAfterADALSetup()
     if (isIframe()) {
         return;
     }
+    resetAppConfiguration();
     // set query strings into appURLQueryParameters
     appURLQueryParameters = parse_query_string(window.location.search.substring(1));
     // set query strings into appFormDataObj
     appFormDataObj = parse_query_string(window.location.search.substring(1));
+    var appDef = appConfiguration.appDefPath;
     
-    beginConfigurationProcess();
-}
-
-function beginConfigurationProcess() {
-    resetAppConfiguration();
-    if (typeof appObj === "undefined" || appObj==null) {
-        var appDef = appConfiguration.appDefPath;
-    
-        var appDefFromServer = checkForResolvedPropertyFromTheServer("appDefPath");
-        if (appDefFromServer!=null) {
-            appDef = appConfiguration.appDefPath = appDefFromServer;
-        } else {
-            // Check if we have an URI paramater which specifies
-            // a path to the app configuration. If so we'll use it.
-            var appRegex = new RegExp("[?&]app(=([^&#]*)|&|#|$)");
-            var appDefParam = appRegex.exec(window.location.href);
-            if (appDefParam && appDefParam[2])
-            {
-                var appUriParam = decodeURIComponent(appDefParam[2].replace(/\+/g, " "));
-                if (appUriParam === "/")
-                {
-                    appDef = appConfiguration.appDefPath = "../appcnfs/app.json.js";
-                }
-                else
-                {
-                    appDef = appConfiguration.appDefPath = "../appcnfs/" + appUriParam + "/app.json.js";
-                }
-            }        
+    // Check if we have an URI paramater which specifies
+    // a path to the app configuration. If so we'll use it.
+    var appRegex = new RegExp("[?&]app(=([^&#]*)|&|#|$)");
+    var appDefParam = appRegex.exec(window.location.href);
+    if (appDefParam && appDefParam[2])
+    {
+        var appUriParam = decodeURIComponent(appDefParam[2].replace(/\+/g, " "));
+        if (appUriParam === "/")
+        {
+            appDef = appConfiguration.appDefPath = "../appcnfs/app.json.js";
         }
-        
-        loadScript(appDef, checkAppConfig);
+        else
+        {
+            appDef = appConfiguration.appDefPath = "../appcnfs/" + appUriParam + "/app.json.js";
+        }
     }
-    else {
-        checkAppConfig();
-    }    
+    
+    loadScript(appDef, checkAppConfig);
 }
 
 /**
@@ -424,7 +403,7 @@ function loadConfigurations()
     var customizationDef;
     var headerConfig;
 
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validBrandObj==null) && (typeof brandObj === "undefined" || brandObj==null)) {
+    if (typeof brandObj === "undefined" || brandObj==null) {
         brandDef = checkForResolvedPropertyFromTheServer("brandDefPath");
         if (brandDef!=null) {
             appConfiguration.brandDefPath = brandDef;
@@ -447,13 +426,10 @@ function loadConfigurations()
     } 
     else 
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validBrandObj!=null) {
-            brandObj = appInfoObjFromServer.validBrandObj;
-        }
         brandObjLoaded();
     }
     
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validCustomizationObj==null) && typeof customizationObj === "undefined" || customizationObj==null) {
+    if (typeof customizationObj === "undefined" || customizationObj==null) {
         customizationDef = checkForResolvedPropertyFromTheServer("customizationDefPath");
         if (customizationDef!=null) {
             appConfiguration.customizationDefPath = customizationDef;
@@ -476,13 +452,10 @@ function loadConfigurations()
     }
     else
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validCustomizationObj!=null) {
-            customizationObj = appInfoObjFromServer.validCustomizationObj;
-        }
         customizationObjLoaded();
     }
 
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validHeaderObj==null) && typeof headerObj === "undefined" || headerObj==null) {
+    if (typeof headerObj === "undefined" || headerObj==null) {
         headerConfig = checkForResolvedPropertyFromTheServer("headerConfPath");
         if (headerConfig!=null) {
             appConfiguration.headerConfPath = headerConfig;
@@ -505,9 +478,6 @@ function loadConfigurations()
     }
     else 
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validHeaderObj!=null) {
-            headerObj = appInfoObjFromServer.validHeaderObj;
-        }
         headerObjLoaded();
     }
 }
@@ -868,13 +838,18 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
 {
     var paramVal = defaultValue;
     var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
+    var boolValFromRPOCorrect = !isBoolean || paramValFromRPO === "false" || paramValFromRPO === "true";
     
     var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
     var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
     
-    if (paramValFromRPO!=null)
+    if (paramValFromRPO && boolValFromRPOCorrect)
     {
-        paramVal = paramValFromRPO;
+        if (isBoolean) {
+            paramVal =  (paramValFromRPO === "true");
+        } else {
+            paramVal = paramValFromRPO;
+        }
     }
     else if (paramValFromUrl && boolValCorrect)
     {
@@ -1059,6 +1034,11 @@ var languageLoadStarted = false;
 var timeZonesLoadStarted = false;
 
 /**
+ * Flag which indicates if the checking successfully finished (necessary when processing 'Loading' request)
+ */
+var checkForAppSetupStarted = false;
+
+/**
  * Flag which indicates if the customScript definition loading has been started
  */
 var customScriptLoadStarted = false;
@@ -1125,7 +1105,7 @@ function checkForAppSetup()
         customScriptLoadStarted = true;
     }
         
-    if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
+    if (!checkForAppSetupStarted && typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"]))))
 		&& (typeof userLangsObj !== 'undefined' && userLangsObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["userlangs"])
@@ -1134,7 +1114,8 @@ function checkForAppSetup()
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"]))))
         && (customScriptLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"])))))
-    {        
+    {
+        checkForAppSetupStarted = true;        
         if (document.readyState === 'complete')
         {
             checkForLoadingCallback();
@@ -1164,23 +1145,18 @@ function checkForLoadingCallback()
     if (!appConfiguration.home)
     {
         // We don't have the base URL for the API call so we don't perform a call
-        appInfoObjFromServer = null;
-        if (typeof formioForm !== 'undefined') {
-            formioForm.destroy();
-            formDestroyed = true;
-        }        
         setupApp();
+        
         return;
     }
+    
+    var doLoadingCallback = appConfiguration.actionLoading && (appInfoObjFromServer==null || (appInfoObjFromServer.callbackCount==null || appInfoObjFromServer.callbackCount<3) && appInfoObjFromServer.formChanged!=null && appInfoObjFromServer.formChanged);
+    
+    appInfoObjFromServer = null;
+    checkForAppSetupStarted = false;
+    
 
-    
-    var formChanged = appInfoObjFromServer!=null && appInfoObjFromServer.formChanged!=null && appInfoObjFromServer.formChanged;
-    var callbackCount = appInfoObjFromServer!=null && appInfoObjFromServer.callbackCount!=null ? appInfoObjFromServer.callbackCount+1 : 1;
-    // appInfoObjFromServer.callbackCount is set only inside handleServerResponseForLoadingAndOtherActions function
-    var doLoadingCallback = appConfiguration.actionLoading && (appInfoObjFromServer==null || appInfoObjFromServer.callbackCount==null || callbackCount<4 && formChanged);
-    
-    console.log("DLC="+doLoadingCallback+', fc='+formChanged+', cc='+callbackCount+', aiofs='+appInfoObjFromServer+', aiofscbc='+(appInfoObjFromServer!=null ? appInfoObjFromServer.callbackCount : null));
-    formChanged = formChanged || callbackCount>1;
+    console.log("DLC="+doLoadingCallback);
     // We found home URL and it is a base address for our call
     // Now we need to find a relative path    
     if (doLoadingCallback)
@@ -1189,26 +1165,19 @@ function checkForLoadingCallback()
         var loadAct = handlePlaceholders(appConfiguration.actionLoading);
         
         var url = appConfiguration.home + "/" + loadAct;
-
-        performLoadingCallback(url,callbackCount);
+        
+        var cnt = 1;
+        if (appInfoObjFromServer!=null && appInfoObjFromServer.callbackCount!=null) {
+            cnt = appInfoObjFromServer.callbackCount+1;
+        }
+        performLoadingCallback(url,cnt);
     }
     else
     {
-        appInfoObjFromServer = null;
-        console.log('fd='+formDestroyed+', fc='+formChanged);
-        if (!formDestroyed && !formChanged) {
-            console.log('setting only submission');
-            formioForm.submission = {"data":appFormDataObj};
-            hideSpinner();
-        } else {            
-            if (typeof formioForm !== 'undefined') {
-                console.log('destroying form from cflc');
-                formioForm.destroy();
-                formDestroyed = true;
-            }
-            console.log('setting app');
-            setupApp();
-        }
+        if (typeof formioForm !== 'undefined') {
+            formioForm.destroy();
+        }        
+        setupApp();
     }
 }
 
@@ -1239,8 +1208,7 @@ function performLoadingCallback(url,cnt)
     if (typeof ADAL!== 'undefined' && ADAL) {
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"callbackCount":cnt},onsuccess_loading,onfailure_loading);
     } else {
-        //alert("It is not possible to perform loading because user is not logged-in!");
-        console.log("It is not possible to perform loading because user is not logged-in!");
+        alert("It is not possible to perform loading because user is not logged-in!");
         setupApp();
     }    
 }
@@ -1255,21 +1223,15 @@ function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textS
     handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
 }
 
-function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
+function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {
+   var callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 1;
    appInfoObjFromServer = data.appInfo;
-   //appInfoObjFromServer = {};
-   //appInfoObjFromServer.resolvedProperties = JSON.parse(JSON.stringify(appConfiguration));
    if (appInfoObjFromServer!=null) {
-       //appInfoObjFromServer.formObj.title = "FT "+Math.floor((Math.random()*1000)+1);
        var resolvedPropertiesObjFromServer = appInfoObjFromServer.resolvedProperties;
        if (resolvedPropertiesObjFromServer==null) {
            resolvedPropertiesObjFromServer = {};
        }
-       // if server decided that the user should go offline, set ADAL to null
-       if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
-          ADAL = null;
-       }
-       appInfoObjFromServer.callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 1;
+       appInfoObjFromServer.callbackCount = additionalConfiguration.callbackCount;
        
        //console.log('DATA received ='+JSON.stringify(data));
        console.log('oldform='+appConfiguration.formDefPath);
@@ -1287,8 +1249,6 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        console.log('hch='+headerChanged);
        var themesChanged = resolvedPropertiesObjFromServer.themes!=null && appConfiguration.themes!=resolvedPropertiesObjFromServer.themes || appInfoObjFromServer.themesObj!=null && JSON.stringify(themesObj)!==JSON.stringify(appInfoObjFromServer.themesObj);       
        console.log('thc='+themesChanged);
-       var userLangsChanged = resolvedPropertiesObjFromServer.userlangs!=null && appConfiguration.userlangs!=resolvedPropertiesObjFromServer.userlangs || appInfoObjFromServer.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.userLangsObj);
-       console.log('ulc='+userLangsChanged);
        var timeZonesChanged = resolvedPropertiesObjFromServer.timezones!=null && appConfiguration.timezones!=resolvedPropertiesObjFromServer.timezones || appInfoObjFromServer.timeZonesArr!=null && JSON.stringify(timeZonesArr)!==JSON.stringify(appInfoObjFromServer.timeZonesArr);
        console.log('tzch='+timeZonesChanged);
        var customScriptChanged = resolvedPropertiesObjFromServer.customScript!=null && appConfiguration.customScript!=resolvedPropertiesObjFromServer.customScript;
@@ -1300,21 +1260,12 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        //console.log('form DATA merged ='+JSON.stringify(appFormDataObj));
        //console.log('configuration DATA merged ='+JSON.stringify(appConfiguration));
        
-       appInfoObjFromServer.validBrandObj = brandObj;
-       appInfoObjFromServer.validCustomizationObj = customizationObj;
-       appInfoObjFromServer.validHeaderObj = headerObj;
-       brandObj = null;
-       customizationObj = null;
-       headerObj = null;
+       var appDef = appConfiguration.appDefPath;
        if (appDefChanged) {
           appObj = null;
           headerObj = null;
-          appInfoObjFromServer.validHeaderObj = null;
           customizationObj = null;
-          appInfoObjFromServer.validCustomizationObj = null;
           brandObj = null;
-          appInfoObjFromServer.validBrandObj = null;
-          formDestroyed = true;
           formObj = null;
           themesObj = null;
           userLangsObj = null;
@@ -1324,16 +1275,14 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           timeZonesLoadStarted = false;
           customScriptLoadStarted = false;
           customScriptLoadedFlag = false;
+
+          appDef = resolvedPropertiesObjFromServer.appDefPath;
        }
        if (formChanged) {
-          formDestroyed = true;
           formObj = null;
-          headerObj = null;
-          appInfoObjFromServer.validHeaderObj = null;
-          customizationObj = null;
-          appInfoObjFromServer.validCustomizationObj = null;
           brandObj = null;
-          appInfoObjFromServer.validBrandObj = null;
+          customizationObj = null;
+          headerObj = null;
           themesObj = null;
           userLangsObj = null;
           timeZonesArr = null;
@@ -1343,15 +1292,12 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        }
        if (brandChanged) {
           brandObj = null;
-          appInfoObjFromServer.validBrandObj = null;
        }
        if (customizationChanged) {
           customizationObj = null;
-          appInfoObjFromServer.validCustomizationObj = null;
        }
        if (headerChanged) {
           headerObj = null;
-          appInfoObjFromServer.validHeaderObj = null;
           themesObj = null;
           userLangsObj = null;
           timeZonesArr = null;
@@ -1363,7 +1309,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           themesObj = null;
           themeLoadStarted = false;
        }
-       if (userLangsChanged) {
+       if (resolvedPropertiesObjFromServer.userlangs!=null && appConfiguration.userlangs!=resolvedPropertiesObjFromServer.userlangs || appInfoObjFromServer.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.userLangsObj)) {
           userLangsObj = null;
           languageLoadStarted = false;
        }
@@ -1376,17 +1322,17 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           customScriptLoaded = false;
        }
        
-       beginConfigurationProcess();
+       resetAppConfiguration(); 
+       appConfiguration.appDefPath = appDef;
+       if (appObj==null) {
+           console.log("loading new appDef");
+          loadScript(appDef, checkAppConfig);
+       } else {
+           console.log("checking app config");
+          checkAppConfig();
+       }       
    } else {
-       appInfoObjFromServer = null;
-       console.log('fd='+formDestroyed);
-       if (!formDestroyed) {
-           console.log('setting only submission');
-           formioForm.submission = {"data":appFormDataObj};
-           hideSpinner();
-       } else {            
-           setupApp();
-       }
+       setupApp();
    }
 }
 
@@ -1409,32 +1355,9 @@ function updateFormDefinition(formPath,data)
     {
         absolutePath = appConfiguration.formDefPath = "../forms/" + formPath + "/form.json.js";
     }
-
-    // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
-    if (data) {
-        appFormDataObj = data;
-    }
     
-    // This is a hack - using the same logic as when we are getting updated appInfo from server
-    appInfoObjFromServer = {
-        "resolvedProperties" : {
-            "formDefPath" : absolutePath
-        }
-    };
-    
-    formDestroyed = true;
-    formObj = null;
-    headerObj = null;
-    customizationObj = null;
-    brandObj = null;
-    themesObj = null;
-    userLangsObj = null;
-    timeZonesArr = null;
-    themeLoadStarted = false;
-    languageLoadStarted = false;
-    timeZonesLoadStarted = false;    
-
-    beginConfigurationProcess();
+    // Load new form definition
+    loadScript(absolutePath, function(){formUpdated(checkForLoadingCallback,data);}, updateFormFailed);
 }
 
 /**
@@ -1447,7 +1370,6 @@ function reloadFormDefinition()
     
     // Update the form
     formioForm.destroy();
-    formDestroyed = true;
     setupAppForUpdatedForm();
 }
 
@@ -1457,6 +1379,46 @@ function reloadFormDefinition()
 function setupAppForUpdatedForm() 
 {
     generateForm(showFormWithUnchagedData);
+}
+
+/**
+ * Runs when a new form definition has been loaded. Updates rendered form and header properties.
+ * Applies updated properties to the layout. Optionally initializes the form with the data.
+ */
+function formUpdated(fnc2exec,data)
+{
+    var fdp = appConfiguration.formDefPath;
+    
+    resetAppConfiguration();
+    resetFormData();
+    
+    // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
+    if (data) {
+        appFormDataObj = data;
+    }
+    
+    // Update header properties
+    setupFormConfiguration();
+    setupBrandConfiguration();
+    setupCustomizationConfiguration();
+    setupHeaderConfiguration();
+
+    appConfiguration.formDefPath = fdp;
+    // Update the form
+    if (typeof formioForm !== 'undefined') {
+        formioForm.destroy();
+    }
+    fnc2exec();
+    //setupApp();
+}
+
+/**
+ * Runs when a new form definition fails to load. Hides the spinner and shows the old form again.
+ */
+function updateFormFailed()
+{
+    // First show the spinner
+    hideSpinner();
 }
 
 function hideSpinner() {
@@ -1473,7 +1435,6 @@ function showSpinner() {
 
 var TogFormViewer =
 {
-    jumpWidth : 767,
     FormioPlugIn:
     {
         setProperty: function(propName, propValue)
@@ -1535,7 +1496,7 @@ var TogFormViewer =
             // in Bootstrap
             if (propName === "jumpWidth")
             {
-                return this.jumpWidth;
+                return 767;
             }
         }
     },
@@ -1709,13 +1670,13 @@ var TogFormViewer =
                 "navigator.appCodeName" : navigator.appCodeName,
                 "navigator.cookieEnabled" : navigator.cookieEnabled
             },
-            "deviceInfo" : {
+            deviceInfo : {
             },
             "currentUser" : currentUser,
             "runtimeProperties" : {
-                "tenantId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.tenant),
-                "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
-                "jumpWidth" : this.jumpWidth,
+                "tenantId" : (ADAL==null ? "" : ADAL.config.tenant),
+                "appRegAppId" : (ADAL==null ? "" : ADAL.config.clientId),
+                "jumpWidth" : 767,
                 "browserInfo" : {
                     "width" : $(window).width(),
                     "height" : $(window).height()

@@ -30,35 +30,143 @@ function setupApp() {
  * Sets up the header and layout elements including a form
  */
 function _setupAppInternal()
-{                
-    if (isSignedInUser())
-    {
-        console.log('ADAL logic finished...');
-    }
+{
+    console.log('Setting app header and the form...');
     
     // Initializing the form
     setupLayout();
     var hooksObj = createHooksObj();
     langObj.hooks = hooksObj;
     langObj.languageOverride = numberFormatObj;
-    generateForm(setUserSettings);
     fillUserInfo();
+    setUserSettings(function()
+    {
+        // We should show the form after new styles has been loaded to prevent FOUC
+        showContentOnStyleApply(function()
+        {
+            
+            generateForm(function()
+            {
+                formDestroyed = false;
+                setupPredefinedLanguage();
+                
+                // Embeds a map (for example Bing Map) 
+                MapPlugIn.embedMap();
+                checkForLoadedAction();
+            });
+        });
+    });
+}
+
+/**
+ * Checks the configuration to find out if we should perform an optional API call after we load the form.
+ * If so performs the call.
+ */
+function checkForLoadedAction()
+{
+    if (!appConfiguration.home)
+    {
+        // We don't have the base URL for the API call so we don't perform a call        
+        return;
+    }
+    
+    // We found home URL and it is a base address for our call
+    // Now we need to find a relative path
+    
+    if (appConfiguration.actionLoaded)
+    {
+        // Replace placeholders in relative path with available settings
+        var loadedAct = handlePlaceholders(appConfiguration.actionLoaded);
+        
+        var url = appConfiguration.home + "/" + loadedAct;
+        
+        performLoadedAction(url);
+    }
+}
+
+/**
+ * Calls loaded action
+ */
+function performLoadedAction(url)
+{
+    var payload = {"appInfo" : TogFormViewer.getAppInfo()};
+    console.log('executing loaded action for url '+url);
+    // TODO: Perform loading API call with the given callback
+    if (typeof ADAL!== 'undefined' && ADAL) {
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {},onsuccess_loaded,onfailure_loaded);
+    } else {
+        //alert("It is not possible to perform loaded action because user is not logged-in!");
+        console.log("It is not possible to perform loaded action because user is not logged-in!");
+    }    
+}
+
+/**
+ * This function is executed on successful call to Loaded API.
+ */
+function onsuccess_loaded(token,url,formdata,additionalConfiguration,data,textStatus,request) {
+   var msgPart = "loaded operation for url '"+url+"'";
+   console.log("Successfully executed "+msgPart+".");
+   //console.log('DATA received ='+JSON.stringify(data));
+}
+
+function onfailure_loaded(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
+   onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
 }
 
 /**
  * Set user settings from Outlook or Azure. 
  */
-function setUserSettings()
+function setUserSettings(userSettingsSetCallback)
 {
     if (appConfiguration.useOutlookSettings && isSignedInUser())
     {
         // Find out user's mailbox settings
-        getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings');
-        getSupportedTimeZones();
+        getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', function(language, timeZone)
+        {
+            if (language)
+            {
+                preparePredefinedLanguage(convertGraphLanguage(language));
+                console.log("Selected language="+languageSelector.selectedLanguage);
+            }
+            else
+            {
+                languageSelector.languageInitialized = true;
+                console.log("User's language hasn't been received.");
+            }
+            
+            console.log("Selected language="+languageSelector.selectedLanguage);
+            
+            if (timeZone)
+            {
+                setInitialTimeZone(timeZone);
+                console.log("User's current time zone alias: " + timeZone);
+            }
+            else
+            {
+                timeZoneSelector.timeZoneInitialized = true;
+                console.log("User's current time zone hasn't been received.");
+            }
+            
+            checkUserSettingsLoaded(userSettingsSetCallback);
+        }, function()
+        {
+            languageSelector.languageInitialized = true;
+            timeZoneSelector.timeZoneInitialized = true;
+            checkUserSettingsLoaded(userSettingsSetCallback);
+        });
+        
+        getSupportedTimeZones(function(timeZones)
+        {
+            setSupportedTimeZones(timeZones);
+        }, function()
+        {
+            timeZoneSelector.supportedTimeZonesSet
+        });
+        
         if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
         {
             // Find out user's theme (user property extensions)
-            getUserPropertyExtensions(false);
+            getUserPropertyExtensions(false, function() {checkUserSettingsLoaded(userSettingsSetCallback)}, function() {checkUserSettingsLoaded(userSettingsSetCallback)});
         }
         else
         {
@@ -74,22 +182,29 @@ function setUserSettings()
                 
         // Find out user's language, time zone and theme settings
         // defined in user's property extensions on AAD
-        getUserPropertyExtensions(true);
+        getUserPropertyExtensions(true, function() {checkUserSettingsLoaded(userSettingsSetCallback)}, function() {checkUserSettingsLoaded(userSettingsSetCallback)});
     }
     else
     {
-        // Just translate the page and set default theme
-        applyTranslation();
         setupStyle(false);
+        userSettingsSetCallback();
     }       
 } 
+
+function checkUserSettingsLoaded(userSettingsLoadedCallback)
+{
+    if ((!appConfiguration.themeSettings || isThemeSettingsLoaded()) && isLanguageSettingsLoaded() && isTimeZoneSettingsLoaded())
+    {
+        userSettingsLoadedCallback();
+    }
+}
 
 /**
  * Create form with form ready callback paremeter. 
  */
 function generateForm(formReadyCallback) 
 {
-     Formio.createForm(document.getElementById('formio'), appConfiguration.formObj, langObj)
+     Formio.createForm(document.getElementById('formio'), formObj, langObj)
     .then(function(form)
     {
         form.header =
@@ -104,14 +219,14 @@ function generateForm(formReadyCallback)
         };
         form.header.settings.brand.mainlogopath = $("#mainLogo").find("img").attr("src");
         form.header.settings.brand.faviconpath = $("#pageIcon").attr("href");            
-        form.submission = {"data":appConfiguration.queries};
+        form.submission = {"data":appFormDataObj};
         form.httprequest =
         {
             protocol : window.location.protocol.substring(0,window.location.protocol.length-1),
             hostname: window.location.hostname,
             pathname: window.location.pathname,
             querystring: window.location.search,
-            queryjson: appConfiguration.queries
+            queryjson: appURLQueryParameters
         }
         window.setLanguage = function (lang)
         {
@@ -119,19 +234,53 @@ function generateForm(formReadyCallback)
         };
         window.formioForm = form;
         
+        // Check if we should show the toggle menu
+        if (appConfiguration.toggleMenu && window.innerWidth <= TogFormViewer.FormioPlugIn.getProperty("jumpWidth"))
+        {
+            $("#toggleMenu").removeClass("header-hidden-element");
+        }
+        else if(!$("#toggleMenu").hasClass("header-hidden-element"))
+        {
+            $("#toggleMenu").addClass("header-hidden-element");
+        }
+        
+        // Trigger form change event (execution of conditional scripts) when the window gets resized
+        window.onresize = function()
+        {
+            if (appConfiguration.toggleMenu)
+            {
+                if (window.innerWidth <= TogFormViewer.FormioPlugIn.getProperty("jumpWidth") && $("#toggleMenu").hasClass("header-hidden-element"))
+                {
+                    $("#toggleMenu").removeClass("header-hidden-element");
+                    TogFormViewer.toggleMenuOpened = false;
+                }
+                else if (window.innerWidth > TogFormViewer.FormioPlugIn.getProperty("jumpWidth") && !$("#toggleMenu").hasClass("header-hidden-element"))
+                {
+                    $("#toggleMenu").addClass("header-hidden-element");
+                    $(".header-wrapper").removeClass("toggle-menu-opened");
+                    $(".content-wrapper").removeClass("toggle-menu-opened");
+                }
+            }
+            
+            if (appConfiguration.triggerResizeChange)
+            {
+                formioForm.checkConditions();
+            }
+        };
+        
         form.ready.then(function()
         {
-           // Executing loading script when the form is ready
+           // Executing loaded script when the form is ready
            // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
-           if (appConfiguration.formObj.hasOwnProperty("properties") && appConfiguration.formObj.properties!=null && appConfiguration.formObj.properties.hasOwnProperty("loadingScript"))
+           if (formObj.hasOwnProperty("properties") && formObj.properties!=null && formObj.properties.hasOwnProperty("loadedScript"))
             {
-               var loadingScript = "";
+               var loadedScript = "";
                try {
-                 loadingScript = appConfiguration.formObj.properties["loadingScript"];
-                 console.log('Executing loading script:'+loadingScript);
-                 eval(loadingScript);
+                 loadedScript = formObj.properties["loadedScript"];
+                 console.log('Executing loaded script:'+loadedScript);
+                 eval(loadedScript);
                } catch (err) {
-                 var msg = "Error occurred when executing loading script:\n\n"+loadingScript;
+                 var msg = "Error occurred when executing loaded script:\n\n"+loadedScript;
                  msg+="\n\nError name: "+err.name;
                  msg+="\n\nError message: "+err.message;
                  msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
@@ -142,6 +291,12 @@ function generateForm(formReadyCallback)
            
             // Sets up form level defined help content
             setDefaultHelpContent();
+			
+            // Sets up default language 
+            setupDefaultLanguage();
+            
+            // Sets up default time zone
+            setupDefaultTimeZone();
             
             formReadyCallback();
         });
@@ -162,17 +317,63 @@ function generateForm(formReadyCallback)
                 calculationResultSet = false;
             }
         });
+        
+        form.on('customEvent', function(event) {
+            console.log('action default = '+appConfiguration.action);
+            
+            var action = appConfiguration.action;
+            if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('action')) {
+                action = event.component.properties.action;
+                console.log('button action = '+action);
+            }
+            action = handlePlaceholders(action);
+            if (appConfiguration.home && action) {
+                var url = appConfiguration.home + "/" + action;
+                console.log('action will be executed');
+                appFormDataObj = form.submission.data;
+                performEventAction(url);
+            }
+        });
+        
     });
 }
 
+/**
+ * Calls event action
+ */
+function performEventAction(url)
+{
+    showSpinner();
+    var payload = {"appInfo" : TogFormViewer.getAppInfo()};    
+    console.log('executing event action for url '+url);
+    if (typeof ADAL!== 'undefined' && ADAL) {
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {},onsuccess_eventaction,onfailure_eventaction);
+    } else {
+        alert("It is not possible to perform event action for url '"+url+"' because user is not logged-in!");
+        hideSpinner();
+    }
+}
+
+/**
+ * This function is executed on successful call to event action API. If form definition changed, it will be updated.
+ */
+function onsuccess_eventaction(token,url,formdata,additionalConfiguration,data,textStatus,request) {
+   var msgPart = "event action for url '"+url+"'";
+   console.log("Successfully executed "+msgPart+".");
+   //console.log('DATA received ='+JSON.stringify(data));
+   handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
+}
+
+function onfailure_eventaction(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
+   onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
+   hideSpinner();
+}
 /**
  * Display a form with unchanged data. 
 */
 function showFormWithUnchagedData()
 {
-    $('.header-border').show();
-    $('.content-wrapper').show();
-    $('.overlay').hide();
+    hideSpinner();
     formioForm.submission = formSubmissionData;
 }
 
@@ -279,42 +480,13 @@ function setupLayout()
     $("#mainLogo").show();
     
     // Set up side logo and show it if defined
-    if (appConfiguration.sidelogopath)
-    {
-        $("#sideLogo").find("img").attr("src", appConfiguration.sidelogopath);
-        $("#sideLogo").show();
-        $("#mainLogo").find("img").removeClass("logo-background");
-        $("#mainLogo").addClass("logo-background");
-        $("#sideLogo").find("img").addClass("logo-background");
-    }
-    else if ($("#sideLogo").find("img").hasClass("logo-background"))
-    {
-        $("#sideLogo").hide();
-        $("#mainLogo").find("img").addClass("logo-background");
-        $("#mainLogo").removeClass("logo-background");
-        $("#sideLogo").find("img").removeClass("logo-background");
-    }
+    setSideLogoPath(); 
     
     // Set up favicon
-    var faviconElement = document.createElement("link");
-    faviconElement.rel = "shortcut icon";
-    faviconElement.type = "image/x-icon";
-    faviconElement.id = "pageIcon";
-    
-    faviconElement.href = appConfiguration.faviconpath;
-    var pageTitleNode = document.getElementById("pageTitle");
-    pageTitleNode.parentNode.insertBefore(faviconElement, pageTitleNode.nextSibling);
+    setFaviconElement(); 
     
     // Set up client's logo (customization logo) and show it if defined
-    if (appConfiguration.customizationlogopath)
-    {
-        $("#customizationLogo").find(".client-logo").attr("src", appConfiguration.customizationlogopath);
-        $("#customizationLogo").show();
-    }
-    else if ($("#customizationLogo").find(".client-logo").attr("src") !== "./")
-    {
-        $("#customizationLogo").hide();
-    }
+    setCustomizationLogo(); 
     
     // Check if we should maximize the browser window (IE only)
     setMaximizeBrowserWindow();
@@ -808,6 +980,60 @@ function showPhraseApp()
     
 }
 
+/**
+ * Set up side logo and show it if defined.
+ */
+function setSideLogoPath() 
+{
+    if (appConfiguration.sidelogopath)
+    {
+        $("#sideLogo").find("img").attr("src", appConfiguration.sidelogopath);
+        $("#sideLogo").show();
+        $("#mainLogo").find("img").removeClass("logo-background");
+        $("#mainLogo").addClass("logo-background");
+        $("#sideLogo").find("img").addClass("logo-background");
+    }
+    else if ($("#sideLogo").find("img").hasClass("logo-background"))
+    {
+        $("#sideLogo").hide();
+        $("#mainLogo").find("img").addClass("logo-background");
+        $("#mainLogo").removeClass("logo-background");
+        $("#sideLogo").find("img").removeClass("logo-background");
+    }
+}
+
+/**
+ * Set up favicon.
+ */
+function setFaviconElement() 
+{
+    $('#pageIcon').remove();
+    var faviconElement = document.createElement("link");
+    faviconElement.rel = "shortcut icon";
+    faviconElement.type = "image/x-icon";
+    faviconElement.id = "pageIcon";
+    
+    faviconElement.href = appConfiguration.faviconpath;
+    var pageTitleNode = document.getElementById("pageTitle");
+    pageTitleNode.parentNode.insertBefore(faviconElement, pageTitleNode.nextSibling);
+}
+
+/**
+ * Set up client's logo (customization logo) and show it if defined.
+ */
+function setCustomizationLogo() 
+{
+    if (appConfiguration.customizationlogopath)
+    {
+        $("#customizationLogo").find(".client-logo").attr("src", appConfiguration.customizationlogopath);
+        $("#customizationLogo").show();
+    }
+    else if ($("#customizationLogo").find(".client-logo").attr("src") !== "./")
+    {
+        $("#customizationLogo").hide();
+    }
+}
+    
 /**
  * Sets the Header title.
  */
@@ -1537,3 +1763,25 @@ function showFeedbackFields(buttonSetText)
     $('#feedbackMiddleFormContainer').addClass('slide-left');
     $('#feedbackMiddleFormContainer').show();
 } 
+
+/**
+ * Change layout when toggle menu has been opened (small screens)
+ */
+function toggleChanged()
+{
+    TogFormViewer.toggleMenuOpened = !TogFormViewer.toggleMenuOpened;
+    if (TogFormViewer.toggleMenuOpened)
+    {
+        $("#toggleMenuButton").addClass("app-menu-button-right-menu-selected");
+        $(".header-wrapper").addClass("toggle-menu-opened");
+        $(".content-wrapper").addClass("toggle-menu-opened");
+    }
+    else
+    {
+        $("#toggleMenuButton").removeClass("app-menu-button-right-menu-selected");
+        $(".header-wrapper").removeClass("toggle-menu-opened");
+        $(".content-wrapper").removeClass("toggle-menu-opened");
+    }
+    
+    formioForm.checkConditions();
+}

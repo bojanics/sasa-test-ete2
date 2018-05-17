@@ -28,7 +28,8 @@ languagesMap['UK-UA'] = 'українська (Україна&nbsp;-&nbsp;UA)';
 var languageSelector =
 {
     currentLanguage: 'EN-GB',
-    selectedLanguage: 'EN-GB'
+    selectedLanguage: 'EN-GB',
+    languageInitialized: false
 };
 
 function setupLanguageMenu()
@@ -64,6 +65,33 @@ function selectLanguage(languageButton, lang)
     $('#langarr').find('.ltz-itm-selector-check').css('visibility', 'hidden');
     $(languageButton).find('.ltz-itm-selector-check').css('visibility', 'visible');
     $('#languages').hide();
+}
+
+/**
+ * Reads language setting (defaultLanguage) from brand.json.js and applies it.
+ * Setting default language in case that user didn't choose any.
+ */
+function setupDefaultLanguage()
+{
+    if (appConfiguration.defaultLanguage && appConfiguration.defaultLanguage != languageSelector.currentLanguage)
+    {
+        languageSelector.selectedLanguage = appConfiguration.defaultLanguage;
+        setupPredefinedLanguage();
+    }
+}
+
+function preparePredefinedLanguage(lang)
+{
+    languageSelector.selectedLanguage = lang;
+    languageSelector.languageInitialized = true;
+}
+
+/**
+ * Checks if user's language has been loaded
+ */
+function isLanguageSettingsLoaded()
+{
+    return languageSelector.languageInitialized;
 }
 
 /**
@@ -172,6 +200,7 @@ function setChosenLanguage()
 {
     var languageChanged = (languageSelector.selectedLanguage !== languageSelector.currentLanguage);
     applyTranslation();
+    MapPlugIn.reloadMap();
     
     return languageChanged;
 }

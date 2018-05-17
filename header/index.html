@@ -20,10 +20,17 @@
         <script src="./scripts/tz.js"></script>
         <script src="./scripts/theme.js"></script>
         <script src="./scripts/main.js"></script>
+        <script src="./scripts/defimp.js"></script>
         <script src="./scripts/auth.js"></script>
 		<script src="./scripts/auth_spec.js"></script>
         <script src="./scripts/map.js"></script>
-        <script src="./scripts/defimp.js"></script>
+        <!--<script src="../xslt/comparatiegenerali.xsl.js"></script>-->
+        <script src="../xslt/decont_omniasig.xsl.js"></script>
+        <!--<script src="../xslt/comparatie.xsl.js"></script>-->
+        <script src="../xslt/defaultPre.xsl.js"></script>
+        <!--<script src="../xslt/default.xsl.js"></script>-->
+        <script src="../xslt/tmpXML2FO.xml.js"></script>
+        <script src="../xslt/fo2html.xsl.js"></script>
 		<meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; media-src *;img-src * data:;font-src * data:;">
     </head>
     <body>
@@ -36,6 +43,11 @@
                     <div class="header-common app-header app-menu rsp-lar-visible">
                         <button type="button" class="header-common app-menu-button appl-button" onclick="openAppLauncher(this)"
                             <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Waffle icon-font-size-24" aria-hidden="true"></i></span>
+                        </button>
+                    </div>
+                    <div id="toggleMenu" class="header-common app-header toggle-menu header-hidden-element">
+                        <button id="toggleMenuButton" type="button" class="header-common app-menu-button app-menu-button-right" onclick="toggleChanged()">
+                            <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--GlobalNavButton" aria-hidden="true"></i></span>
                         </button>
                     </div>
                     <div class="header-common app-header header-hidden-element hiddensmcommands">

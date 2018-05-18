@@ -1114,7 +1114,7 @@ function checkForAppSetup()
         }        
         timeZonesLoadStarted = true;
     }
-console.log('csls='+customScriptLoadStarted+', csloadedflag='+customScriptLoadedFlag);
+
     // Check if the file, which path is specified at customScript parameter, should be loaded
     if (!customScriptLoadStarted && typeof appObj !== 'undefined' && appObj != null && typeof formObj !== 'undefined' && formObj != null)
     {

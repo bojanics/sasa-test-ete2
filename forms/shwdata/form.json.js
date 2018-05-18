@@ -421,6 +421,21 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
+		"label": "Submit",
+		"tableView": false,
+		"key": "submit",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "submit",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button"
+	},
+	{
+		"autofocus": false,
+		"input": true,
 		"label": "Reset form",
 		"tableView": false,
 		"key": "resetform",
@@ -446,9 +461,9 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
-		"label": "Load form",
+		"label": "Load form calcsimple",
 		"tableView": false,
-		"key": "loadform",
+		"key": "loadformcalcsimple",
 		"size": "md",
 		"leftIcon": "",
 		"rightIcon": "",
@@ -566,7 +581,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "console.log(JSON.stringify(TogFormViewer.getAppInfo()));"
+      "custom": "console.log(JSON.stringify(TogFormViewer.getAppInfo(),null,2));"
 	},
 	{
 		"autofocus": false,
@@ -603,7 +618,7 @@ var formObj={
 	}],
 	"submissionAccess": [],
 	"created": "2018-03-30T09:24:56.684Z",
-	"_id": "5abe0268fad38b108803fb43",
+	"_id": "5abe0268fad38b108803fb45",
 	"title": "Show data",
 	"display": "form",
 	"settings": {

@@ -119,6 +119,31 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
+		"label": "Load form uploadFile",
+		"tableView": false,
+		"key": "loadformupldfile",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.loadForm('fileupload',{'a':33,'b':55});"
+	},    
+	{
+		"autofocus": false,
+		"input": true,
 		"label": "Load form shwdata",
 		"tableView": false,
 		"key": "loadformshwdata",

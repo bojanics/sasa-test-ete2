@@ -237,6 +237,6 @@ var formObj={
     "elearningimagelink": "../logos/elearn.png",
     "processlink": "https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers",
     "processimagelink": "../logos/process.png",
-    "customScript": "console.log('sasa');",
+    "loadedScript": "console.log('sasa');",
   }   
 };

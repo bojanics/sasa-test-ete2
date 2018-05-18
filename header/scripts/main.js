@@ -303,6 +303,7 @@ function generateForm(formReadyCallback)
         
         form.on('submit', function(submission)
         {
+            console.log('submitting......');
             console.log(submission);
         });
         

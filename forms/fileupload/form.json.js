@@ -51,6 +51,31 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
+		"label": "Load form calcsimple",
+		"tableView": false,
+		"key": "loadformcalcsimple",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.loadForm('calcsimple',{'a':13,'b':15});"
+	},    
+	{
+		"autofocus": false,
+		"input": true,
 		"label": "Show data (JSON)",
 		"tableView": false,
 		"key": "showdata",
@@ -121,7 +146,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "console.log(JSON.stringify(TogFormViewer.getAppInfo()));"
+      "custom": "console.log(JSON.stringify(TogFormViewer.getAppInfo(),null,2));"
 	},
 	{
 		"autofocus": false,

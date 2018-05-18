@@ -2,5 +2,5 @@ var brandObj = {
     "mainlogopath": "",
     "sidelogopath": "",
     "faviconpath": "",
-    "bootswatchtheme": ""
+    "bootswatchtheme": "bluemeanie"
 };

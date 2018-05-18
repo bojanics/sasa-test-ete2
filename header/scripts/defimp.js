@@ -1114,7 +1114,7 @@ function checkForAppSetup()
         }        
         timeZonesLoadStarted = true;
     }
-
+console.log('csls='+customScriptLoadStarted+', csloadedflag='+customScriptLoadedFlag);
     // Check if the file, which path is specified at customScript parameter, should be loaded
     if (!customScriptLoadStarted && typeof appObj !== 'undefined' && appObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
@@ -1340,6 +1340,8 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           themeLoadStarted = false;
           languageLoadStarted = false;
           timeZonesLoadStarted = false;
+          customScriptLoadStarted = false;
+          customScriptLoadedFlag = false;
        }
        if (brandChanged) {
           brandObj = null;
@@ -1412,8 +1414,10 @@ function updateFormDefinition(formPath,data)
 
     // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
     if (data) {
+        console.log('sd to '+data);
         appFormDataObj = data;
     } else {
+        console.log('reset data because, data='+data);
         resetFormData();
     }
     
@@ -1435,6 +1439,8 @@ function updateFormDefinition(formPath,data)
     themeLoadStarted = false;
     languageLoadStarted = false;
     timeZonesLoadStarted = false;    
+    customScriptLoadStarted = false;
+    customScriptLoadedFlag = false;
 
     beginConfigurationProcess();
 }
@@ -1819,13 +1825,13 @@ var TogFormViewer =
         } else {
             _showData(showDataWindow,formatXml(new XMLSerializer().serializeToString(xmlDoc)),"Form submission data - XML (plain)");
         }
-    },
+    }/*,
     
     executeCustomAction: function(url)
     {
         appFormDataObj = form.submission.data;
         performEventAction(url);
-    }
+    }*/
        
 }
 

@@ -119,6 +119,31 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
+		"label": "Load form uploadFile",
+		"tableView": false,
+		"key": "loadformupldfile",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.loadForm('fileupload',{'a':133,'b':155});"
+	},    
+	{
+		"autofocus": false,
+		"input": true,
 		"label": "Load form shwdata",
 		"tableView": false,
 		"key": "loadformshwdata",
@@ -288,7 +313,7 @@ var formObj={
 	}],
 	"submissionAccess": [],
 	"created": "2018-03-30T09:24:56.684Z",
-	"_id": "5abe0268fad38b108803fb43",
+	"_id": "5abe0268fad38b108803fb44",
 	"title": "Calculate 2 numbers (V2)",
 	"display": "form",
 	"settings": {

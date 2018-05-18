@@ -308,6 +308,7 @@ function generateForm(formReadyCallback)
         
         form.on('change', function()
         {
+           console.log('onchange'); 
             if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
             {
                 TogFormViewer.calculate();

@@ -24,7 +24,7 @@ var formObj={
 			"step": "any",
 			"integer": "",
 			"multiple": "",
-			"custom": ""
+			"custom": "console.log('cva');valid=true;"
 		},
 		"type": "number",
 		"labelPosition": "top",

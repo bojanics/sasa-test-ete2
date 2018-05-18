@@ -1413,6 +1413,8 @@ function updateFormDefinition(formPath,data)
     // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
     if (data) {
         appFormDataObj = data;
+    } else {
+        resetFormData();
     }
     
     // This is a hack - using the same logic as when we are getting updated appInfo from server
@@ -1421,7 +1423,7 @@ function updateFormDefinition(formPath,data)
             "formDefPath" : absolutePath
         }
     };
-    
+
     formDestroyed = true;
     formObj = null;
     headerObj = null;
@@ -1442,6 +1444,7 @@ function updateFormDefinition(formPath,data)
  */
 function reloadFormDefinition()
 {
+    console.log('rfd called');
     showSpinner();
     window.formSubmissionData = formioForm.submission;
     
@@ -1456,6 +1459,7 @@ function reloadFormDefinition()
  */
 function setupAppForUpdatedForm() 
 {
+    console.log('setupAppForUpdatedForm');
     generateForm(showFormWithUnchagedData);
 }
 
@@ -1474,6 +1478,8 @@ function showSpinner() {
 var TogFormViewer =
 {
     jumpWidth : 767,
+    toggleMenuOpened: false,
+    
     FormioPlugIn:
     {
         setProperty: function(propName, propValue)
@@ -1484,6 +1490,7 @@ var TogFormViewer =
             }
             else if (propName === "display" && propValue !== appConfiguration.display && (propValue === "form" || propValue === "wizard")) 
             {
+                console.log('setting display to '+propValue);
                 appConfiguration.display = propValue;
                 formObj["display"] = appConfiguration.display;
                 reloadFormDefinition();
@@ -1716,6 +1723,7 @@ var TogFormViewer =
                 "tenantId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.tenant),
                 "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
                 "jumpWidth" : this.jumpWidth,
+                "toggleMenuOpened" : this.toggleMenuOpened,
                 "browserInfo" : {
                     "width" : $(window).width(),
                     "height" : $(window).height()
@@ -1813,7 +1821,12 @@ var TogFormViewer =
         }
     },
     
-    toggleMenuOpened: false
+    executeCustomAction: function(url)
+    {
+        appFormDataObj = form.submission.data;
+        performEventAction(url);
+    }
+       
 }
 
 function _showData(showDataWindow,data2show,title) {    

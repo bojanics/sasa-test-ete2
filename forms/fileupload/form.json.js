@@ -51,6 +51,31 @@ var formObj={
 	{
 		"autofocus": false,
 		"input": true,
+		"label": "Open file from Base64 url",
+		"tableView": false,
+		"key": "openfilefrombase64url",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "window.open(formioForm.submission.data['myFile'][0].url);"
+	},    
+	{
+		"autofocus": false,
+		"input": true,
 		"label": "Load form calcsimple",
 		"tableView": false,
 		"key": "loadformcalcsimple",

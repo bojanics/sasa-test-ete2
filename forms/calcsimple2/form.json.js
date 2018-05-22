@@ -116,7 +116,32 @@ var formObj={
 		"disabled": true,
 		"isNew": false
 	},
-	{
+{
+		"autofocus": false,
+		"input": true,
+		"label": "a2n direct call",
+		"tableView": false,
+		"key": "a2ndircall",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, 'https://sasa-test-ete-fnc.azurewebsites.net/Add', {'data':{'a':11,'b':33}}, {},onsuccess_calc,onfailure_generic)"
+	},    
+		{
 		"autofocus": false,
 		"input": true,
 		"label": "Load form uploadFile",

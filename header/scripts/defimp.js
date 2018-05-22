@@ -178,13 +178,15 @@ function loadScript(url, callback, errorHandler)
     // Bind the event to the callback function.
     // There are several events for cross browser compatibility.
     scriptElement.onreadystatechange = callback;
-    scriptElement.onload = callback;
+    scriptElement.onload = callback;    
     if (typeof errorHandler === 'undefined')
     {
+        console.log('loads '+url+' with errhandler UNDEFINED');
         scriptElement.onerror = callback;
     }
     else
     {
+        console.log('loads '+url+' with errhandler defined');
         scriptElement.onerror = errorHandler;
     }
     

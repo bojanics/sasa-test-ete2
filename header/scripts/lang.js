@@ -47,6 +47,55 @@ function setupLanguageMenu()
 }
 
 /**
+ * Defines a minimum distance of available languages list (element with id "languages"). 
+ * Distance is mesured from the top of page.
+ */
+var languageManuMinTopDistance = 12;
+
+/**
+ * Sets position of available language list (i.e. position from which it will be shown)
+ */
+function setPositionOfLanguageMenu()
+{
+    var langElement = document.getElementById("languages");
+    
+    var countLanguages = 0;
+    for (var propName in languagesMap)
+    {
+        countLanguages++;
+    }
+    
+    if (countLanguages % 2 == 1) 
+    {
+        countLanguages++;
+    }
+    
+    var moveTop = (countLanguages / 2) * 30;
+    
+    // if languagesSelect button exists then set position of langElement in relation to it. 
+    if ($("#languagesSelect").length)
+    {
+        var positionOfLangSelectElement = $("#languagesSelect").offset();
+        
+        if (positionOfLangSelectElement != null)
+        {
+            var topValue = positionOfLangSelectElement.top - moveTop;
+            
+            if (topValue < languageManuMinTopDistance) 
+            {
+                topValue = languageManuMinTopDistance;
+            }
+            
+            // if element exists we set his position.
+            if (langElement != null)
+            {
+                langElement.style = "top: " + topValue + "px;";
+            }
+        }
+    }
+}
+
+/**
  * Sets a language setting to a new value
  */
 function setLanguageSettings(lang)

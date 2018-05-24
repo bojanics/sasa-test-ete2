@@ -609,7 +609,8 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration,
         if (!configuration.justCheck) {
             setupStyle(false);
             if (configuration.fetchLTZ) {
-                applyTranslation();
+                languageSelector.languageInitialized = true;
+                timeZoneSelector.timeZoneInitialized = true;
             }
         }
         

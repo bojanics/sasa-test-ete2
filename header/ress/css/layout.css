@@ -2268,7 +2268,7 @@ textarea.valid {
     box-sizing: border-box;
     outline: 0;
     z-index: 2002;
-    left: calc(100vw - 343px);
+    left: calc(100vw - 288px);
     top: 12px;
     display: none;
     background-color: white;

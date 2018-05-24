@@ -1,0 +1,4 @@
+var customizationObj = {
+    "customizationlogopath": "",
+    "faviconpath": ""
+};

@@ -1,4 +1,4 @@
-var formObj={
+var formObj = {
 	"type": "form",
 	"tags": [],
 	"owner": "599d5130a0434200072250ab",
@@ -141,6 +141,32 @@ var formObj={
 		},
       "custom": "executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, 'https://sasa-test-ete-fnc.azurewebsites.net/Add', {'data':{'a':11,'b':33}}, {},onsuccess_calc,onfailure_generic)"
 	},    
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Add using executeCustomEvent",
+		"tableView": false,
+		"key": "addusingcexeccustev",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.executeCustomAction('https://sasa-test-ete-fnc.azurewebsites.net/Add');"
+	},
+    
 		{
 		"autofocus": false,
 		"input": true,

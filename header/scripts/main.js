@@ -160,7 +160,7 @@ function setUserSettings(userSettingsSetCallback)
             setSupportedTimeZones(timeZones);
         }, function()
         {
-            timeZoneSelector.supportedTimeZonesSet
+            timeZoneSelector.supportedTimeZonesSet = true;
         });
         
         if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
@@ -333,7 +333,7 @@ function generateForm(formReadyCallback)
                 var url = appConfiguration.home + "/" + action;
                 console.log('action will be executed');
                 appFormDataObj = form.submission.data;
-                performEventAction(url);
+                performEventOrCustomAction(url,true);
             }
         });
         
@@ -343,30 +343,30 @@ function generateForm(formReadyCallback)
 /**
  * Calls event action
  */
-function performEventAction(url)
+function performEventOrCustomAction(url,isEventAction)
 {
     showSpinner();
     var payload = {"appInfo" : TogFormViewer.getAppInfo()};    
-    console.log('executing event action for url '+url);
+    console.log("executing "+(isEventAction ? "event" : "custom")+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
-        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {},onsuccess_eventaction,onfailure_eventaction);
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"isEventAction":isEventAction},onsuccess_eventorcustomaction,onfailure_eventorcustomaction);
     } else {
-        alert("It is not possible to perform event action for url '"+url+"' because user is not logged-in!");
+        alert("It is not possible to perform "+(isEventAction ? "event" : "custom")+" action for url '"+url+"' because user is not logged-in!");
         hideSpinner();
     }
 }
 
 /**
- * This function is executed on successful call to event action API. If form definition changed, it will be updated.
+ * This function is executed on successful call to event/custom action API. If form definition changed, it will be updated.
  */
-function onsuccess_eventaction(token,url,formdata,additionalConfiguration,data,textStatus,request) {
-   var msgPart = "event action for url '"+url+"'";
+function onsuccess_eventorcustomaction(token,url,formdata,additionalConfiguration,data,textStatus,request) {
+   var msgPart = (additionalConfiguration.isEventAction ? "event" : "custom")+" action for url '"+url+"'";
    console.log("Successfully executed "+msgPart+".");
    //console.log('DATA received ='+JSON.stringify(data));
-   handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
+   handleServerResponseForLoadingAndOtherActions(url,{},data);
 }
 
-function onfailure_eventaction(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
+function onfailure_eventorcustomaction(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
    onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
    hideSpinner();
 }
@@ -1558,6 +1558,7 @@ function closeAppLauncher()
  */
 function chooseLanguage()
 {
+    setPositionOfLanguageMenu();
     $('#languages').show();
 }
 

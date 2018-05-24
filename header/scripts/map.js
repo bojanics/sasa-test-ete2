@@ -163,7 +163,7 @@ var MapPlugIn =
     /**
      * Adds a pushpin to a given location on the map
      */
-    addLocation: function (latitude, longitude, title, subtitle, description, pushpinClickedCallback)
+    addLocation: function (latitude, longitude, title, subtitle, description, options, pushpinClickedCallback)
     {
         // Check which maps provider we should use
         if (appConfiguration.bingMapsKey)
@@ -196,6 +196,14 @@ var MapPlugIn =
             else
             {
                 pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(latitude, longitude));
+            }
+            
+            if(options)
+            {
+                if(options.color)
+                {
+                    pushpin.setOptions({ color: options.color});
+                }
             }
             
             if (pushpinClickedCallback)

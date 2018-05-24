@@ -1128,7 +1128,7 @@ function checkForAppSetup()
         } else {
             if (appConfiguration.timezones)
             {                
-                loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();}, loadDefaultTimeZones);loadScript(appConfiguration.timezones, checkForAppSetup, loadDefaultTimeZones);
+                loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();}, loadDefaultTimeZones);
             }
         }        
         timeZonesLoadStarted = true;
@@ -1288,7 +1288,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
           ADAL = null;
        }
-       appInfoObjFromServer.callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 1;
+       appInfoObjFromServer.callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 0;
        
        //console.log('DATA received ='+JSON.stringify(data));
        console.log('oldadp='+appConfiguration.appDefPath);
@@ -1378,8 +1378,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           timeZonesLoadStarted = false;
           customScriptLoadStarted = false;
           customScriptLoadedFlag = false;
-       } 
-       
+       }
        if (brandChanged) {
           hasChanges = true;
           brandObj = null;
@@ -1545,11 +1544,12 @@ function showSpinner() {
 
 var TogFormViewer =
 {
-    jumpWidth : 767,
     toggleMenuOpened: false,
     
     FormioPlugIn:
     {
+        jumpWidth : 767,
+        
         setProperty: function(propName, propValue)
         {
             if (_checkPropertyValue(propName, propValue, "form", "string"))
@@ -1790,7 +1790,7 @@ var TogFormViewer =
             "runtimeProperties" : {
                 "tenantId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.tenant),
                 "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
-                "jumpWidth" : this.jumpWidth,
+                "jumpWidth" : this.FormioPlugIn.jumpWidth,
                 "toggleMenuOpened" : this.toggleMenuOpened,
                 "browserInfo" : {
                     "width" : $(window).width(),

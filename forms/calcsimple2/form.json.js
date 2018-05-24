@@ -139,7 +139,7 @@ var formObj = {
 		"properties": {
 			
 		},
-      "custom": "executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, 'https://sasa-test-ete-fnc.azurewebsites.net/Add', {'data':{'a':11,'b':33}}, {},onsuccess_calc,onfailure_generic)"
+      "custom": "executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, 'https://sasa-test-ete-fnc.azurewebsites.net/Add', {'data':{'a':formioForm.submission.data.a,'b':formioForm.submission.data.b}}, {'isSendReceive' : true,'operation':'test'},onsuccess_sendReceiveOrHandover,onfailure_generic)"
 	},    
 	{
 		"autofocus": false,

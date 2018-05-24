@@ -1,5 +1,20 @@
 var timeZonesArr=[
     {
+        "alias": "UTC",
+        "displayName": "(UTC) Coordinated Universal Time"
+    },
+    {
+        "alias": "W. Europe Standard Time",
+        "displayName": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+    },
+    {
+        "alias": "Central Europe Standard Time",
+        "displayName": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+    }
+];
+
+var timeZonesArrOLD=[
+    {
         "alias": "Dateline Standard Time",
         "displayName": "(UTC-12:00) International Date Line West"
     },
@@ -544,3 +559,4 @@ var timeZonesArr=[
         "displayName": "(UTC+14:00) Kiritimati Island"
     }
 ];
+

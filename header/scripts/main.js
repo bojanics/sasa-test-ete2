@@ -305,6 +305,12 @@ function generateForm(formReadyCallback)
         {
             console.log('submitting......');
             console.log(submission);
+            //form.emit('submitDone');
+        });
+        form.on('submitDone', function(submission)
+        {
+            console.log('submitting finished......');
+            console.log(submission);
         });
         
         form.on('change', function()

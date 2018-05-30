@@ -144,9 +144,11 @@ var formObj={
     "elearningimagelink": "../logos/elearn.png",
     "processlink": "https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers",
     "processimagelink": "../logos/process.png",
-    "loadingScriptS": "alert('ssa');",
-    "loadingScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
-    "loadingScript3": "TogFormViewer.loadData('../data/datasmall.json.js');",
-    "loadingScript": "TogFormViewer.loadData('../data/data.json.js');TogFormViewer.calculate('../calc/calc_aplusbintoc.js');",    
+    "loadingScript1": "TogFormViewer.setProperty('settings',false);alert('Settings turned-off');",
+    "loadingScript2": "TogFormViewer.setProperty('appLauncher',false);TogFormViewer.setProperty('environment',false);TogFormViewer.setProperty('notifications',false);TogFormViewer.FormioPlugIn.setProperty('formhelp','This is your help!');",
+    "loadedScriptS": "alert('ssa');",
+    "loadedScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
+    "loadedScript3": "TogFormViewer.loadData('../data/datasmall.json.js');",
+    "loadedScript4": "TogFormViewer.loadData('../data/data.json.js');TogFormViewer.calculate('../calc/calc_aplusbintoc.js');",    
   }   
 };

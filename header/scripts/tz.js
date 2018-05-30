@@ -605,12 +605,15 @@ function setSupportedTimeZones(values)
 {
     if (values && values.length > 0)
     {
+        // empty element with id = "tzarr" in order to avoid repeating the list of available time zones
+        $('#tzarr').empty();
+        
         // Add all time zones to our map and update choices in the header menu
         for (var timeZoneIndex = 0; timeZoneIndex < values.length; timeZoneIndex++)
         {
             supportedTimeZonesMap[values[timeZoneIndex]["alias"]] = values[timeZoneIndex]["displayName"];
             var timeZoneItem = '<div class="ltz-itm-container"><button class="ltz-itm-selector" onclick="selectTimeZone(this,\''
-                + values[timeZoneIndex]["alias"] + '\')"><span id="tzCheck' + values[timeZoneIndex]["alias"] + '" class="ms-Icon ms-Icon--check ltz-itm-selector-check"'
+                + values[timeZoneIndex]["alias"] + '\')"><span id="tzCheck' + values[timeZoneIndex]["alias"] + '" class="ms-Icon2 ms-Icon--check ltz-itm-selector-check"'
                 + (values[timeZoneIndex]["alias"] === timeZoneSelector.currentTimeZone ? ' style="visibility: visible;"' : 'style="visibility: hidden;"') 
                 + '></span><div class="ltz-itm-content"><div class="ltz-itm-wrapper"><span>'
                 + values[timeZoneIndex]["displayName"] + '&lrm;</span></div></div></button></div>';

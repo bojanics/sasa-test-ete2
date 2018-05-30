@@ -1,4 +1,4 @@
-var themesObj = {
+var themesObjShort = {
     "bluemeanie": {
         "path": "./ress/css/bluemeanie",
         "name": "Bluemeanie",
@@ -11,7 +11,7 @@ var themesObj = {
     }
 };
 
-var themesObjOLD = {
+var themesObj = {
     "banker": {
         "path": "./ress/css/banker",
         "name": "Banker",

@@ -290,6 +290,9 @@ function resetStyle()
  */
 function setupThemeMenu()
 {
+    /* empty element with id = "themeList" in order to avoid repeating the list of available themes */
+    $('#themeList').empty();
+    
     setThemeValue();
     $.each(themesMap, function(code, value)
     {

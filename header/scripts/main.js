@@ -272,22 +272,7 @@ function generateForm(formReadyCallback)
         {
            // Executing loaded script when the form is ready
            // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
-           if (formObj.hasOwnProperty("properties") && formObj.properties!=null && formObj.properties.hasOwnProperty("loadedScript"))
-            {
-               var loadedScript = "";
-               try {
-                 loadedScript = formObj.properties["loadedScript"];
-                 console.log('Executing loaded script:'+loadedScript);
-                 eval(loadedScript);
-               } catch (err) {
-                 var msg = "Error occurred when executing loaded script:\n\n"+loadedScript;
-                 msg+="\n\nError name: "+err.name;
-                 msg+="\n\nError message: "+err.message;
-                 msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
-                 console.log(msg);
-                 alert(msg);                      
-               }
-            }
+           executeLoadingOrLoadedScript(false);
            
             // Sets up form level defined help content
             setDefaultHelpContent();
@@ -303,16 +288,23 @@ function generateForm(formReadyCallback)
         
         form.on('submit', function(submission)
         {
-            console.log('submitting......');
-            console.log(submission);
-            //form.emit('submitDone');
-        });
-        form.on('submitDone', function(submission)
-        {
-            console.log('submitting finished......');
             console.log(submission);
         });
         
+        form.on('search', function(submission)
+        {
+            console.log('search, subm='+submission);
+        });
+
+        form.on('componentChange', function(submission)
+        {
+            console.log('componentChange, subm='+submission);
+        });
+        form.on('render', function(submission)
+        {
+            console.log('render, subm='+submission);
+        });
+
         form.on('change', function()
         {
            console.log('onchange'); 
@@ -351,7 +343,9 @@ function generateForm(formReadyCallback)
  */
 function performEventOrCustomAction(url,isEventAction)
 {
-    showSpinner();
+    if (!appConfiguration.disableActionSpinner) {
+        showSpinner();
+    }
     var payload = {"appInfo" : TogFormViewer.getAppInfo()};    
     console.log("executing "+(isEventAction ? "event" : "custom")+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {

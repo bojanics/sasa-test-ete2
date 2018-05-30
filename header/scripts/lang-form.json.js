@@ -22,6 +22,9 @@ var langObj = {
             'The second number to add': 'The second number to add'
         },
         'SR': {
+            'File Name':'Ime fajla',
+            'Size':'Velicina fajla',
+            'Drop files to attach, or browse':'Pusti fajlove ovde kako bi ih dodao ili izaberi',
             'Number 1': 'Broj 1',
             'Number 2': 'Broj 2',
             'Result': 'Rezultat',

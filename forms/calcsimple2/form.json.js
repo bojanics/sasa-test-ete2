@@ -116,7 +116,80 @@ var formObj = {
 		"disabled": true,
 		"isNew": false
 	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Submit",
+		"tableView": false,
+		"key": "submit",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "submit",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button"
+	},
 {
+		"autofocus": false,
+		"input": true,
+		"label": "Post to URL(with headers that don't work)",
+		"tableView": false,
+		"key": "posttoUrl",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "url",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"headers": [{
+			"value": "v1",
+			"header": "h1"
+		},
+		{
+			"value": "v2",
+			"header": "h2"
+		}],
+		"url": "https://sasa-test-misc.azurewebsites.net/Add"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Show data (JSON)",
+		"tableView": false,
+		"key": "showdata",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showData();"
+	},    
+    {
 		"autofocus": false,
 		"input": true,
 		"label": "a2n direct call",
@@ -383,6 +456,7 @@ var formObj = {
     "elearningimagelink": "../logos/elearn.png",
     "processlink": "https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers",
     "processimagelink": "../logos/process.png",
-    "loadingScript1": "TogFormViewer.loadData('../data/data.json.js');TogFormViewer.calculate('../calc/calc_aplusbintoc.js');",    
-  }   
+    "loadingScript1": "TogFormViewer.loadData('../data/data.json.js');TogFormViewer.calculate('../calc/calc_aplusbintoc.js');",
+    "disableActionSpinner":true
+    }   
 };

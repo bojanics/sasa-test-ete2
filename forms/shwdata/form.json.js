@@ -418,6 +418,126 @@ var formObj={
 		},
 		"hideLabel": true
 	},    
+    {
+      "clearOnHide": false,
+      "label": "Columns",
+      "input": false,
+      "tableView": false,
+      "key": "columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "label": "Select",
+              "key": "dlPrograms",
+              "placeholder": "",
+              "data": {
+                "values": [
+                  {
+                    "value": "outPatient",
+                    "label": "Амбулаторно-поликлиническая помощь",
+                    "$$hashKey": "object:13022"
+                  },
+                  {
+                    "value": "homeCare",
+                    "label": "Вызов врача на дом в пределах 30 км МКАД",
+                    "$$hashKey": "object:13023"
+                  },
+                  {
+                    "value": "ambulance",
+                    "label": "Скорая помощь в пределах 30 км МКАД",
+                    "$$hashKey": "object:13024"
+                  },
+                  {
+                    "value": "injury",
+                    "label": "Круглосуточный травматологический пункт",
+                    "$$hashKey": "object:13025"
+                  },
+                  {
+                    "value": "dental",
+                    "label": "Стоматологическое обслуживание",
+                    "$$hashKey": "object:13026"
+                  },
+                  {
+                    "value": "inPatient",
+                    "label": "Госпитализация по плановым и экстренным показаниям",
+                    "$$hashKey": "object:13027"
+                  },
+                  {
+                    "value": "travel",
+                    "label": "Страхование выезжающих за рубеж",
+                    "$$hashKey": "object:13028"
+                  },
+                  {
+                    "value": "exclusion",
+                    "label": "Исключения",
+                    "$$hashKey": "object:887"
+                  }
+                ],
+                "json": "",
+                "url": "",
+                "resource": "",
+                "custom": ""
+              },
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "outPatient",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": false
+              },
+              "type": "select",
+              "labelPosition": "top",
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "lockKey": true,
+              "$$hashKey": "object:13010",
+              "hideLabel": true
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "$$hashKey": "object:12611"
+        },
+        {
+          "components": [],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "$$hashKey": "object:12612"
+        }
+      ],
+      "type": "columns",
+      "$$hashKey": "object:12605",
+      "hideLabel": true,
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {}
+    },
 	{
 		"autofocus": false,
 		"input": true,
@@ -430,9 +550,35 @@ var formObj={
 		"block": false,
 		"action": "submit",
 		"disableOnInvalid": false,
-		"theme": "primary",
+		"theme": "default",
 		"type": "button"
 	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Show HTML",
+		"tableView": false,
+		"key": "showhtml",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom1": "TogFormViewer.showHTML('../html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
+      "custom1": "TogFormViewer.showHTML('https://sasa-test-ete2.azurewebsites.net/html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
+	},    
 	{
 		"autofocus": false,
 		"input": true,
@@ -506,7 +652,8 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.loadData('../data/data.json.js');"
+      "custom1": "TogFormViewer.loadData('../data/data.json.js');",
+      "custom": "TogFormViewer.loadData('../data/twfdata.json.js');"
 	},
 	{
 		"autofocus": false,
@@ -607,6 +754,31 @@ var formObj={
 			
 		},
       "custom": "TogFormViewer.showDataXML('showdatawindow','../xslt/defaultPre.xsl.js');"
+	},	
+    {
+		"autofocus": false,
+		"input": true,
+		"label": "Show FO2HTML (decontare)",
+		"tableView": false,
+		"key": "showfo2htmldecontare",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showDataFO2HTML('../xslt/testPre2.xsl.js','../xslt/default.xsl.js');"
 	}],
 	"revisions": "",
 	"_vid": 0,
@@ -636,10 +808,11 @@ var formObj={
     "elearningimagelink": "../logos/elearn.png",
     "processlink": "https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers",
     "processimagelink": "../logos/process.png",
-    "loadingScriptS": "alert('ssa');",
-    "loadingScript2": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
-    "loadingScript3": "TogFormViewer.loadData('../data/datasmall.json.js');",
-    "loadingScript4": "TogFormViewer.loadData('../data/datagrid.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
-    "loadingScript": "TogFormViewer.loadData('../data/twfdata.json.js');",
+    "loadingScript1": "TogFormViewer.setProperty('settings',false);alert('Settings turned-off');",
+    "loadingScript2": "TogFormViewer.setProperty('appLauncher',false);TogFormViewer.setProperty('environment',false);TogFormViewer.FormioPlugIn.setProperty('formhelp','This is new form help');",
+    "loadedScript1": "alert('ssa');TogFormViewer.loadData('../data/datasmall.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
+    "loadedScript2": "TogFormViewer.loadData('../data/datasmall.json.js');",
+    "loadedScript3": "TogFormViewer.loadData('../data/datagrid.json.js');TogFormViewer.calculate('../calc/calc_v12abc.js');",
+    "loadedScript4": "TogFormViewer.loadData('../data/twfdata.json.js');",
   }   
 };

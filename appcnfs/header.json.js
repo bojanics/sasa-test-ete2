@@ -47,5 +47,6 @@ var headerObj = {
     "userlangs": "../appcnfs/userlangs.json.js",
     "defaultLanguage": "EN-GB",
     "timezones": "../appcnfs/timezones.json.js",
-    "defaultTimeZone": "UTC"
+    "defaultTimeZone": "UTC",
+    "disableActionSpinner": false
 };

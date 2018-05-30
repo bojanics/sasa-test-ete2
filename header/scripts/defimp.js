@@ -51,6 +51,7 @@ function resetAppConfiguration()
         themes: "",
         userlangs: "",
         timezones: "",
+        customScript: "",
         onlinemode: false,
         display: "form",
         formtitle: "Tog Formviewer",
@@ -112,7 +113,7 @@ function resetAppConfiguration()
         triggerResizeChange: false,
         defaultLanguage: "",
         defaultTimeZone: "",
-        customScript: ""
+        disableActionSpinner: false
     };
     appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
 }
@@ -861,6 +862,9 @@ function setupHeaderConfiguration()
     
     // Check if we should trigger form change when the window gets resized
     resolveStringOrBooleanParameter(true,"triggerResizeChange","triggerResizeChange",formObj,headerObj,null,true,appConfiguration.triggerResizeChange); 
+    
+    // Check if we should disable spinner when executing actions
+    resolveStringOrBooleanParameter(true,"disableActionSpinner","disableActionSpinner",formObj,headerObj,null,true,appConfiguration.disableActionSpinner); 
 }
 
 /**
@@ -1173,12 +1177,42 @@ function checkForAppSetup()
 }
 
 /**
+ * Executes script defined by form's custom property "loadingScript" or "loadedScript".
+ * If the parameter isLoadingScript is true, the "loadingScript" will be used, otherwise "loadedScript" will be used.
+ */
+function executeLoadingOrLoadedScript(isLoadingScript)
+{
+    var propertyName = isLoadingScript ? "loadingScript" : "loadedScript";
+    var lname = isLoadingScript ? "loading" : "loaded";
+    if (formObj.hasOwnProperty("properties") && formObj.properties!=null && formObj.properties.hasOwnProperty(propertyName))
+    {
+        var lScript = "";
+        try {
+            lScript = formObj.properties[propertyName];
+            console.log("Executing "+lname+" script:"+lScript);
+            eval(lScript);
+        } catch (err) {
+            var msg = "Error occurred when executing "+lname+" script:\n\n"+lScript;
+            msg+="\n\nError name: "+err.name;
+            msg+="\n\nError message: "+err.message;
+            msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+            console.log(msg);
+            alert(msg);                      
+        }
+    }    
+}
+
+/**
  * Checks the configuration to find out if we should perform an optional API call before we load the form.
  * If so performs the call and waits for a response. When the response is received uses returned data to
  * set up the APP. Otherwise just sets up the APP.
  */
 function checkForLoadingCallback()
 {
+    // Executing loading script before we perform "Loading" action
+    // E.g. the script could be something like: 
+    // TogFormViewer.setProperty('appLauncher',false);TogFormViewer.setProperty('environment',false);TogFormViewer.FormioPlugIn.setProperty('formhelp','This is new form help');",    
+    executeLoadingOrLoadedScript(true);
     console.log('cflc, ah='+appConfiguration.home+', AC='+JSON.stringify(appConfiguration));
     if (!appConfiguration.home)
     {
@@ -1888,7 +1922,35 @@ var TogFormViewer =
             _showData(showDataWindow,formatXml(new XMLSerializer().serializeToString(xmlDoc)),"Form submission data - XML (plain)");
         }
     },
+
+    showDataFO2HTML: function(xslPrePathOrURL,xslFOPathOrUrl,target)
+    {
+        if (!target) {
+            target = "_blank";
+        }
+        var showDataWindow = window.open("",target);
+        var xmlDoc = _convertJSON2XML("data", null, formioForm.submission.data, null, null);
+        doFO2HTMLAndShowData(xmlDoc,xslPrePathOrURL,xslFOPathOrUrl,showDataWindow);
+    },
     
+    showHTML: function(pathToForm,data,target)
+    {
+        if (!target) {
+            target = "_blank";
+        }
+        if (!data) {
+            data = {};
+        }
+        var showDataWindow = window.open(pathToForm,target);
+        
+        // we are posting 5 times, 1st time with a delay of 100ms, each next time delay will be 100ms more
+        // this is a workaround to try to wait for the child window to completely load (can't do it with
+        // child window informing parent window that it loaded -> cross-domain issues)
+        for (var cnt=1; cnt<6; cnt++) {
+            _postToWindow(showDataWindow,data,cnt);
+        }
+    },
+
     // This function should be called from custom button action. It will post appInfo object to the specified URL
     // If the response changes some of the appInfo data, the re-evaluation of the properties will start (like with Loading action)
     executeCustomAction: function(url)
@@ -1899,10 +1961,25 @@ var TogFormViewer =
        
 }
 
-function _showData(showDataWindow,data2show,title) {    
+function _postToWindow(showDataWindow,data,cnt) {
+    setTimeout(function(){
+        showDataWindow.postMessage(data,"*")
+    },cnt*100);
+}
+
+function _showData(showDataWindow,data2show,title) { 
     showDataWindow.document.open();
     showDataWindow.document.write('<html><body><h1><u>'+title+'</u></h1><pre>' + jQuery('<div/>').text(data2show).html() + '</pre></body></html>');
     showDataWindow.document.close(); 
+    showDataWindow.document.title=title;
+    showDataWindow.focus();
+}
+
+function _showDataHTML(showDataWindow,htmlData2show,title) {    
+    showDataWindow.document.open();
+    showDataWindow.document.write(htmlData2show);
+    showDataWindow.document.close(); 
+    showDataWindow.document.title=title;
     showDataWindow.focus();
 }
 
@@ -1937,13 +2014,99 @@ function formatXml(xml) {
     return formatted;
 }
 
-function doXSLTAndShowData(xmlDoc,xsltPathOrUrl,showDataWindow)
+function doFO2HTMLAndShowData(xmlDoc,xsltPrePathOrURL,xsltFOPathOrUrl,showDataWindow)
 {
-   var script = getScript(xsltPathOrUrl);
+   if (xsltPrePathOrURL) {
+       var script = getScript(xsltPrePathOrURL);
+       if (script) {
+          script.parentNode.removeChild(script);
+       }
+       loadScript(xsltPrePathOrURL,function(){xsltPreLoadOK(xmlDoc,xsltPrePathOrURL,xsltFOPathOrUrl,showDataWindow);},function(){xsltLoadFailed(xsltPrePathOrURL,showDataWindow);});   
+   } else {
+       xsltPreLoadOK(xmlDoc,xsltPrePathOrURL,xsltFOPathOrUrl,showDataWindow);
+   }
+
+}
+
+function xsltPreLoadOK(xmlDoc,xsltPrePathOrURL,xsltFOPathOrUrl,showDataWindow)
+{
+   var script = getScript(xsltFOPathOrUrl);
    if (script) {
       script.parentNode.removeChild(script);
    }
-   loadScript(xsltPathOrUrl,function(){xsltLoadOK(xmlDoc,xsltPathOrUrl,showDataWindow);},function(){xsltLoadFailed(xsltPathOrUrl,showDataWindow);});   
+   loadScript(xsltFOPathOrUrl,function(){_doFO2HTMLAndShowData(xmlDoc,xsltPrePathOrURL,xsltFOPathOrUrl,showDataWindow);},function(){xsltLoadFailed(xsltFOPathOrUrl,showDataWindow);});   
+}
+
+function _doFO2HTMLAndShowData(xmlDoc,xsltPrePathOrURL,xsltFOPathOrUrl,showDataWindow)
+{
+    try {
+        var xsltPreDoc = null;        
+        if (xsltPrePathOrURL) {
+            xsltPreDoc = parseXmlStringForTransformation(xsltPreObj);
+        }
+        
+        var resultHTML = null;
+        if (window.ActiveXObject!=null || "ActiveXObject" in window) {
+            var resultDoc = null;
+            xmlDoc = parseXmlStringForTransformation(new XMLSerializer().serializeToString(xmlDoc));
+            if (xsltPrePathOrURL) {
+                resultHTML = xmlDoc.transformNode(xsltPreDoc);
+                resultDoc = parseXmlStringForTransformation(resultHTML);
+            } else {
+                resultDoc = xmlDoc;
+            }            
+            var xsltDoc2 = parseXmlStringForTransformation(xsltFOObj);
+            resultHTML = resultDoc.transformNode(xsltDoc2);
+
+            var resultDoc2 = parseXmlStringForTransformation(resultHTML);
+            var xsltDoc3 = parseXmlStringForTransformation(xsltFO2HTMLObj);
+            resultHTML = resultDoc2.transformNode(xsltDoc3);            
+        } else {
+            var xsltProcessor = new XSLTProcessor();
+            var resultDoc = null;
+            if (xsltPrePathOrURL) {
+                xsltProcessor.importStylesheet(xsltPreDoc);
+                resultDoc = xsltProcessor.transformToDocument(xmlDoc);
+            } else {
+                resultDoc = xmlDoc;
+            }
+            var xsltProcessor2 = new XSLTProcessor();
+            var xsltDoc2 = parseXmlStringForTransformation(xsltFOObj);
+            xsltProcessor2.importStylesheet(xsltDoc2);
+            var resultDoc2 = xsltProcessor2.transformToDocument(resultDoc);
+            
+            var xsltProcessor3 = new XSLTProcessor();
+            var xsltDoc3 = parseXmlStringForTransformation(xsltFO2HTMLObj);
+            xsltProcessor3.importStylesheet(xsltDoc3);
+            var resultDoc3 = xsltProcessor3.transformToDocument(resultDoc2);
+            resultHTML = new XMLSerializer().serializeToString(resultDoc3);
+        }
+        var titlemsg = "HTML based on form submission data";
+        if(xsltPrePathOrURL) {
+            titlemsg+=", pre-transformation '"+xsltPrePathOrURL+"'";
+        }
+        titlemsg+=" and XSL-FO transformation '"+xsltFOPathOrUrl+"'";
+        _showDataHTML(showDataWindow,resultHTML,titlemsg);
+   } catch (err) {
+      showDataWindow.close();
+      var msg = "Error occurred when performing FO2HTML transformation with pre-transformation '"+xsltPrePathOrURL+"' and FO transformation '"+xsltFOPathOrUrl+"'!";
+      msg+="\n\nError name: "+err.name;
+      msg+="\n\nError message: "+err.message;
+      msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+      msg+="\n\nForm data: "+(formioForm.submission.data!=null ? JSON.stringify(formioForm.submission.data) : null);
+      
+      console.log(msg);
+      alert(msg);
+   }
+}
+
+function doXSLTAndShowData(xmlDoc,xsltPrePathOrUrl,showDataWindow)
+{
+   var script = getScript(xsltPrePathOrUrl);
+   if (script) {
+      script.parentNode.removeChild(script);
+   }
+   loadScript(xsltPrePathOrUrl,function(){xsltLoadOK(xmlDoc,xsltPrePathOrUrl,showDataWindow);},function(){xsltLoadFailed(xsltPrePathOrUrl,showDataWindow);});   
 
 }
 
@@ -1959,9 +2122,9 @@ function parseXmlStringForTransformation(xml) {
     }
 }
   
-function xsltLoadOK(xmlDoc,xsltPathOrUrl,showDataWindow) {
+function xsltLoadOK(xmlDoc,xsltPrePathOrUrl,showDataWindow) {
     try {
-        var xsltDoc = parseXmlStringForTransformation(xsltObj);
+        var xsltDoc = parseXmlStringForTransformation(xsltPreObj);
         var resultXml = null;
         if (window.ActiveXObject!=null || "ActiveXObject" in window) {
             xmlDoc = parseXmlStringForTransformation(new XMLSerializer().serializeToString(xmlDoc));        
@@ -1972,10 +2135,10 @@ function xsltLoadOK(xmlDoc,xsltPathOrUrl,showDataWindow) {
             var resultDoc = xsltProcessor.transformToDocument(xmlDoc);
             resultXml = new XMLSerializer().serializeToString(resultDoc);
         }
-        _showData(showDataWindow,formatXml(resultXml),"Form submission data - XML (with (pre)transformation '"+xsltPathOrUrl+"')");
+        _showData(showDataWindow,formatXml(resultXml),"Form submission data - XML (with (pre)transformation '"+xsltPrePathOrUrl+"')");
    } catch (err) {
       showDataWindow.close();
-      var msg = "Error occurred when doing xsl transformation "+xsltPathOrUrl+"!";
+      var msg = "Error occurred when doing xsl transformation "+xsltPrePathOrUrl+"!";
       msg+="\n\nError name: "+err.name;
       msg+="\n\nError message: "+err.message;
       msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");

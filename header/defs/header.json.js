@@ -47,5 +47,6 @@ var headerObj = {
     "userlangs": "./defs/userlangs.json.js",
     "defaultLanguage": "EN-GB",
     "timezones": "./defs/timezones.json.js",
-    "defaultTimeZone": "UTC"
+    "defaultTimeZone": "UTC",
+    "disableActionSpinner": false
 };

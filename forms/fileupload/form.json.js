@@ -6,8 +6,40 @@ var formObj={
 		"autofocus": false,
 		"input": true,
 		"tableView": true,
-		"label": "MyFile",
-		"key": "myFile",
+		"label": "Upload Base64",
+		"key": "uploadBase64",
+		"image": false,
+		"imageSize": "200",
+		"placeholder": "",
+		"multiple": true,
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"filePattern": "*",
+		"fileMinSize": "0KB",
+		"fileMaxSize": "1GB",
+		"type": "file",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"storage": "base64",
+		"lockKey": true
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"label": "Upload to URL",
+		"key": "uploadtoUrl",
 		"image": false,
 		"imageSize": "200",
 		"placeholder": "",
@@ -31,7 +63,8 @@ var formObj={
 		"properties": {
 			
 		},
-		"storage": "base64"
+		"storage": "url",
+		"url": "https://sasa-test-misc.azurewebsites.net/Add"
 	},
 	{
 		"autofocus": false,
@@ -71,7 +104,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "window.open(formioForm.submission.data['myFile'][0].url);"
+      "custom": "window.open(formioForm.submission.data['uploadBase64'][0].url);"
 	},    
 	{
 		"autofocus": false,

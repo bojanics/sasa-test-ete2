@@ -34,6 +34,9 @@ var languageSelector =
 
 function setupLanguageMenu()
 {
+    /* empty element with id = "langarr" in order to avoid repeating the list of available languages */
+    $('#langarr').empty();
+    
     setLanguageSettings(languageSelector.currentLanguage);
     $.each(languagesMap, function(code, name)
     {

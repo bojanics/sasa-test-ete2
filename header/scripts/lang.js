@@ -21,6 +21,7 @@ languagesMap['SL-SI'] = 'slovenščina (Slovenija&nbsp;-&nbsp;SI)';
 languagesMap['SK-SK'] = 'slovenčina (Slovensko&nbsp;-&nbsp;SK)';
 languagesMap['TR-TR'] = 'Türkçe (Türkiye&nbsp;-&nbsp;TR)';
 languagesMap['UK-UA'] = 'українська (Україна&nbsp;-&nbsp;UA)';
+var defaultLanguagesMap = languagesMap;
 
 /**
  * Language selector model
@@ -119,19 +120,6 @@ function selectLanguage(languageButton, lang)
     $('#languages').hide();
 }
 
-/**
- * Reads language setting (defaultLanguage) from brand.json.js and applies it.
- * Setting default language in case that user didn't choose any.
- */
-function setupDefaultLanguage()
-{
-    if (appConfiguration.defaultLanguage && appConfiguration.defaultLanguage != languageSelector.currentLanguage)
-    {
-        languageSelector.selectedLanguage = appConfiguration.defaultLanguage;
-        setupPredefinedLanguage();
-    }
-}
-
 function preparePredefinedLanguage(lang)
 {
     languageSelector.selectedLanguage = lang;
@@ -165,7 +153,15 @@ function setupPredefinedLanguage()
 function applyTranslation()
 {
     var oldLanguage = languageSelector.currentLanguage;
+    if (!languagesMap[languageSelector.selectedLanguage])
+    {
+        languageSelector.selectedLanguage = languageSelector.currentLanguage;
+        
+        return;
+    }
+    
     languageSelector.currentLanguage = languageSelector.selectedLanguage;
+    TogFormViewer.setProperty("userLanguage", languageSelector.currentLanguage);
     if (typeof phraseAppSelection === 'undefined' || !phraseAppSelection.phraseAppSwitched)
     {
         setLanguage(languageSelector.selectedLanguage);
@@ -267,6 +263,15 @@ function resetLanguage()
 }
 
 /**
+ * Resets language configuration
+ */
+function resetLanguageConfiguration()
+{
+    languageSelector.selectedLanguage = languageSelector.currentLanguage;
+    languageSelector.languageInitialized = false;
+}
+
+/**
  * Converts locale received from MS graph API to supported locales in our app
  */
 function convertGraphLanguage(graphLanguage)
@@ -291,7 +296,23 @@ function convertGraphLanguage(graphLanguage)
         case "SR-CYRL-CS":
         case "SR-CYRL-BA":
             return "SR-LATN-CS";
-        default:
+        case "EN-US":
+        case "EN-AU":
+        case "EN-CA":
+        case "EN-029":
+        case "EN-BZ":
+        case "EN-IE":
+        case "EN-IN":
+        case "EN-JM":
+        case "EN-MY":
+        case "EN-NZ":
+        case "EN-PH":
+        case "EN-SG":
+        case "EN-TT":
+        case "EN-ZA":
+        case "EN-ZW":
             return "EN-GB";
+        default:
+            return languageUC;
     }
 }

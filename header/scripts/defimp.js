@@ -136,12 +136,16 @@ function beginConfigurationProcess() {
     resetAppConfiguration();
     var appDefFromServer = checkForResolvedPropertyFromTheServer("appDefPath");
     console.log('adfs='+appDefFromServer);
-    if (appDefFromServer!=null) {
+    if (appDefFromServer!=null)
+    {
        appConfiguration.appDefPath = appDefFromServer;
     }
-    if (typeof appObj === "undefined" || appObj==null) {
+    
+    if (typeof appObj === "undefined" || appObj==null)
+    {
         var appDef = appConfiguration.appDefPath;    
-        if (appDefFromServer==null) {
+        if (appDefFromServer==null)
+        {
             // Check if we have an URI paramater which specifies
             // a path to the app configuration. If so we'll use it.
             var appRegex = new RegExp("[?&]app(=([^&#]*)|&|#|$)");
@@ -157,15 +161,15 @@ function beginConfigurationProcess() {
                 {
                     appDef = appConfiguration.appDefPath = "../appcnfs/" + appUriParam + "/app.json.js";
                 }
-            }        
-        } else {
-            appDef = appDefFromServer;
+            }
+            
+            appConfiguration.appDefPath = appDef;    
         }
-        appConfiguration.appDefPath = appDef;        
         
         loadScript(appDef, checkAppConfig);
     }
-    else {
+    else
+    {
         checkAppConfig();
     }    
 }
@@ -258,34 +262,36 @@ function getURIParamForConfiguration(formAndAppObjPropertyName,paramName,appConf
         {
             paramDef = paramUriParam;
         }
-        
         else
         {
             paramDef = "../"+paramFolderName+"/" + paramUriParam + "/"+paramFileName+".json.js";
         }
     }
-    if (paramName!='form' && paramDef==null && typeof formObj !== 'undefined' && formObj != null && formObj.hasOwnProperty("properties"))
+    
+    if (paramName != 'form' && paramDef == null && typeof formObj !== 'undefined' && formObj != null && formObj.hasOwnProperty("properties"))
     {
         // We have a form defition loaded so we will use it to get paths for other definition files
-        // If we have brand definition already defined in query parameter we will use it.
+        // If we have definition path already defined in query parameter we will use it.
         // Otherwise we use the value from the form definition
         if (formObj.properties[formAndAppObjPropertyName])
         {
             paramDef = formObj.properties[formAndAppObjPropertyName];
         }
     }
-    if (paramDef==null && typeof appObj !== 'undefined')
+    
+    if (paramDef == null && typeof appObj !== 'undefined')
     {
         // We have found app.json.js so we will use it to load other definitions
-        // If we have definition already defined in query parameter or in form definition
-        // we will use it. Otherwise we use the value from the app.json.js
+        // If we have definition path already defined in query parameter or in form
+        // definition we will use it. Otherwise we use the value from the app.json.js
         if (appObj[formAndAppObjPropertyName])
         {
             paramDef = appObj[formAndAppObjPropertyName];
         }
     }
     
-    if (updateConfiguration && paramDef!=null) {
+    if (updateConfiguration && paramDef != null)
+    {
         appConfiguration[appConfigurationParamName] = paramDef;
     }        
     
@@ -294,35 +300,36 @@ function getURIParamForConfiguration(formAndAppObjPropertyName,paramName,appConf
 
 /**
  * Loads form definition, then loads brand, customization and header definitions
- * and sets up the app once everything is loaded including the document itself.
+ * and sets up the app once everything is loaded.
  */
 function loadFormDefinition()
 {
     console.log("Loading form definition");
-    if (appInfoObjFromServer!=null && appInfoObjFromServer.formObj!=null) {
+    if (appInfoObjFromServer != null && appInfoObjFromServer.formObj != null)
+    {
         formObj = appInfoObjFromServer.formObj;
     }
+    
     var formDefFromServer = checkForResolvedPropertyFromTheServer("formDefPath");
     console.log('fdfs='+formDefFromServer);
-    if (formDefFromServer!=null) {
+    if (formDefFromServer != null)
+    {
         appConfiguration.formDefPath = formDefFromServer;
     }
-    if (typeof formObj === "undefined" || formObj==null) {
-        var formDef = appConfiguration.formDefPath;
-        if (formDefFromServer==null) {
+    
+    if (typeof formObj === "undefined" || formObj == null)
+    {
+        if (formDefFromServer == null)
+        {
             // Resolve form parameter, check if we have an URI paramater which specifies
             // a path to the form definition. If so we'll use it. Otherwise, check appObj.
-            var formDefTemp = getURIParamForConfiguration("formdefinition","form","formDefPath","forms","form",true);
-            if (formDefTemp!=null) {
-                formDef = formDefTemp;
-            }
-        } else {
-            formDef = formDefFromServer;
+            getURIParamForConfiguration("formdefinition","form","formDefPath","forms","form",true);
         }
-        appConfiguration.formDefPath = formDef;        
         
-        loadScript(formDef, formObjLoaded, loadDefaultForm);
-    } else {
+        loadScript(appConfiguration.formDefPath, formObjLoaded, loadDefaultForm);
+    }
+    else
+    {
         console.log('fobj loaded, path='+appConfiguration.formDefPath);
         formObjLoaded();
     }
@@ -345,9 +352,11 @@ function setupFormConfiguration()
 {
     // Set up form display mode
     var formDisplay = checkForResolvedPropertyFromTheServer("display");
-    if (!formDisplay) {
+    if (!formDisplay)
+    {
         formDisplay = checkForUrlParameter("display");
     }
+    
     if (formDisplay)
     {
         appConfiguration.display = formDisplay;
@@ -365,9 +374,11 @@ function setupFormConfiguration()
     
     // Set up the header title
     var titleUrl = checkForResolvedPropertyFromTheServer("title");
-    if (!titleUrl) {
+    if (!titleUrl)
+    {
         titleUrl = checkForUrlParameter("title");
-    }    
+    }
+    
     if (titleUrl)
     {
         appConfiguration.title = titleUrl;
@@ -441,14 +452,17 @@ function loadConfigurations()
         appConfiguration.headerConfPath = headerConfig;
     }
 
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validBrandObj==null) && (typeof brandObj === "undefined" || brandObj==null)) {
-        if (brandDef==null) {
+    if ((appInfoObjFromServer == null || appInfoObjFromServer.validBrandObj == null) && (typeof brandObj === "undefined" || brandObj == null))
+    {
+        if (brandDef == null)
+        {
             // Check if we have an URI paramater which specifies
             // a path to the brand definition. If so we'll use it.
             // Otherwise, if we have a form defition loaded so we will use it to get paths for other definition files
             // If not found in form definition, we will search for it in app.json.js
             brandDef = getURIParamForConfiguration("branddefinition","brand","brandDefPath","brands","brand",true);
         }
+        
         if (brandDef)
         {
             loadScript(brandDef, brandObjLoaded, loadDefaultBrand);
@@ -460,20 +474,25 @@ function loadConfigurations()
     } 
     else 
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validBrandObj!=null) {
+        if (appInfoObjFromServer != null && appInfoObjFromServer.validBrandObj != null)
+        {
             brandObj = appInfoObjFromServer.validBrandObj;
         }
+        
         brandObjLoaded();
     }
     
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validCustomizationObj==null) && (typeof customizationObj === "undefined" || customizationObj==null)) {
-        if (customizationDef==null) {
+    if ((appInfoObjFromServer == null || appInfoObjFromServer.validCustomizationObj == null) && (typeof customizationObj === "undefined" || customizationObj == null))
+    {
+        if (customizationDef == null)
+        {
             // Check if we have an URI paramater which specifies
             // a path to the customization definition. If so we'll use it.
             // Otherwise, if we have a form defition loaded so we will use it to get paths for other definition files
             // If not found in form definition, we will search for it in app.json.js
             customizationDef = getURIParamForConfiguration("customizationdefinition","cstmz","customizationDefPath","cstmz","customization",true);
         }
+        
         if (customizationDef)
         {
             loadScript(customizationDef, customizationObjLoaded, loadDefaultCustomization);
@@ -485,20 +504,25 @@ function loadConfigurations()
     }
     else
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validCustomizationObj!=null) {
+        if (appInfoObjFromServer != null && appInfoObjFromServer.validCustomizationObj != null)
+        {
             customizationObj = appInfoObjFromServer.validCustomizationObj;
         }
+        
         customizationObjLoaded();
     }
 
-    if ((appInfoObjFromServer==null || appInfoObjFromServer.validHeaderObj==null) && (typeof headerObj === "undefined" || headerObj==null)) {
-        if (headerConfig==null) {
+    if ((appInfoObjFromServer == null || appInfoObjFromServer.validHeaderObj == null) && (typeof headerObj === "undefined" || headerObj == null))
+    {
+        if (headerConfig==null)
+        {
             // Check if we have an URI paramater which specifies
             // a path to the header definition. If so we'll use it.
             // Otherwise, if we have a form defition loaded so we will use it to get paths for other definition files
             // If not found in form definition, we will search for it in app.json.js
             headerConfig = getURIParamForConfiguration("headerconfiguration","hdrcnf","headerConfPath","hdrcnfs","header",true);
         }
+        
         if (headerConfig)
         {
             loadScript(headerConfig, headerObjLoaded, loadDefaultHeader);
@@ -510,9 +534,11 @@ function loadConfigurations()
     }
     else 
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.validHeaderObj!=null) {
+        if (appInfoObjFromServer != null && appInfoObjFromServer.validHeaderObj != null)
+        {
             headerObj = appInfoObjFromServer.validHeaderObj;
         }
+        
         headerObjLoaded();
     }
 }
@@ -877,33 +903,40 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
     var paramVal = defaultValue;
     var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
     
-    var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
-    var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
-    
     if (paramValFromRPO!=null)
     {
         paramVal = paramValFromRPO;
     }
-    else if (paramValFromUrl && boolValCorrect)
+    else
     {
-        if (isBoolean) {
-            paramVal =  (paramValFromUrl === "true");
-        } else {
-            paramVal = paramValFromUrl;
+        var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
+        var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
+        
+        if (paramValFromUrl && boolValCorrect)
+        {
+            if (isBoolean)
+            {
+                paramVal =  (paramValFromUrl === "true");
+            }
+            else
+            {
+                paramVal = paramValFromUrl;
+            }
+        }
+        else if (typeof firstObj !== 'undefined' && firstObj !== null && firstObj.hasOwnProperty("properties") && firstObj.properties !== null && firstObj.properties.hasOwnProperty(paramName))
+        {
+            paramVal = firstObj.properties[paramName];
+        }
+        else if (typeof secondObj !== 'undefined' && secondObj !== null && secondObj.hasOwnProperty(paramName))
+        {
+            paramVal  = secondObj[paramName];
+        }
+        else if (typeof thirdObj !== 'undefined' && thirdObj !== null && thirdObj.hasOwnProperty(paramName))
+        {
+            paramVal  = thirdObj[paramName];
         }
     }
-    else if (typeof firstObj !== 'undefined' && firstObj !== null && firstObj.hasOwnProperty("properties") && firstObj.properties !== null && firstObj.properties.hasOwnProperty(paramName))
-    {
-        paramVal = firstObj.properties[paramName];
-    }
-    else if (typeof secondObj !== 'undefined' && secondObj !== null && secondObj.hasOwnProperty(paramName))
-    {
-        paramVal  = secondObj[paramName];
-    }
-    else if (typeof thirdObj !== 'undefined' && thirdObj !== null && thirdObj.hasOwnProperty(paramName))
-    {
-        paramVal  = thirdObj[paramName];
-    }
+    
     appConfiguration[appConfigurationParamName] = paramVal;
     
 //    var msg = 'rsobp[isb='+isBoolean+',pn='+paramName+',acpn='+appConfigurationParamName+',fo='+firstObj+',so='+secondObj+',cup='+checkUrlParameter+',dv='+defaultValue+']';
@@ -990,7 +1023,7 @@ function loadDefaultThemes()
     // defined in the themesMap global variable. We still need to define the
     // themesObj as a global variable because we check if it is defined in the
     // checkForAppSetup function when we want to know if the themes are initialized
-    window.themesObj = themesMap;
+    window.themesObj = defaultThemesMap;
     
     // Check if anything else should be loaded
     checkForAppSetup();
@@ -1027,7 +1060,7 @@ function loadDefaultLanguages()
     // defined in the languagesMap global variable. We still need to define the
     // userLangsObj as a global variable because we check if it is defined in the
     // checkForAppSetup function when we want to know if the languages are initialized
-    window.userLangsObj = languagesMap;
+    window.userLangsObj = defaultLanguagesMap;
     
     // Check if anything else should be loaded
     checkForAppSetup();
@@ -1097,44 +1130,56 @@ function checkForAppSetup()
     // Check if the themes.json.js should be loaded
     if (!themeLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.themesObj!=null) {
+        if (appInfoObjFromServer != null && appInfoObjFromServer.themesObj != null) 
+        {
             themesObj = appInfoObjFromServer.themesObj;
             setThemesConfiguration();
-        } else {
+        }
+        else
+        {
             if (appConfiguration.themes)
             {
                 loadScript(appConfiguration.themes, themesLoaded, loadDefaultThemes);
             }            
         }
+        
         themeLoadStarted = true;
     }
 	
 	// Check if the userlangs.json.js should be loaded
     if (!languageLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.userLangsObj!=null) {
+        if (appInfoObjFromServer != null && appInfoObjFromServer.userLangsObj != null)
+        {
             userLangsObj = appInfoObjFromServer.userLangsObj;
             setLanguagesConfiguration();
-        } else {
+        }
+        else
+        {
             if (appConfiguration.userlangs)
             {
                 loadScript(appConfiguration.userlangs, languagesLoaded, loadDefaultLanguages);
             }
-        }        
+        }
+        
         languageLoadStarted = true;
     }
     
     // Check if the timezones.json.js should be loaded
     if (!timeZonesLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appInfoObjFromServer!=null && appInfoObjFromServer.timeZonesArr!=null) {
+        if (appInfoObjFromServer != null && appInfoObjFromServer.timeZonesArr != null)
+        {
             timeZonesArr = appInfoObjFromServer.timeZonesArr;
-        } else {
+        }
+        else
+        {
             if (appConfiguration.timezones)
-            {                
+            {
                 loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();}, loadDefaultTimeZones);
             }
-        }        
+        }
+        
         timeZonesLoadStarted = true;
     }
 
@@ -1144,36 +1189,292 @@ function checkForAppSetup()
         if (appConfiguration.customScript)
         {
             loadScript(appConfiguration.customScript, customScriptLoaded);
-        }        
+        }
+        
         customScriptLoadStarted = true;
     }
         
     if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"]))))
-		&& (typeof userLangsObj !== 'undefined' && userLangsObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["userlangs"])
+		&& (typeof userLangsObj !== 'undefined' && userLangsObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["userlangs"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["userlangs"]))))
-        && (typeof timeZonesArr !== 'undefined' && timeZonesArr!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["timezones"])
+        && (typeof timeZonesArr !== 'undefined' && timeZonesArr != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["timezones"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"]))))
         && (customScriptLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"])))))
     {        
         if (document.readyState === 'complete')
         {
-            checkForLoadingCallback();
+            checkUserSettingsAndPerformLoadingCallback();
         }
         else
         {
             if(window.addEventListener)
             {
-                window.addEventListener('load', checkForLoadingCallback);
+                window.addEventListener('load', checkUserSettingsAndPerformLoadingCallback);
             }
             else
             {
-                window.attachEvent('onload', checkForLoadingCallback);
+                window.attachEvent('onload', checkUserSettingsAndPerformLoadingCallback);
             }
         }
     }
+}
+
+/**
+ * Calls MS APIs to find out user settings such as language, time zone and theme if they are not
+ * already initialized and then performs loading callback if needed and sets up the application
+ */
+function checkUserSettingsAndPerformLoadingCallback()
+{
+    setUserSettings(checkForLoadingCallback);
+}
+
+/**
+ * Set user settings from Outlook or Azure. 
+ */
+function setUserSettings(userSettingsSetCallback)
+{
+    resetLanguageConfiguration();
+    resetTimeZoneConfiguration();
+    resetThemeConfiguration();
+    
+    // Check if exsist stored user settings (on Azure or Outlook)
+    if (appConfiguration.useOutlookSettings && isSignedInUser())
+    {
+        getSupportedTimeZones(function(timeZones)
+        {
+            TogFormViewer.setProperty("supportedTimeZones", timeZones);
+            var userTimeZonesRPO = checkForResolvedPropertyFromTheServer("userTimeZones");
+            if (userTimeZonesRPO)
+            {
+                TogFormViewer.setProperty("userTimeZones", userTimeZonesRPO);
+            }
+            else
+            {
+                TogFormViewer.setProperty("userTimeZones", timeZones);
+            }
+            
+            setSupportedTimeZones(TogFormViewer.getProperty("userTimeZones"));
+            
+            // Find out user's mailbox settings
+            getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
+            function(language, timeZone)
+            {
+                outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
+            },
+            function(userSettingsSetCallback)
+            {
+                outlookSettingsErrorCallback(userSettingsSetCallback);
+            });
+        }, function()
+        {
+            TogFormViewer.setProperty("supportedTimeZones", "");
+            var userTimeZonesRPO = checkForResolvedPropertyFromTheServer("userTimeZones");
+            if (userTimeZonesRPO)
+            {
+                TogFormViewer.setProperty("userTimeZones", userTimeZonesRPO);
+                setSupportedTimeZones(timeZones);
+            }
+            else
+            {
+                setDefaultTimeZonesChoices();
+            }
+            
+            // Find out user's mailbox settings
+            getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', outlookSettingsSuccessCallback, outlookSettingsErrorCallback);
+        });
+        
+        if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
+        {
+            // Find out user's theme (user property extensions)
+            getUserPropertyExtensions(false,
+            function(language, timeZone, theme)
+            {
+                // Setup theme configuration
+                setupThemeConfiguration(theme);
+                checkUserSettingsLoaded(userSettingsSetCallback);
+            },
+            function()
+            {
+                // Setup theme configuration
+                setupThemeConfiguration();
+                checkUserSettingsLoaded(userSettingsSetCallback);
+            });
+        }
+        else if (appConfiguration.themeSettings)
+        {
+            // In this case we don't use stored theme but we still need
+            // to update properties and predefined theme
+            setupThemeConfiguration();
+            checkUserSettingsLoaded(userSettingsSetCallback);
+        }
+    }
+    else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
+    {
+        // We set the default time zone choices beacuse
+        // we don't read them from the mailbox settings
+        TogFormViewer.setProperty("supportedTimeZones", "");
+        setDefaultTimeZonesChoices();
+                
+        // Find out user's language, time zone and theme settings
+        // defined in user's property extensions on AAD
+        getUserPropertyExtensions(true,
+        function(language, timeZone, theme)
+        {
+            // Setup language, time zone and theme configuration
+            setupLanguageConfiguration(language);
+            setupTimeZoneConfiguration(timeZone);
+            setupThemeConfiguration(theme);
+            
+            // We perform the callback immidiately because we performed only one API call
+            userSettingsSetCallback();
+        },
+        function()
+        {
+            // Setup language, time zone and theme configuration
+            setupLanguageConfiguration();
+            setupTimeZoneConfiguration();
+            setupThemeConfiguration();
+            
+            // We perform the callback immidiately because we performed only one API call
+            userSettingsSetCallback();
+        });
+    }
+    else
+    {
+        // We set the default time zone choices beacuse
+        // we don't read them from the mailbox settings
+        TogFormViewer.setProperty("supportedTimeZones", "");
+        setDefaultTimeZonesChoices();
+        
+        // Setup language, time zone and theme configuration
+        setupLanguageConfiguration();
+        setupTimeZoneConfiguration();
+        setupThemeConfiguration();
+        userSettingsSetCallback();
+    }
+} 
+
+function checkUserSettingsLoaded(userSettingsLoadedCallback)
+{
+    if ((!appConfiguration.themeSettings || isThemeSettingsLoaded()) && isLanguageSettingsLoaded() && isTimeZoneSettingsLoaded())
+    {
+        userSettingsLoadedCallback();
+    }
+}
+
+function setupLanguageConfiguration(storedLanguage)
+{
+    var convertedStoredLanguage = "";
+    if (typeof storedLanguage === "undefined")
+    {
+        storedLanguage = "";
+    }
+    else
+    {
+        convertedStoredLanguage = convertGraphLanguage(storedLanguage);
+    }
+    
+    TogFormViewer.setProperty("storedUserLanguage", storedLanguage);
+    console.log("Mailbox settings language = " + languageSelector.selectedLanguage);
+    var userLanguageFromRPO = checkForResolvedPropertyFromTheServer("userLanguage");
+    if (userLanguageFromRPO && languagesMap[userLanguageFromRPO])
+    {
+        TogFormViewer.setProperty("userLanguage", userLanguageFromRPO);
+    }
+    else if (convertedStoredLanguage && languagesMap[convertedStoredLanguage])
+    {
+        TogFormViewer.setProperty("userLanguage", convertedStoredLanguage);
+    }
+    else if (appConfiguration.defaultLanguage && languagesMap[appConfiguration.defaultLanguage])
+    {
+        TogFormViewer.setProperty("userLanguage", appConfiguration.defaultLanguage);
+    }
+    else
+    {
+        resetLanguageConfiguration();
+        TogFormViewer.setProperty("userLanguage", languageSelector.currentLanguage);
+    }
+    
+    preparePredefinedLanguage(TogFormViewer.getProperty("userLanguage"));
+}
+
+function setupTimeZoneConfiguration(storedTimeZone)
+{
+    if (typeof storedTimeZone === "undefined")
+    {
+        storedTimeZone = "";
+    }
+    
+    TogFormViewer.setProperty("storedUserTimeZone", storedTimeZone);
+    console.log("Mailbox settings time zone = " + timeZoneSelector.selectedTimeZone);
+    var timeZoneFromRPO = checkForResolvedPropertyFromTheServer("userTimeZone");
+    if (timeZoneFromRPO && supportedTimeZonesMap[timeZoneFromRPO])
+    {
+        TogFormViewer.setProperty("userTimeZone", timeZoneFromRPO);
+    }
+    else if (storedTimeZone && supportedTimeZonesMap[storedTimeZone])
+    {
+        TogFormViewer.setProperty("userTimeZone", storedTimeZone);
+    }
+    else if (appConfiguration.defaultTimeZone && supportedTimeZonesMap[appConfiguration.defaultTimeZone])
+    {
+        TogFormViewer.setProperty("userTimeZone", appConfiguration.defaultTimeZone);
+    }
+    else
+    {
+        resetTimeZoneConfiguration();
+        checkTimeZonesConfiguration();
+        TogFormViewer.setProperty("userTimeZone", timeZoneSelector.currentTimeZone);
+    }
+    
+    preparePredefinedTimeZone(TogFormViewer.getProperty("userTimeZone"));
+}
+
+function setupThemeConfiguration(storedTheme)
+{
+    if (typeof storedTheme === "undefined")
+    {
+        storedTheme = "";
+    }
+    
+    TogFormViewer.setProperty("storedUserTheme", storedTheme);
+    var userThemeFromRPO = checkForResolvedPropertyFromTheServer("userTheme");
+    if (userThemeFromRPO && themesMap[userThemeFromRPO])
+    {
+        TogFormViewer.setProperty("userTheme", userThemeFromRPO);
+    }
+    else if (storedTheme && themesMap[storedTheme])
+    {
+        TogFormViewer.setProperty("userTheme", storedTheme);
+    }
+    else if (appConfiguration.bootswatchtheme && themesMap[appConfiguration.bootswatchtheme])
+    {
+        TogFormViewer.setProperty("userTheme", appConfiguration.bootswatchtheme);
+    }
+    else
+    {
+        resetThemeConfiguration();
+        TogFormViewer.setProperty("userTheme", themeSelector.currentTheme);
+    }
+    
+    preparePredefinedTheme(TogFormViewer.getProperty("userTheme"));
+}
+
+function outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback)
+{
+    setupLanguageConfiguration(language);
+    setupTimeZoneConfiguration(timeZone);    
+    checkUserSettingsLoaded(userSettingsSetCallback);
+}
+
+function outlookSettingsErrorCallback(userSettingsSetCallback)
+{
+    setupLanguageConfiguration();
+    setupTimeZoneConfiguration();    
+    checkUserSettingsLoaded(userSettingsSetCallback);
 }
 
 /**
@@ -1318,6 +1619,8 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        if (resolvedPropertiesObjFromServer==null) {
            resolvedPropertiesObjFromServer = {};
        }
+       //resolvedPropertiesObjFromServer.userLanguage='EN-GB';
+       //resolvedPropertiesObjFromServer.userTheme='cosmo';
        // if server decided that the user should go offline, set ADAL to null
        if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
           ADAL = null;
@@ -1463,9 +1766,29 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
                   break;
                }
            }
+           
+           if (!hasChanges) {
+               if (resolvedPropertiesObjFromServer.hasOwnProperty("userLanguage") && TogFormViewer.getProperty("userLanguage") !== resolvedPropertiesObjFromServer["userLanguage"]) {
+                   hasChanges = true;
+                   console.log('There was a change in user language from the server that require re-configuration process, oldValue='
+                       + TogFormViewer.getProperty("userLanguage") + ', newValue=' + resolvedPropertiesObjFromServer["userLanguage"]);
+               } else if (resolvedPropertiesObjFromServer.hasOwnProperty("userTheme") && TogFormViewer.getProperty("userTheme") !== resolvedPropertiesObjFromServer["userTheme"]) {
+                   hasChanges = true;
+                   console.log('There was a change in user theme from the server that require re-configuration process, oldValue='
+                       + TogFormViewer.getProperty("userTheme") + ', newValue=' + resolvedPropertiesObjFromServer["userTheme"]);
+               } else if (resolvedPropertiesObjFromServer.hasOwnProperty("userTimeZone") && TogFormViewer.getProperty("userTimeZone") !== resolvedPropertiesObjFromServer["userTimeZone"]) {
+                   hasChanges = true;
+                   console.log('There was a change in user time zone from the server that require re-configuration process, oldValue='
+                       + TogFormViewer.getProperty("userTimeZone") + ', newValue=' + resolvedPropertiesObjFromServer["userTimeZone"]);
+               } else if (resolvedPropertiesObjFromServer.hasOwnProperty("userTimeZones") && JSON.stringify(TogFormViewer.getProperty("userTimeZones")) !== JSON.stringify(resolvedPropertiesObjFromServer["userTimeZones"])) {
+                   hasChanges = true;
+                   console.log('There was a change in user time zone from the server that require re-configuration process');
+               }
+           }
        } else {
            console.log('There were changes in configuration or definition objects on the server that require re-configuration process');
        }
+       
        if (hasChanges) {
           brandObj = null;
           customizationObj = null;
@@ -1800,6 +2123,130 @@ var TogFormViewer =
             appConfiguration.mapCenterPushpinDescription = propValue;
             MapPlugIn.updateMap();
         }
+        else if (propName === "storedUserTheme")
+        {
+            this.storedUserTheme = propValue;
+        }
+        else if (propName === "userTheme")
+        {
+            this.userTheme = propValue;
+        }
+        else if (propName === "storedUserLanguage")
+        {
+            this.storedUserLanguage = propValue;
+        }
+        else if (propName === "userLanguage")
+        {
+            this.userLanguage = propValue;
+        }
+        else if (propName === "storedUserTimeZone")
+        {
+            this.storedUserTimeZone = propValue;
+        }
+        else if (propName === "userTimeZone")
+        {
+            this.userTimeZone = propValue;
+        }
+        else if (propName === "supportedTimeZones")
+        {
+            this.supportedTimeZones = propValue;
+        }
+        else if (propName === "userTimeZones")
+        {
+            this.userTimeZones = propValue;
+        }
+    },
+    
+    getProperty: function(propName)
+    {
+        if (propName === "storedUserTheme")
+        {
+            if (this.storedUserTheme)
+            {
+                return this.storedUserTheme;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "userTheme")
+        {
+            if (this.userTheme)
+            {
+                return this.userTheme;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "storedUserLanguage")
+        {
+            if (this.storedUserLanguage)
+            {
+                return this.storedUserLanguage;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "userLanguage")
+        {
+            if (this.userLanguage)
+            {
+                return this.userLanguage;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "storedUserTimeZone")
+        {
+            if (this.storedUserTimeZone)
+            {
+                return this.storedUserTimeZone;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "userTimeZone")
+        {
+            if (this.userTimeZone)
+            {
+                return this.userTimeZone;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "supportedTimeZones")
+        {
+            if (this.supportedTimeZones)
+            {
+                return this.supportedTimeZones;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "userTimeZones")
+        {
+            if (this.userTimeZones)
+            {
+                return this.userTimeZones;
+            }
+            else
+            {
+                return "";
+            }
+        }
     },
 
     getAppInfo: function()
@@ -1821,6 +2268,12 @@ var TogFormViewer =
             "deviceInfo" : {
             },
             "currentUser" : currentUser,
+            "currentUserSettings": {
+                "theme": this.getProperty("storedUserTheme"),
+                "language": this.getProperty("storedUserLanguage"),
+                "timeZone": this.getProperty("storedUserTimeZone"),
+                "supportedTimeZones": this.getProperty("supportedTimeZones")
+            },
             "runtimeProperties" : {
                 "tenantId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.tenant),
                 "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
@@ -1836,13 +2289,19 @@ var TogFormViewer =
             "customizationObj" : customizationObj,
             "brandObj" : brandObj,
             "queries" : appURLQueryParameters,
-            "userLangsObj" : userLangsObj,
-            "timeZonesArr" : timeZonesArr,
-            "themesObj" : themesObj,
+            "userLangsObj" : typeof userLangsObj === 'undefined' ? '' : userLangsObj,
+            "timeZonesArr" : typeof timeZonesArr === 'undefined' ? '' : timeZonesArr,
+            "themesObj" : typeof themesObj === 'undefined' ? '' : themesObj,
             "formObj" : formObj,
             "dataObj" : typeof window.formioForm !== 'undefined' && window.formioForm!=null ? formioForm.submission.data : appFormDataObj,
             "resolvedProperties" : appConfiguration,
         };
+        
+        appInfo.resolvedProperties.userTheme = this.getProperty("userTheme");
+        appInfo.resolvedProperties.userLanguage = this.getProperty("userLanguage");
+        appInfo.resolvedProperties.userTimeZone = this.getProperty("userTimeZone");
+        appInfo.resolvedProperties.userTimeZones = this.getProperty("userTimeZones");
+        
         return appInfo;
     },
     

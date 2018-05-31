@@ -548,38 +548,41 @@ var timeZonesArray = [
         "displayName": "(UTC+14:00) Kiritimati Island"
     }];
 
+var defaultTimeZone =
+{
+    "alias": "UTC",
+    "displayName": "(UTC) Coordinated Universal Time"
+};
 
 /**
  * Time zone selector model
  */
 var timeZoneSelector =
 {
-    currentTimeZone: 'UTC',
-    selectedTimeZone: 'UTC',
+    currentTimeZone: defaultTimeZone["alias"],
+    selectedTimeZone: defaultTimeZone["displayName"],
     timeZoneInitialized: false,
     supportedTimeZonesSet: false
 };
 
 /**
- * Sets time zone when retrieved from Microsoft Graph API
+ * Updates current user time zone settings according to resulting configuration
  */
-function setInitialTimeZone(timeZone)
+function setInitialTimeZone()
 {
-    if (supportedTimeZonesMap[timeZone])
+    if (supportedTimeZonesMap[timeZoneSelector.selectedTimeZone])
     {
-        timeZoneSelector.currentTimeZone = timeZone;
-        timeZoneSelector.selectedTimeZone = timeZone;
+        timeZoneSelector.currentTimeZone = timeZoneSelector.selectedTimeZone;
         
         // Update GUI components with the time zone information
-        if (timeZoneSelector.supportedTimeZonesSet)
-        {
-            $('#timeZoneName').html(supportedTimeZonesMap[timeZone]);
-            $('#tzarr').find('.ltz-itm-selector-check').css('visibility', 'hidden');
-            document.getElementById('tzCheck' + timeZone).style.visibility = "visible";
-        }
+        $('#timeZoneName').html(supportedTimeZonesMap[timeZoneSelector.selectedTimeZone]);
+        $('#tzarr').find('.ltz-itm-selector-check').css('visibility', 'hidden');
+        document.getElementById('tzCheck' + timeZoneSelector.selectedTimeZone).style.visibility = "visible";
     }
-    
-    timeZoneSelector.timeZoneInitialized = true;
+    else
+    {
+        timeZoneSelector.selectedTimeZone = timeZoneSelector.currentTimeZone;
+    }
 }
 
 /**
@@ -590,11 +593,13 @@ function setDefaultTimeZonesChoices()
 {
     if (this.timeZonesArr)
     {
-        setSupportedTimeZones(timeZonesArr); 
+        setSupportedTimeZones(timeZonesArr);
+        TogFormViewer.setProperty("userTimeZones", timeZonesArr);
     }
     else
     {
-        setSupportedTimeZones(timeZonesArray); 
+        setSupportedTimeZones(timeZonesArray);
+        TogFormViewer.setProperty("userTimeZones", timeZonesArr);
     }
 }
 
@@ -603,6 +608,7 @@ function setDefaultTimeZonesChoices()
  */
 function setSupportedTimeZones(values)
 {
+    supportedTimeZonesMap = {};
     if (values && values.length > 0)
     {
         // empty element with id = "tzarr" in order to avoid repeating the list of available time zones
@@ -623,7 +629,7 @@ function setSupportedTimeZones(values)
         timeZoneSelector.supportedTimeZonesSet = true;
         $('#timeZoneWrapper').show();
         $('#Language').show();
-        $('#languageAndTimeZone').attr('lang-tran', 'Language and time zone').html('Language and time zone').translate();
+        $('#languageAndTimeZone').attr('lang-tran', 'Language and time zone').html('Language and time zone');
         
         // If user's time zone is already retrieved we need to update GUI now,
         // because we couldn't do that when we didn't have time zone choices
@@ -657,17 +663,10 @@ function selectTimeZone(timeZoneButton, timeZone)
     $('#timeZones').hide();
 }
 
-/**
- * Reads time zone setting (defaultTimeZone) from header.json.js and applies it.
- * Setting default time zone.
- */
-function setupDefaultTimeZone()
+function preparePredefinedTimeZone(timeZone)
 {
-    if (appConfiguration.defaultTimeZone && appConfiguration.defaultTimeZone != timeZoneSelector.currentTimeZone)
-    {
-        timeZoneSelector.selectedTimeZone = appConfiguration.defaultTimeZone;
-        setChosenTimeZone();
-    }
+    timeZoneSelector.selectedTimeZone = timeZone;
+    timeZoneSelector.timeZoneInitialized = true;
 }
 
 /**
@@ -677,6 +676,7 @@ function setChosenTimeZone()
 {
     var timeZoneChanged = (timeZoneSelector.currentTimeZone !== timeZoneSelector.selectedTimeZone);
     timeZoneSelector.currentTimeZone = timeZoneSelector.selectedTimeZone;
+    TogFormViewer.setProperty("userTimeZone", timeZoneSelector.currentTimeZone);
     
     return timeZoneChanged;
 }
@@ -688,4 +688,33 @@ function resetTimeZone()
 {
     timeZoneSelector.selectedTimeZone = timeZoneSelector.currentTimeZone;
     $('#timeZoneName').html(supportedTimeZonesMap[timeZoneSelector.currentTimeZone]);
+}
+
+/**
+ * Resets time zone configuration
+ */
+function resetTimeZoneConfiguration()
+{
+    timeZoneSelector.selectedTimeZone = timeZoneSelector.currentTimeZone;
+    timeZoneSelector.timeZoneInitialized = false;
+}
+
+/**
+ * Check if supported time zones array contains currently set time zone.
+ * It can happen that it doesn't contain it only when we use hardcoded
+ * default time zone and default time zones are overriden with 
+ * configuration files / MS Outlook settings / response from the server.
+ */
+function checkTimeZonesConfiguration()
+{
+    if (supportedTimeZonesMap && !supportedTimeZonesMap[timeZoneSelector.currentTimeZone] && timeZoneSelector.currentTimeZone === defaultTimeZone["alias"])
+    {
+        supportedTimeZonesMap[defaultTimeZone["alias"]] = defaultTimeZone["displayName"];
+        var timeZoneItem = '<div class="ltz-itm-container"><button class="ltz-itm-selector" onclick="selectTimeZone(this,\''
+            + defaultTimeZone["alias"] + '\')"><span id="tzCheck' + defaultTimeZone["alias"] + '" class="ms-Icon2 ms-Icon--check ltz-itm-selector-check"'
+            + ' style="visibility: visible;"></span><div class="ltz-itm-content"><div class="ltz-itm-wrapper"><span>'
+            + defaultTimeZone["displayName"] + '&lrm;</span></div></div></button></div>';
+        $('#tzarr').append(timeZoneItem);
+        TogFormViewer.getProperty("userTimeZones").push(defaultTimeZone);
+    }
 }

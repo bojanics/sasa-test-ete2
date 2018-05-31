@@ -72,7 +72,7 @@ var MapPlugIn =
                 }
                 
                 map = null;
-                this._dm = null;
+                dm = null;
                 Microsoft = null;
                 
                 this.embedMap();

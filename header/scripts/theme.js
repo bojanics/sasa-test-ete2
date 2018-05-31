@@ -207,6 +207,8 @@ themesMap['yeti'] =
     color: '#008cba'
 };
 
+var defaultThemesMap = themesMap;
+
 /**
  * Theme selector model
  */
@@ -218,6 +220,15 @@ var themeSelector =
     changedTheme: '',
     themeInitialized: false
 };
+
+/**
+ * Updates current user theme settings and applies them
+ */
+function setupPredefinedTheme()
+{
+    themeSelector.currentTheme = themeSelector.selectedTheme;
+    setupTheme(themeSelector.currentTheme);
+}
 
 function setupTheme(theme) {
     if (themesMap[theme]) {
@@ -269,6 +280,12 @@ function setupStyle(overrideBrandTheme)
     headerStyleDE.rel = "stylesheet";
     headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
     layoutStyleNode.parentNode.insertBefore(headerStyleDE, layoutStyleNode.nextSibling);
+}
+
+function preparePredefinedTheme(theme)
+{
+    themeSelector.selectedTheme = theme;
+    themeSelector.themeInitialized = true;
 }
 
 function isThemeSettingsLoaded()
@@ -357,6 +374,7 @@ function applyTheme()
 {
     $('.content-wrapper').hide();
     themeSelector.currentTheme = themeSelector.selectedTheme;
+    TogFormViewer.setProperty("userTheme", themeSelector.currentTheme);
     setThemeValue();
     document.getElementById('themelayoutstyle').href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
     document.getElementById('bodystyle').href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
@@ -408,6 +426,15 @@ function resetTheme()
 {
     themeSelector.selectedTheme = themeSelector.currentTheme;
     setThemeSettings();
+}
+
+/**
+ * Resets theme configuration
+ */
+function resetThemeConfiguration()
+{
+    themeSelector.selectedTheme = themeSelector.currentTheme;
+    themeSelector.themeInitialized = false;
 }
 
 /**

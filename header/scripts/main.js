@@ -39,21 +39,20 @@ function _setupAppInternal()
     langObj.hooks = hooksObj;
     langObj.languageOverride = numberFormatObj;
     fillUserInfo();
-    setUserSettings(function()
-    {
-        // We should show the form after new styles has been loaded to prevent FOUC
-        showContentOnStyleApply(function()
+    setupPredefinedTheme();
+    setInitialTimeZone();
+    
+    // We should show the form after new styles has been loaded to prevent FOUC
+    showContentOnStyleApply(function()
+    {  
+        generateForm(function()
         {
+            formDestroyed = false;
+            setupPredefinedLanguage();
             
-            generateForm(function()
-            {
-                formDestroyed = false;
-                setupPredefinedLanguage();
-                
-                // Embeds a map (for example Bing Map) 
-                MapPlugIn.embedMap();
-                checkForLoadedAction();
-            });
+            // Embeds a map (for example Bing Map) 
+            MapPlugIn.reloadMap();
+            checkForLoadedAction();
         });
     });
 }
@@ -111,92 +110,6 @@ function onsuccess_loaded(token,url,formdata,additionalConfiguration,data,textSt
 
 function onfailure_loaded(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
    onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
-}
-
-/**
- * Set user settings from Outlook or Azure. 
- */
-function setUserSettings(userSettingsSetCallback)
-{
-    if (appConfiguration.useOutlookSettings && isSignedInUser())
-    {
-        // Find out user's mailbox settings
-        getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', function(language, timeZone)
-        {
-            if (language)
-            {
-                preparePredefinedLanguage(convertGraphLanguage(language));
-                console.log("Selected language="+languageSelector.selectedLanguage);
-            }
-            else
-            {
-                languageSelector.languageInitialized = true;
-                console.log("User's language hasn't been received.");
-            }
-            
-            console.log("Selected language="+languageSelector.selectedLanguage);
-            
-            if (timeZone)
-            {
-                setInitialTimeZone(timeZone);
-                console.log("User's current time zone alias: " + timeZone);
-            }
-            else
-            {
-                timeZoneSelector.timeZoneInitialized = true;
-                console.log("User's current time zone hasn't been received.");
-            }
-            
-            checkUserSettingsLoaded(userSettingsSetCallback);
-        }, function()
-        {
-            languageSelector.languageInitialized = true;
-            timeZoneSelector.timeZoneInitialized = true;
-            checkUserSettingsLoaded(userSettingsSetCallback);
-        });
-        
-        getSupportedTimeZones(function(timeZones)
-        {
-            setSupportedTimeZones(timeZones);
-        }, function()
-        {
-            timeZoneSelector.supportedTimeZonesSet = true;
-        });
-        
-        if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
-        {
-            // Find out user's theme (user property extensions)
-            getUserPropertyExtensions(false, function() {checkUserSettingsLoaded(userSettingsSetCallback)}, function() {checkUserSettingsLoaded(userSettingsSetCallback)});
-        }
-        else
-        {
-            // Set default theme
-            setupStyle(false);
-        }
-    }
-    else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
-    {
-        // We set the default time zone choices beacuse
-        // we don't read them from the mailbox settings
-        setDefaultTimeZonesChoices();
-                
-        // Find out user's language, time zone and theme settings
-        // defined in user's property extensions on AAD
-        getUserPropertyExtensions(true, function() {checkUserSettingsLoaded(userSettingsSetCallback)}, function() {checkUserSettingsLoaded(userSettingsSetCallback)});
-    }
-    else
-    {
-        setupStyle(false);
-        userSettingsSetCallback();
-    }       
-} 
-
-function checkUserSettingsLoaded(userSettingsLoadedCallback)
-{
-    if ((!appConfiguration.themeSettings || isThemeSettingsLoaded()) && isLanguageSettingsLoaded() && isTimeZoneSettingsLoaded())
-    {
-        userSettingsLoadedCallback();
-    }
 }
 
 /**
@@ -276,12 +189,6 @@ function generateForm(formReadyCallback)
            
             // Sets up form level defined help content
             setDefaultHelpContent();
-			
-            // Sets up default language 
-            setupDefaultLanguage();
-            
-            // Sets up default time zone
-            setupDefaultTimeZone();
             
             formReadyCallback();
         });
@@ -290,7 +197,7 @@ function generateForm(formReadyCallback)
         {
             console.log(submission);
         });
-
+        
         form.on('change', function()
         {
            console.log('onchange'); 

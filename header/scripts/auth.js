@@ -7,6 +7,7 @@ var timeZonePropertyExtensionExists = false;
 var themePropertyExtensionExists = false;
 var languagePropertyExtension;
 var timeZonePropertyExtension;
+var themePropertyExtension;
 var ADAL = null; 
 var storageObj = null;
 // we do try/catch here because Edge can't access the storage when used locally
@@ -190,7 +191,7 @@ function getFunctionName(funct) {
  *        API function or get no data
  */
 function getmailboxsettingsdata(url, onsuccesscallback, onfailurecallback) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadalmailboxsettings, url, {}, {}, oncsuccesscallback, onfailurecallback);
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadalmailboxsettings, url, {}, {}, onsuccesscallback, onfailurecallback);
 }
 
 function getdatanoadalmailboxsettings(token, url, data, conf, onsuccesscallback, onfailurecallback) {
@@ -231,10 +232,10 @@ function getdatanoadalmailboxsettings(token, url, data, conf, onsuccesscallback,
  *        Graph API function or get no data
  */
 function getSupportedTimeZones(onsuccesscallback, onfailurecallback) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getDataOnAdalSupportedTimeZones, 'https://graph.microsoft.com/beta/me/outlook/supportedTimeZones');
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getDataOnAdalSupportedTimeZones, 'https://graph.microsoft.com/beta/me/outlook/supportedTimeZones', {}, {}, onsuccesscallback, onfailurecallback);
 }
 
-function getDataOnAdalSupportedTimeZones(token, url, onsuccesscallback, onfailurecallback) {
+function getDataOnAdalSupportedTimeZones(token, url, payload, conf, onsuccesscallback, onfailurecallback) {
     var settings = {
         "crossDomain": true,
         "url": url,
@@ -284,9 +285,25 @@ function patchdatanoadal(token, url, payload) {
     };
     
     $.ajax(settings).done(function (data,textStatus,request) {
+        if (payload.language) {
+            TogFormViewer.setProperty("storedUserLanguage", payload.language);
+        }
+        
+        if (payload.timeZone) {
+            TogFormViewer.setProperty("storedUserTimeZone", payload.timeZone);
+        }
+        
         console.log('patchmailboxsettingsdata call successfully executed');
         console.log('Data successfully updated! DATA='+(data!=null ? JSON.stringify(data) : null));
     }).fail(function (err, textStatus, errorThrown) {
+        if (payload.language) {
+            TogFormViewer.setProperty("storedUserLanguage", "");
+        }
+        
+        if (payload.timeZone) {
+            TogFormViewer.setProperty("storedUserTimeZone", "");
+        }
+        
         console.log('patchmailboxsettingsdata call failed');
         console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
     });
@@ -435,6 +452,18 @@ function postuserpropertyextensiononadal(token, url, payload) {
     
     $.ajax(settings).done(function (data,textStatus,request) {
         userPropertyExtensionExists = true;
+        if (payload.theme) {
+            TogFormViewer.setProperty("storedUserTheme", payload.theme);
+        }
+        
+        if (payload.language) {
+            TogFormViewer.setProperty("storedUserLanguage", payload.language);
+        }
+        
+        if (payload.timeZone) {
+            TogFormViewer.setProperty("storedUserTimeZone", payload.timeZone);
+        }
+        
         console.log('postuserpropertyextensiononadal call successfully executed');
         console.log('Data successfully updated! DATA='+(data!=null ? JSON.stringify(data) : null));
     }).fail(function (err, textStatus, errorThrown) {
@@ -481,21 +510,18 @@ function postfeedbackformadal(token, url, payload) {
 }
 
 function getUserPropertyExtensions(fetchLTZ, onsuccesscallback, onfailurecallback) {
-    var additionalConfiguration = {
-        fetchLTZ: fetchLTZ,
-        justCheck: false
-    };
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {},
-        additionalConfiguration, onsuccesscallback, onfailurecallback,
+        {}, onsuccesscallback, onfailurecallback,
         (fetchLTZ ? function() {
             userPropertyExtensionExists = false;
             userPropertyExtensionsAvailable = false;
-            setupStyle(false);
-            applyTranslation();
+            TogFormViewer.setProperty("storedUserTheme", "");
+            TogFormViewer.setProperty("storedUserLanguage", "");
+            TogFormViewer.setProperty("storedUserTimeZone", "");
         } : function() {
             userPropertyExtensionExists = false;
             userPropertyExtensionsAvailable = false;
-            setupStyle(false);
+            TogFormViewer.setProperty("storedUserTheme", "");
         })
     );
 }
@@ -538,34 +564,20 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration,
             for (var i = 0; i < data.extensions.length; i++) {
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].language) {
                     languagePropertyExtensionExists = true;
-                    if (configuration.fetchLTZ && !configuration.justCheck) {
-                        preparePredefinedLanguage(data.extensions[i].language);
-                        console.log("Current user's language: " + languageSelector.selectedLanguage);
-                    } else {
-                        languagePropertyExtension = data.extensions[i].language;
-                        console.log("Language property in open extension: " + languagePropertyExtension);
-                    }
-                    
+                    languagePropertyExtension = data.extensions[i].language;
+                    console.log("Language property in open extension: " + languagePropertyExtension);
                 }
                 
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].timeZone) {
                     timeZonePropertyExtensionExists = true;
-                    if (configuration.fetchLTZ && !configuration.justCheck) {
-                        setInitialTimeZone(data.extensions[i].timeZone);
-                        console.log("Current user's time zone alias: " + data.extensions[i].timeZone);
-                    } else {
-                        timeZonePropertyExtension = data.extensions[i].timeZone;
-                        console.log("Time zone property in open extension: " + timeZonePropertyExtension);
-                    }
+                    timeZonePropertyExtension = data.extensions[i].timeZone;
+                    console.log("Time zone property in open extension: " + timeZonePropertyExtension);
                 }
                 
                 if (data.extensions[i].id === userPropertyExtensionId && data.extensions[i].theme) {
-                    if (!configuration.justCheck) {
-                        setupTheme(data.extensions[i].theme);
-                    }
-                    
                     themePropertyExtensionExists = true;
-                    console.log("Stored theme: " + data.extensions[i].theme);
+                    themePropertyExtension = data.extensions[i].theme;
+                    console.log("Theme property in open extension: " + data.extensions[i].theme);
                 }
                 
                 if (languagePropertyExtensionExists || timeZonePropertyExtensionExists || themePropertyExtensionExists) {
@@ -574,24 +586,6 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration,
                     break;
                 }
             }
-            
-            if (!languagePropertyExtensionExists && configuration.fetchLTZ && !configuration.justCheck) {
-                languageSelector.languageInitialized = true;
-            }
-            
-            if (!timeZonePropertyExtensionExists && configuration.fetchLTZ && !configuration.justCheck) {
-                timeZoneSelector.timeZoneInitialized = true;
-            }
-            
-            if (!themePropertyExtensionExists && !configuration.justCheck) {
-                setupStyle(false);
-            }
-        } else if (!configuration.justCheck) {
-            setupStyle(false);
-            if (configuration.fetchLTZ) {
-                languageSelector.languageInitialized = true;
-                timeZoneSelector.timeZoneInitialized = true;
-            }
         }
         
         if (typeof configuration.callbackfunc !== 'undefined') {
@@ -599,21 +593,15 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration,
         }
         
         if (onsuccesscallback) {
-            onsuccesscallback();
+            onsuccesscallback(languagePropertyExtensionExists ? languagePropertyExtension : "",
+                timeZonePropertyExtensionExists ? timeZonePropertyExtension : "",
+                themePropertyExtensionExists ? themePropertyExtension : "");
         }
         
         console.log('Data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
     }).fail(function (err, textStatus, errorThrown) {
         userPropertyExtensionExists = false;
         userPropertyExtensionsAvailable = false;
-        if (!configuration.justCheck) {
-            setupStyle(false);
-            if (configuration.fetchLTZ) {
-                languageSelector.languageInitialized = true;
-                timeZoneSelector.timeZoneInitialized = true;
-            }
-        }
-        
         console.log('getUserPropertyExtensions call failed');
         console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
         if (onfailurecallback) {
@@ -629,8 +617,6 @@ function getdatanoadaluserpropertyextensions(token, url, payload, configuration,
  */
 function updateLanguageTimeZonePropertyExtensions(language, timeZone) {
     var additionalConfiguration = {
-        fetchLTZ: true,
-        justCheck: true,
         callbackfunc: updateLanguageTimeZonePropertyExtensionsCallback,
         callbackParam1: language,
         callbackParam2: timeZone
@@ -684,8 +670,6 @@ function updateLanguageTimeZonePropertyExtensionsCallback(language, timeZone) {
 
 function updateThemePropertyExtension(theme) {
     var additionalConfiguration = {
-        fetchLTZ: true,
-        justCheck: true,
         callbackfunc: updateThemePropertyExtensionCallback,
         callbackParam1: theme
     };
@@ -734,9 +718,39 @@ function patchUserPropertyExtensionOnAdal(token, url, payload) {
     };
     
     $.ajax(settings).done(function (data,textStatus,request) {
+        if (payload.theme) {
+            TogFormViewer.setProperty("storedUserTheme", payload.theme);
+        } else {
+            TogFormViewer.setProperty("storedUserTheme", "");
+        }
+        
+        if (payload.language) {
+            TogFormViewer.setProperty("storedUserLanguage", payload.language);
+        } else {
+            TogFormViewer.setProperty("storedUserLanguage", "");
+        }
+        
+        if (payload.timeZone) {
+            TogFormViewer.setProperty("storedUserTimeZone", payload.timeZone);
+        } else {
+            TogFormViewer.setProperty("storedUserTimeZone", "");
+        }
+        
         console.log('patchUserPropertyExtensionOnAdal call successfully executed');
         console.log("User's theme property extension successfully updated! DATA="+(data!=null ? JSON.stringify(data) : null));
     }).fail(function (err, textStatus, errorThrown) {
+        if (payload.theme) {
+            TogFormViewer.setProperty("storedUserTheme", "");
+        }
+        
+        if (payload.language) {
+            TogFormViewer.setProperty("storedUserLanguage", "");
+        }
+        
+        if (payload.timeZone) {
+            TogFormViewer.setProperty("storedUserTimeZone", "");
+        }
+        
         console.log('patchUserPropertyExtensionOnAdal call failed');
         console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
     });

@@ -2,38 +2,43 @@
     <head>
         <meta charset="utf-8">
         <title>Outlook mail</title>
-        <link href="../header/ress/css/cerulean/bootstrap.min.css" rel="stylesheet">
 		<link href="../header/ress/css/formio.full.min.css" rel="stylesheet">
+        <link href="../header/ress/css/cerulean/bootstrap.min.css" rel="stylesheet">
 		<script src="../header/scripts/vendor/formio.full.min.js"></script>
         <script src="../header/scripts/vendor/jquery-1.10.2.min.js"></script>
-        <!--<script src="./outlook.json.js"></script>-->
-        <!--<script src="./ebhcover.json.js"></script>-->
-        <script src="./ebhadmin.json.js"></script>
-        <!--<script src="./droneaction.json.js"></script>-->
-        <!--<script src="./ebhinsure.json.js"></script>-->
+        <script src="./outlook.json.js"></script>
         <script type='text/javascript'>
-          var formioForm = null;
-          window.onload = function() {
-            Formio.createForm(document.getElementById('formio'), formObj)
-            .then(function(form)
-            {
-                formioForm = form;
-            });
-          };
+            var formioForm = null;
+            window.onload = function() {
+                Formio.createForm(document.getElementById('formio'), formObj).then(function(form)
+                {
+                    formioForm = form;
+                    form.ready.then(function()
+                    {
+                        postToOpenerWindow();
+                    });
+
+                });
+            };
           
-        window.addEventListener("message", function(event) {
-            console.log('event['+event.origin+','+(event.data ? JSON.stringify(event.data) : 'null')+',formioinitialized='+(formioForm ? 'true':'false')+']');
-            if (event.data && formioForm) {
-                formioForm.submission={"data":event.data};
-            }
-        });
+            window.addEventListener("message", function(event) {
+                //console.log('event['+event.origin+','+(event.data ? JSON.stringify(event.data) : 'null')+',formioinitialized='+(formioForm ? 'true':'false')+']');
+                if (event.data && formioForm) {
+                    formioForm.submission={"data":event.data};
+                }
+                //console.log(window.opener);            
+            });
         
+            function postToOpenerWindow() {
+                if (window.opener) {
+                console.log(window.opener);
+                console.log('post to wind');
+                    window.opener.postMessage("","*");
+                }
+            }
         </script>
     </head>
     <body>
-        <div>
-            <img src="./outlook.jpg" width="100%"/>
-        </div>
-        <div id='formio'></div>
+        <div id='formio'/>
     </body>
 </html>

@@ -290,20 +290,6 @@ function generateForm(formReadyCallback)
         {
             console.log(submission);
         });
-        
-        form.on('search', function(submission)
-        {
-            console.log('search, subm='+submission);
-        });
-
-        form.on('componentChange', function(submission)
-        {
-            console.log('componentChange, subm='+submission);
-        });
-        form.on('render', function(submission)
-        {
-            console.log('render, subm='+submission);
-        });
 
         form.on('change', function()
         {

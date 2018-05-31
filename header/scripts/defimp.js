@@ -1941,14 +1941,8 @@ var TogFormViewer =
         if (!data) {
             data = {};
         }
-        var showDataWindow = window.open(pathToForm,target);
-        
-        // we are posting 5 times, 1st time with a delay of 100ms, each next time delay will be 100ms more
-        // this is a workaround to try to wait for the child window to completely load (can't do it with
-        // child window informing parent window that it loaded -> cross-domain issues)
-        for (var cnt=1; cnt<6; cnt++) {
-            _postToWindow(showDataWindow,data,cnt);
-        }
+        window.showHTMLWindow = window.open(pathToForm,target);
+        window.showHTMLData = data;
     },
 
     // This function should be called from custom button action. It will post appInfo object to the specified URL
@@ -1961,11 +1955,18 @@ var TogFormViewer =
        
 }
 
-function _postToWindow(showDataWindow,data,cnt) {
-    setTimeout(function(){
-        showDataWindow.postMessage(data,"*")
-    },cnt*100);
-}
+// This listener is triggered when the child window (opened with showHTML function) posts message to our application window
+// Then we know the child window form.io form is loaded, and then we post the JSON (parameter to showHTML function) to the
+// child window, and child window sets the form.io submission
+window.addEventListener("message", function(event) {
+    if (window.showHTMLWindow && window.showHTMLData) {
+        console.log('posting message to child "showHTMLData" window: '+JSON.stringify(window.showHTMLData));
+        showHTMLWindow.postMessage(window.showHTMLData,"*");
+        window.showHTMLWindow = null;
+        window.showHTMLData = null;
+    }
+});
+
 
 function _showData(showDataWindow,data2show,title) { 
     showDataWindow.document.open();

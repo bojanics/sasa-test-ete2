@@ -3,6 +3,52 @@ var formObj={
 	"tags": [],
 	"owner": "599d5130a0434200072250ab",
 	"components": [{
+		"key": "content",
+		"label": "Content",
+		"input": false,
+		"tag": "img",
+		"attrs": [{
+			"value": "./outlook.jpg",
+			"attr": "src"
+		}],
+		"className": "",
+		"content": "",
+		"type": "htmlelement",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"hideLabel": true
+	},
+	{
+		"key": "content2",
+		"label": "Content",
+		"input": false,
+		"tag": "span",
+		"attrs": [{
+			"value": "",
+			"attr": ""
+		}],
+		"className": "",
+		"content": "&nbsp;",
+		"type": "htmlelement",
+		"hideLabel": true,
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
 		"clearOnHide": false,
 		"label": "Columns",
 		"input": false,
@@ -10,30 +56,6 @@ var formObj={
 		"key": "columns",
 		"columns": [{
 			"components": [{
-				"key": "sendImg",
-				"label": "Content",
-				"input": false,
-				"tag": "img",
-				"attrs": [{
-					"value": "./saa.png",
-					"attr": "src"
-				}],
-				"className": "",
-				"content": "",
-				"type": "htmlelement",
-				"hideLabel": true,
-				"tags": [],
-				"conditional": {
-					"show": "",
-					"when": null,
-					"eq": ""
-				},
-				"properties": {
-					
-				},
-				"lockKey": true
-			},
-			{
 				"autofocus": false,
 				"input": true,
 				"label": "Send",
@@ -42,7 +64,7 @@ var formObj={
 				"size": "md",
 				"leftIcon": "",
 				"rightIcon": "",
-				"block": false,
+				"block": true,
 				"action": "custom",
 				"disableOnInvalid": false,
 				"theme": "default",
@@ -56,7 +78,7 @@ var formObj={
 				"properties": {
 					
 				},
-				"custom": "window.setSubmissionData({'toText':'sasaboy@live.com'});"
+				"custom": "alert('Your email has been sent!')"
 			}],
 			"width": 1,
 			"offset": 0,
@@ -80,7 +102,7 @@ var formObj={
 						"size": "md",
 						"leftIcon": "",
 						"rightIcon": "",
-						"block": false,
+						"block": true,
 						"action": "custom",
 						"disableOnInvalid": false,
 						"theme": "default",
@@ -95,7 +117,8 @@ var formObj={
 							
 						},
 						"custom": "alert('Select To address');",
-						"lockKey": true
+						"lockKey": true,
+						"shortcut": "T"
 					},
 					{
 						"autofocus": false,
@@ -106,7 +129,7 @@ var formObj={
 						"size": "md",
 						"leftIcon": "",
 						"rightIcon": "",
-						"block": false,
+						"block": true,
 						"action": "custom",
 						"disableOnInvalid": false,
 						"theme": "default",
@@ -133,7 +156,7 @@ var formObj={
 						"size": "md",
 						"leftIcon": "",
 						"rightIcon": "",
-						"block": false,
+						"block": true,
 						"action": "custom",
 						"disableOnInvalid": false,
 						"theme": "default",
@@ -150,8 +173,31 @@ var formObj={
 						"shortcut": "B",
 						"custom": "alert('Select Bcc address');",
 						"lockKey": true
+					},
+					{
+						"key": "columnsColumnsContent",
+						"label": "Content",
+						"input": false,
+						"tag": "span",
+						"attrs": [{
+							"value": "",
+							"attr": ""
+						}],
+						"className": "",
+						"content": "Subject",
+						"type": "htmlelement",
+						"hideLabel": true,
+						"tags": [],
+						"conditional": {
+							"show": "",
+							"when": null,
+							"eq": ""
+						},
+						"properties": {
+							
+						}
 					}],
-					"width": 2,
+					"width": 1,
 					"offset": 0,
 					"push": 0,
 					"pull": 0
@@ -279,8 +325,49 @@ var formObj={
 						},
 						"lockKey": true,
 						"hideLabel": true
+					},
+					{
+						"autofocus": false,
+						"input": true,
+						"tableView": true,
+						"inputType": "text",
+						"inputMask": "",
+						"label": "Text",
+						"key": "subjectText",
+						"placeholder": "",
+						"prefix": "",
+						"suffix": "",
+						"multiple": false,
+						"defaultValue": "",
+						"protected": false,
+						"unique": false,
+						"persistent": true,
+						"hidden": false,
+						"clearOnHide": true,
+						"spellcheck": true,
+						"validate": {
+							"required": false,
+							"minLength": "",
+							"maxLength": "",
+							"pattern": "",
+							"custom": "",
+							"customPrivate": false
+						},
+						"conditional": {
+							"show": "",
+							"when": null,
+							"eq": ""
+						},
+						"type": "textfield",
+						"labelPosition": "top",
+						"tags": [],
+						"properties": {
+							
+						},
+						"hideLabel": true,
+						"lockKey": true
 					}],
-					"width": 10,
+					"width": 11,
 					"offset": 0,
 					"push": 0,
 					"pull": 0
@@ -323,7 +410,7 @@ var formObj={
 		"placeholder": "",
 		"prefix": "",
 		"suffix": "",
-		"rows": 13,
+		"rows": 20,
 		"multiple": false,
 		"defaultValue": "",
 		"protected": false,
@@ -372,6 +459,6 @@ var formObj={
 	"path": "outlook",
 	"project": "599d5201a0434200072250b3",
 	"created": "2018-05-30T07:11:51.264Z",
-	"modified": "2018-05-30T08:50:51.790Z",
+	"modified": "2018-05-31T07:12:29.252Z",
 	"machineName": "ewhyjxtmcncdriz:outlook"
 };

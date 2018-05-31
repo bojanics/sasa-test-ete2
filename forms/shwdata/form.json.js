@@ -576,8 +576,8 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom1": "TogFormViewer.showHTML('../html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
-      "custom1": "TogFormViewer.showHTML('https://sasa-test-ete2.azurewebsites.net/html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
+      "custom": "TogFormViewer.showHTML('../html/outlook.html',{'toText':'john.doe@live.com','ccText':'jane.doe@live.com','bccText':'jack.doe@live.com','subjectText':form.submission.data.info1,'bodyText':form.submission.data.info2},'htmlwindow');",
+      "custom2": "TogFormViewer.showHTML('https://sasa-test-ete2.azurewebsites.net/html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
 	},    
 	{
 		"autofocus": false,

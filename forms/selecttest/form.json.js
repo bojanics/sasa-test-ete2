@@ -77,7 +77,7 @@ var formObj={
 		},
 		"dataSrc": "custom",
 		"valueProperty": "value",
-		"defaultValue": "outPatient",
+		"defaultValue": "sonja",
 		"refreshOn": "",
 		"filter": "",
 		"authenticate": false,
@@ -100,7 +100,8 @@ var formObj={
 			"eq": ""
 		},
 		"properties": {
-			
+            "searchAction":"doSomethingCustom",
+            "searchScript":"mySearchScriptCustom"
 		},
 		"clearOnRefresh": false
 	},
@@ -112,38 +113,7 @@ var formObj={
 		"key": "selectpredefined",
 		"placeholder": "",
 		"data": {
-			"values": [{
-				"value": "outPatient",
-				"label": "Out Patient"
-			},
-			{
-				"value": "homeCare",
-				"label": "Home Care"
-			},
-			{
-				"value": "ambulance",
-				"label": "Ambulance"
-			},
-			{
-				"value": "injury",
-				"label": "Injury"
-			},
-			{
-				"value": "dental",
-				"label": "Dental"
-			},
-			{
-				"value": "inPatient",
-				"label": "In Patient"
-			},
-			{
-				"value": "travel",
-				"label": "Travel"
-			},
-			{
-				"value": "exclusion",
-				"label": "Exclusion"
-			}],
+			"values": [],
 			"json": "",
 			"url": "",
 			"resource": "",
@@ -174,7 +144,8 @@ var formObj={
 			"eq": ""
 		},
 		"properties": {
-			
+            "searchAction":"doSomethingPredefined",
+            "searchScript":"mySearchScriptPredefined"
 		}
 	},
 	{

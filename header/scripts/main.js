@@ -203,9 +203,9 @@ function generateForm(formReadyCallback)
             console.log("SEARCHING................");
         });
 
-        form.on('change', function()
+        form.on('change', function(event)
         {
-           console.log('onchange'); 
+           console.log('onchange '+(event && event.changed && event.changed.component ? event.changed.component.key : '')); 
             if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
             {
                 TogFormViewer.calculate();
@@ -287,12 +287,10 @@ function createHooksObj()
         input: function(input)
         {
             this.addEventListener(input, 'focus', formFocusListener(this));
-            this.addEventListener(input, 'blur', formBlurListener(this));
+            this.addEventListener(input, 'blur', formBlurListener);
            
             this.addEventListener(input, 'search', formSearchListener(this));
-            this.addEventListener(input, 'stopSearch', formSearchStopedListener(this));             
             
-            this.addEventListener(input, 'keyUp', formKeyUpListener(this));
             this.addEventListener(input, 'showDropdown', formShowDropdownListener(this));
         }
 
@@ -303,29 +301,73 @@ function formShowDropdownListener(comp)
 {
     return function() {
         console.log('onshowdropdown for '+comp.key);
+
+var ck = comp.key;
+
+
+    var vals = [];
+    formioForm.submission.data[ck] = "";
+    formioForm.getComponent(ck).component.data.values = vals;
+    if (ck=='selectpredefined') {
+        vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"},{"value": "inPatient","label": "In Patient"},{"value": "travel","label": "Travel"},{"value": "exclusion","label": "Exclusion"}];
+    } else if (ck=='selectcustom') {
+        vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
+    }
+    console.log('setting dropd vals to '+JSON.stringify(vals));
+    formioForm.getComponent(ck).component.data.values = vals;
+    formioForm.getComponent(ck).triggerUpdate();
+        
     };
 }
 
-function formKeyUpListener(comp)
-{
-    return function() {
-    console.log('onkeyup for '+comp.key);
-    };
-}
-
-function formSearchStopedListener(comp)
-{
-    return function() {
-    console.log('onsearchstoped for '+comp.key);
-    };
-}
 
 function formSearchListener(comp)
 {
-    return function() {
-        console.log('onsearch for '+comp.key);
+    return function(event) {
+        console.log('onsearch for '+comp.key+',cv='+event.detail.value+',  JSON='+JSON.stringify(comp.component));
+        if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")) {            
+            var sact = comp.component.properties.searchAction;
+            var sscr = comp.component.properties.searchScript;
+            console.log('sact='+sact+', sscr='+sscr);
+            if (sscr) {
+                var exec = sscr+'("'+comp.key+'","'+event.detail.value+'")';
+                console.log('now exec '+exec);
+                eval(exec);
+            }
+        }
     };
 }
+
+function mySearchScriptPredefined(ck,cv){
+    console.log('mysearchscriptpredefined called with params ck='+ck+', cv='+cv);
+    var vals = [];
+    formioForm.submission.data[ck] = "";
+    formioForm.getComponent(ck).component.data.values = vals;
+    if (cv=='s') {
+        vals =[{"value": "inPatient","label": "In Patient"},{"value": "sa","label": "sa"}];
+    } else {
+        vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"}];
+    }
+    console.log('setting vals to '+JSON.stringify(vals));
+    formioForm.getComponent(ck).component.data.values = vals;
+    formioForm.getComponent(ck).triggerUpdate();
+}
+
+function mySearchScriptCustom(ck,cv){
+    console.log('mysearchscriptcustom called with params ck='+ck+', cv='+cv);
+    var vals = [];
+    formioForm.submission.data[ck] = "";
+    formioForm.getComponent(ck).component.data.values = vals;
+    if (cv.indexOf('s')==0) {
+        vals = [{'value':'1','label':'sonja'},{'value':'3','label':'sasa'}]
+    } else if (cv.indexOf('t')==0) {
+        vals = [{'value':'2','label':'tamara'}]
+    }
+    console.log('setting vals to '+JSON.stringify(vals));
+    formioForm.getComponent(ck).component.data.values = vals;
+    formioForm.getComponent(ck).triggerUpdate();
+}
+
 /**
  * Returns function which is called by Form.io when component gets focus
  * @param comp {object} Form.io component which got focus
@@ -393,16 +435,14 @@ function formFocusListener(comp)
 /**
  * Called by Form.io when a component loses focus
  */
-function formBlurListener(comp)
+function formBlurListener()
 {
-    return function() {
-        console.log('onblur for '+comp.key);
-        setDefaultHelpContent();
-        if (appConfiguration && appConfiguration.autocalc === "focuschange")
-        {
-            TogFormViewer.calculate();
-        }
-    };
+    console.log('onblur for '+comp.key);
+    setDefaultHelpContent();
+    if (appConfiguration && appConfiguration.autocalc === "focuschange")
+    {
+        TogFormViewer.calculate();
+    }
 }
 
 /**

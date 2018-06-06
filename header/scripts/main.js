@@ -287,11 +287,45 @@ function createHooksObj()
         input: function(input)
         {
             this.addEventListener(input, 'focus', formFocusListener(this));
-            this.addEventListener(input, 'blur', formBlurListener);
+            this.addEventListener(input, 'blur', formBlurListener(this));
+           
+            this.addEventListener(input, 'search', formSearchListener(this));
+            this.addEventListener(input, 'stopSearch', formSearchStopedListener(this));             
+            
+            this.addEventListener(input, 'keyUp', formKeyUpListener(this));
+            this.addEventListener(input, 'showDropdown', formShowDropdownListener(this));
         }
+
     };
 }
 
+function formShowDropdownListener(comp)
+{
+    return function() {
+        console.log('onshowdropdown for '+comp.key);
+    };
+}
+
+function formKeyUpListener(comp)
+{
+    return function() {
+    console.log('onkeyup for '+comp.key);
+    };
+}
+
+function formSearchStopedListener(comp)
+{
+    return function() {
+    console.log('onsearchstoped for '+comp.key);
+    };
+}
+
+function formSearchListener(comp)
+{
+    return function() {
+        console.log('onsearch for '+comp.key);
+    };
+}
 /**
  * Returns function which is called by Form.io when component gets focus
  * @param comp {object} Form.io component which got focus
@@ -300,6 +334,7 @@ function formFocusListener(comp)
 {
     return function()
     {
+        console.log('onfocus for component '+(comp!=null ? comp.key : "nocomp"));
         $('#divHelp').empty();
         if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
             && comp.component.properties.hasOwnProperty("formhelp"))
@@ -358,13 +393,16 @@ function formFocusListener(comp)
 /**
  * Called by Form.io when a component loses focus
  */
-function formBlurListener()
+function formBlurListener(comp)
 {
-    setDefaultHelpContent();
-    if (appConfiguration && appConfiguration.autocalc === "focuschange")
-    {
-        TogFormViewer.calculate();
-    }
+    return function() {
+        console.log('onblur for '+comp.key);
+        setDefaultHelpContent();
+        if (appConfiguration && appConfiguration.autocalc === "focuschange")
+        {
+            TogFormViewer.calculate();
+        }
+    };
 }
 
 /**

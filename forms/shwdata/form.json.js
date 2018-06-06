@@ -438,42 +438,42 @@ var formObj={
                 "values": [
                   {
                     "value": "outPatient",
-                    "label": "Амбулаторно-поликлиническая помощь",
+                    "label": "Out Patient",
                     "$$hashKey": "object:13022"
                   },
                   {
                     "value": "homeCare",
-                    "label": "Вызов врача на дом в пределах 30 км МКАД",
+                    "label": "Home Care",
                     "$$hashKey": "object:13023"
                   },
                   {
                     "value": "ambulance",
-                    "label": "Скорая помощь в пределах 30 км МКАД",
+                    "label": "Ambulance",
                     "$$hashKey": "object:13024"
                   },
                   {
                     "value": "injury",
-                    "label": "Круглосуточный травматологический пункт",
+                    "label": "Injury",
                     "$$hashKey": "object:13025"
                   },
                   {
                     "value": "dental",
-                    "label": "Стоматологическое обслуживание",
+                    "label": "Dental",
                     "$$hashKey": "object:13026"
                   },
                   {
                     "value": "inPatient",
-                    "label": "Госпитализация по плановым и экстренным показаниям",
+                    "label": "In Patient",
                     "$$hashKey": "object:13027"
                   },
                   {
                     "value": "travel",
-                    "label": "Страхование выезжающих за рубеж",
+                    "label": "Travel",
                     "$$hashKey": "object:13028"
                   },
                   {
                     "value": "exclusion",
-                    "label": "Исключения",
+                    "label": "Exclusion",
                     "$$hashKey": "object:887"
                   }
                 ],
@@ -576,8 +576,9 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showHTML('../html/outlook.html',{'toText':'john.doe@live.com','ccText':'jane.doe@live.com','bccText':'jack.doe@live.com','subjectText':form.submission.data.info1,'bodyText':form.submission.data.info2},'htmlwindow');",
-      "custom2": "TogFormViewer.showHTML('https://sasa-test-ete2.azurewebsites.net/html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
+      "custom": "TogFormViewer.showDataHTML('../html/outlook.html',{'toText':'john.doe@live.com','ccText':'jane.doe@live.com','bccText':'jack.doe@live.com','subjectText':form.submission.data.info1,'bodyText':form.submission.data.info2});",
+      "custom2": "TogFormViewer.showDataHTML('https://sasa-test-ete2.azurewebsites.net/html/outlook.html',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});",
+      "custom3": "TogFormViewer.showDataHTML('https://www.google.com',{'toText':'sasaboy@live.com','ccText':'sasaboy@icloud.com','bodyText':'Please do it immediatelly'});"
 	},    
 	{
 		"autofocus": false,
@@ -703,7 +704,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('showdatawindow');"
+      "custom": "TogFormViewer.showDataXML(null,'showdatawindow');"
 	},
 	{
 		"autofocus": false,
@@ -753,7 +754,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('showdatawindow','../xslt/defaultPre.xsl.js');"
+      "custom": "TogFormViewer.showDataXML('../xslt/defaultPre.xsl.js','showdatawindow');"
 	},	
     {
 		"autofocus": false,

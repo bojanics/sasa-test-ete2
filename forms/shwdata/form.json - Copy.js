@@ -441,7 +441,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('showdatawindow','../xslt/testPre.xsl.js');"
+      "custom": "TogFormViewer.showDataXML('../xslt/testPre.xsl.js','showdatawindow');"
 	}],
 	"revisions": "",
 	"_vid": 0,

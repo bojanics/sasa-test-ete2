@@ -244,10 +244,6 @@ function setupTheme(theme) {
  */
 function setupStyle(overrideBrandTheme)
 {
-    var bootswatchStyleDE = document.createElement("link");
-    bootswatchStyleDE.id = "bodystyle";
-    bootswatchStyleDE.rel = "stylesheet";
-    
     if (!overrideBrandTheme)
     {
         if (themesMap.hasOwnProperty(appConfiguration.bootswatchtheme))
@@ -271,7 +267,25 @@ function setupStyle(overrideBrandTheme)
     themeSelector.themeInitialized = true;
     setupThemeMenu();
     
-    bootswatchStyleDE.href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
+    var bootstrapThemeStylePath = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
+    var existingBootstrapStyle = document.getElementById("bodystyle");
+    if (existingBootstrapStyle)
+    {
+        // If we already have a theme loaded we don't need to do anything else
+        if (existingBootstrapStyle.href === bootstrapThemeStylePath)
+        {
+            return;
+        }
+        
+        $("#bodystyle").remove();
+        $("#themelayoutstyle").remove();
+    }
+    
+    var bootswatchStyleDE = document.createElement("link");
+    bootswatchStyleDE.id = "bodystyle";
+    bootswatchStyleDE.rel = "stylesheet";
+    
+    bootswatchStyleDE.href = bootstrapThemeStylePath;
     var layoutStyleNode = document.getElementById("layoutstyle");
     layoutStyleNode.parentNode.insertBefore(bootswatchStyleDE, layoutStyleNode.nextSibling);
     

@@ -1553,7 +1553,15 @@ function checkForLoadingCallback()
         if (!formDestroyed && !formChanged) {
             console.log('setting only submission');
             formioForm.submission = {"data":appFormDataObj};
-            hideSpinner();
+            setupPredefinedTheme();
+            setInitialTimeZone();
+            setupPredefinedLanguage();
+            
+            // We should show the form after new styles has been loaded to prevent FOUC
+            showContentOnStyleApply(function()
+            {
+                hideSpinner();
+            });
         } else {            
             if (typeof formioForm !== 'undefined') {
                 console.log('destroying form from cflc');
@@ -1619,8 +1627,8 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        if (resolvedPropertiesObjFromServer==null) {
            resolvedPropertiesObjFromServer = {};
        }
-       //resolvedPropertiesObjFromServer.userLanguage='EN-GB';
-       //resolvedPropertiesObjFromServer.userTheme='cosmo';
+//       resolvedPropertiesObjFromServer.userLanguage='EN-GB';
+//       resolvedPropertiesObjFromServer.userTheme='cosmo';
        // if server decided that the user should go offline, set ADAL to null
        if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
           ADAL = null;
@@ -2368,7 +2376,7 @@ var TogFormViewer =
         _showData(showDataWindow,data2show,"Form submission data - JSON");
     },
     
-    showDataXML: function(target,xslPrePathOrURL)
+    showDataXML: function(xslPrePathOrURL,target)
     {
         if (!target) {
             target = "_blank";
@@ -2392,7 +2400,7 @@ var TogFormViewer =
         doFO2HTMLAndShowData(xmlDoc,xslPrePathOrURL,xslFOPathOrUrl,showDataWindow);
     },
     
-    showHTML: function(pathToForm,data,target)
+    showDataHTML: function(pathToHTML,data,target)
     {
         if (!target) {
             target = "_blank";
@@ -2400,10 +2408,15 @@ var TogFormViewer =
         if (!data) {
             data = {};
         }
-        window.showHTMLWindow = window.open(pathToForm,target);
-        window.showHTMLData = data;
+        window.showDataHTMLWindow = window.open(pathToHTML,target);
+        window.showDataHTMLData = data;
     },
 
+    getCustomValues: function(url) 
+    {
+        return [{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
+    },
+    
     // This function should be called from custom button action. It will post appInfo object to the specified URL
     // If the response changes some of the appInfo data, the re-evaluation of the properties will start (like with Loading action)
     executeCustomAction: function(url)
@@ -2411,18 +2424,18 @@ var TogFormViewer =
         appFormDataObj = formioForm.submission.data;
         performEventOrCustomAction(url,false);
     }
-       
+
 }
 
-// This listener is triggered when the child window (opened with showHTML function) posts message to our application window
-// Then we know the child window form.io form is loaded, and then we post the JSON (parameter to showHTML function) to the
-// child window, and child window sets the form.io submission
+// This listener is triggered when the child window (opened with showDataHTML function) posts message to our application window
+// Then we know the child window (form) is loaded, and then we post the JSON (parameter to showDataHTML function) to the
+// child window, and child window populates the form with that data
 window.addEventListener("message", function(event) {
-    if (window.showHTMLWindow && window.showHTMLData) {
-        console.log('posting message to child "showHTMLData" window: '+JSON.stringify(window.showHTMLData));
-        showHTMLWindow.postMessage(window.showHTMLData,"*");
-        window.showHTMLWindow = null;
-        window.showHTMLData = null;
+    if (window.showDataHTMLWindow && window.showDataHTMLData) {
+        console.log('posting message to child "showDataHTMLWindow" window: '+JSON.stringify(window.showDataHTMLData));
+        showDataHTMLWindow.postMessage(window.showDataHTMLData,"*");
+        window.showDataHTMLWindow = null;
+        window.showDataHTMLData = null;
     }
 });
 

@@ -692,7 +692,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('xmlsdwin');"
+      "custom": "TogFormViewer.showDataXML(null,'xmlsdwin');"
 	},
 	{
 		"autofocus": false,
@@ -717,7 +717,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('xmlsdwin','../xslt/defaultPre.xsl.js');"
+      "custom": "TogFormViewer.showDataXML('../xslt/defaultPre.xsl.js','xmlsdwin');"
 	},
 	{
 		"autofocus": false,
@@ -742,7 +742,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('xmlsdwin','http://sasa-formio-pdf.azurewebsites.net/xsl/defaultPre.xsl.js');"
+      "custom": "TogFormViewer.showDataXML('http://sasa-formio-pdf.azurewebsites.net/xsl/defaultPre.xsl.js','xmlsdwin');"
 	},    
 	{
 		"autofocus": false,

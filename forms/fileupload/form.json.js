@@ -179,7 +179,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('showdatawindow');"
+      "custom": "TogFormViewer.showDataXML(null,'showdatawindow');"
 	},
 	{
 		"autofocus": false,
@@ -229,7 +229,7 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "TogFormViewer.showDataXML('showdatawindow','../xslt/defaultPre.xsl.js');"
+      "custom": "TogFormViewer.showDataXML('../xslt/defaultPre.xsl.js','showdatawindow');"
 	}],
 	"revisions": "",
 	"_vid": 0,

@@ -198,6 +198,11 @@ function generateForm(formReadyCallback)
             console.log(submission);
         });
         
+        form.on('search', function()
+        {
+            console.log("SEARCHING................");
+        });
+
         form.on('change', function()
         {
            console.log('onchange'); 

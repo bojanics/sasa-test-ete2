@@ -1,0 +1,486 @@
+var formObj={
+	"type": "form",
+	"tags": [],
+	"owner": "599d5130a0434200072250ab",
+	"components": [{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "text",
+		"inputMask": "",
+		"label": "Text",
+		"key": "text",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"multiple": false,
+		"defaultValue": "",
+		"protected": false,
+		"unique": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"spellcheck": true,
+		"validate": {
+			"required": false,
+			"minLength": "",
+			"maxLength": "",
+			"pattern": "",
+			"custom": "",
+			"customPrivate": false
+		},
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"type": "textfield",
+		"labelPosition": "top",
+		"tags": [],
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Number",
+		"key": "number",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": false,
+		"inputType": "password",
+		"label": "Password",
+		"key": "password",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"protected": true,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"type": "password",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"tabindex": "s.bojanic@togetherteam.co.th"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"label": "Text Area",
+		"key": "textArea",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"rows": 3,
+		"multiple": false,
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"wysiwyg": false,
+		"clearOnHide": true,
+		"spellcheck": true,
+		"validate": {
+			"required": false,
+			"minLength": "",
+			"maxLength": "",
+			"pattern": "",
+			"custom": ""
+		},
+		"type": "textarea",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"inputType": "checkbox",
+		"tableView": true,
+		"label": "checkboxField",
+		"dataGridLabel": false,
+		"key": "checkboxField",
+		"defaultValue": false,
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"name": "",
+		"value": "",
+		"clearOnHide": true,
+		"validate": {
+			"required": false
+		},
+		"type": "checkbox",
+		"labelPosition": "right",
+		"hideLabel": true,
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"label": "Select Boxes",
+		"key": "selectBoxes",
+		"values": [{
+			"value": "",
+			"label": "",
+			"shortcut": ""
+		}],
+		"inline": false,
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false
+		},
+		"type": "selectboxes",
+		"labelPosition": "top",
+		"optionsLabelPosition": "right",
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "radio",
+		"label": "Radio",
+		"key": "radio",
+		"values": [{
+			"value": "",
+			"label": "",
+			"shortcut": ""
+		}],
+		"defaultValue": "",
+		"protected": false,
+		"fieldSet": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"custom": "",
+			"customPrivate": false
+		},
+		"type": "radio",
+		"labelPosition": "top",
+		"optionsLabelPosition": "right",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"label": "Date Time",
+		"key": "dateTime",
+		"placeholder": "",
+		"format": "yyyy-MM-dd hh:mm a",
+		"enableDate": true,
+		"enableTime": true,
+		"defaultDate": "",
+		"datepickerMode": "day",
+		"datePicker": {
+			"showWeeks": true,
+			"startingDay": 0,
+			"initDate": "",
+			"minMode": "day",
+			"maxMode": "year",
+			"yearRows": 4,
+			"yearColumns": 5,
+			"minDate": null,
+			"maxDate": null,
+			"datepickerMode": "day"
+		},
+		"timePicker": {
+			"hourStep": 1,
+			"minuteStep": 1,
+			"showMeridian": true,
+			"readonlyInput": false,
+			"mousewheel": true,
+			"arrowkeys": true
+		},
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"custom": ""
+		},
+		"type": "datetime",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"label": "Day",
+		"key": "day",
+		"fields": {
+			"day": {
+				"type": "number",
+				"placeholder": "",
+				"required": false
+			},
+			"month": {
+				"type": "select",
+				"placeholder": "",
+				"required": false
+			},
+			"year": {
+				"type": "number",
+				"placeholder": "",
+				"required": false
+			}
+		},
+		"dayFirst": false,
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"custom": ""
+		},
+		"type": "day",
+		"labelPosition": "top",
+		"inputsLabelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tree": true,
+		"components": [{
+			"autofocus": false,
+			"input": true,
+			"tableView": true,
+			"inputType": "text",
+			"inputMask": "",
+			"label": "Text",
+			"key": "dataGridText",
+			"placeholder": "",
+			"prefix": "",
+			"suffix": "",
+			"multiple": false,
+			"defaultValue": "",
+			"protected": false,
+			"unique": false,
+			"persistent": true,
+			"hidden": false,
+			"clearOnHide": true,
+			"spellcheck": true,
+			"validate": {
+				"required": false,
+				"minLength": "",
+				"maxLength": "",
+				"pattern": "",
+				"custom": "",
+				"customPrivate": false
+			},
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"type": "textfield",
+			"inDataGrid": true,
+			"labelPosition": "top",
+			"tags": [],
+			"properties": {
+				
+			}
+		}],
+		"tableView": true,
+		"label": "Data Grid",
+		"key": "dataGrid",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"type": "datagrid",
+		"addAnotherPosition": "bottom",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"isNew": false
+	},
+	{
+		"input": true,
+		"tree": true,
+		"components": [{
+			"autofocus": false,
+			"input": true,
+			"tableView": true,
+			"inputType": "text",
+			"inputMask": "",
+			"label": "Text",
+			"key": "editGridText",
+			"placeholder": "",
+			"prefix": "",
+			"suffix": "",
+			"multiple": false,
+			"defaultValue": "",
+			"protected": false,
+			"unique": false,
+			"persistent": true,
+			"hidden": false,
+			"clearOnHide": true,
+			"spellcheck": true,
+			"validate": {
+				"required": false,
+				"minLength": "",
+				"maxLength": "",
+				"pattern": "",
+				"custom": "",
+				"customPrivate": false
+			},
+			"conditional": {
+				"show": "",
+				"when": null,
+				"eq": ""
+			},
+			"type": "textfield",
+			"labelPosition": "top",
+			"tags": [],
+			"properties": {
+				
+			}
+		}],
+		"multiple": false,
+		"tableView": true,
+		"label": "Edit Grid",
+		"key": "editGrid",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"templates": {
+			"header": "<div class=\"row\"> \n  {%util.eachComponent(components, function(component) { %} \n    <div class=\"col-sm-2\"> \n      {{ component.label }} \n    </div> \n  {% }) %} \n</div>",
+			"row": "<div class=\"row\"> \n  {%util.eachComponent(components, function(component) { %} \n    <div class=\"col-sm-2\"> \n      {{ getView(component, row[component.key]) }} \n    </div> \n  {% }) %} \n  <div class=\"col-sm-2\"> \n    <div class=\"btn-group pull-right\"> \n      <div class=\"btn btn-default editRow\">Edit</div> \n      <div class=\"btn btn-danger removeRow\">Delete</div> \n    </div> \n  </div> \n</div>",
+			"footer": ""
+		},
+		"type": "editgrid",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		}
+	}],
+	"revisions": "",
+	"_vid": 0,
+	"_id": "5b18db3adaf43466a599244b",
+	"title": "manycontrols",
+	"display": "form",
+	"access": [{
+		"roles": ["599d5201a0434200072250b4",
+		"599d5201a0434200072250b5",
+		"599d5201a0434200072250b6"],
+		"type": "read_all"
+	}],
+	"submissionAccess": [],
+	"settings": {
+		
+	},
+	"name": "manycontrols",
+	"path": "manycontrols",
+	"project": "599d5201a0434200072250b3",
+	"created": "2018-06-07T07:14:02.854Z",
+	"modified": "2018-06-07T07:18:18.582Z",
+	"machineName": "ewhyjxtmcncdriz:manycontrols"
+};

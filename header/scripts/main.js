@@ -191,16 +191,12 @@ function generateForm(formReadyCallback)
             setDefaultHelpContent();
             
             formReadyCallback();
+            console.log('form is ready');
         });
         
         form.on('submit', function(submission)
         {
-            console.log(submission);
-        });
-        
-        form.on('search', function()
-        {
-            console.log("SEARCHING................");
+            console.log('SUBMIT, submission='+submission);
         });
 
         form.on('change', function(event)
@@ -231,6 +227,54 @@ function generateForm(formReadyCallback)
                 appFormDataObj = form.submission.data;
                 performEventOrCustomAction(url,true);
             }
+        });
+
+
+        form.on('submitButton', function(submission)
+        {
+            console.log('SUBMIT bUTTTON, submission='+submission);
+        });
+        form.on('submitDone', function(submission)
+        {
+            console.log('SUBMIT DONE, submission='+submission);
+        });
+        
+        form.on('render', function()
+        {
+            console.log("FORM is rendered");
+        });
+        
+        form.on('formLoad', function()
+        {
+            console.log("FORM is loaded");
+        });
+        form.on('componentChange', function(comp)
+        {
+            console.log("COMPONENT IS CHANGED");
+        });
+        form.on('componentError', function(comp)
+        {
+            console.log("COMPONENT ERROR");
+        });
+        form.on('error', function()
+        {
+            console.log("FORM ERROR");
+        });
+        form.on('requestButton', function()
+        {
+            console.log("REQ BUTTON");
+        });
+        form.on('requestDone', function()
+        {
+            console.log("REQ DONE");
+        });
+        form.on('resetForm', function()
+        {
+            console.log("RESET FORM");
+        });
+        form.on('refreshData', function()
+        {
+            console.log("REFRESH DATA");
         });
         
     });
@@ -287,13 +331,79 @@ function createHooksObj()
         input: function(input)
         {
             this.addEventListener(input, 'focus', formFocusListener(this));
-            this.addEventListener(input, 'blur', formBlurListener);
+            this.addEventListener(input, 'blur', formBlurListener(this));
            
             this.addEventListener(input, 'search', formSearchListener(this));
+            this.addEventListener(input, 'stopSearch', formStopSearchListener(this));
             
             this.addEventListener(input, 'showDropdown', formShowDropdownListener(this));
+            
+            this.addEventListener(input, 'click', formClickListener(this));
+            
+            this.addEventListener(input, 'mouseover', formMOListener(this));
+            this.addEventListener(input, 'keypress', formKPListener(this));
+            this.addEventListener(input, 'keydown', formKDListener(this));
+            this.addEventListener(input, 'keyup', formKUListener(this));
+            this.addEventListener(input, 'change', formCHListener(this));
+            this.addEventListener(input, 'select', formSLListener(this));
+            this.addEventListener(input, 'resize', formRSListener(this));
+            
         }
 
+    };
+}
+
+function formRSListener(comp)
+{
+    return function(event) {
+        console.log('onresize for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+
+function formSLListener(comp)
+{
+    return function(event) {
+        console.log('onselect for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+
+function formMOListener(comp)
+{
+    return function(event) {
+        console.log('onmouseover for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+
+function formCHListener(comp)
+{
+    return function(event) {
+        console.log('onchange for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+
+function formKPListener(comp)
+{
+    return function(event) {
+        console.log('onkeypress for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+function formKDListener(comp)
+{
+    return function(event) {
+        console.log('onkeydown for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+function formKUListener(comp)
+{
+    return function(event) {
+        console.log('onkeyup for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
+
+function formClickListener(comp)
+{
+    return function(event) {
+        console.log('onclick for '+comp.key+', ev='+JSON.stringify(event));
     };
 }
 
@@ -306,12 +416,12 @@ var ck = comp.key;
 
 
     var vals = [];
-    formioForm.submission.data[ck] = "";
     formioForm.getComponent(ck).component.data.values = vals;
     if (ck=='selectpredefined') {
         vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"},{"value": "inPatient","label": "In Patient"},{"value": "travel","label": "Travel"},{"value": "exclusion","label": "Exclusion"}];
     } else if (ck=='selectcustom') {
-        vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
+        //vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
+        vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'4','label':'tata'}];
     }
     console.log('setting dropd vals to '+JSON.stringify(vals));
     formioForm.getComponent(ck).component.data.values = vals;
@@ -321,6 +431,12 @@ var ck = comp.key;
 }
 
 
+function formStopSearchListener(comp)
+{
+    return function(event) {
+        console.log('onstopsearch for '+comp.key+', ev='+JSON.stringify(event));
+    };
+}
 function formSearchListener(comp)
 {
     return function(event) {
@@ -340,13 +456,12 @@ function formSearchListener(comp)
 
 function mySearchScriptPredefined(ck,cv){
     console.log('mysearchscriptpredefined called with params ck='+ck+', cv='+cv);
-    var vals = [];
-    formioForm.submission.data[ck] = "";
-    formioForm.getComponent(ck).component.data.values = vals;
-    if (cv=='s') {
-        vals =[{"value": "inPatient","label": "In Patient"},{"value": "sa","label": "sa"}];
+    var vals = formioForm.getComponent(ck).component.data.values;
+    //formioForm.getComponent(ck).component.data.values = vals;
+    if (cv=='i') {
+        vals =[{"value": "inPatient","label": "In Patient"},{"value": "injury","label": "Injury"}];
     } else {
-        vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"}];
+        //vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"}];
     }
     console.log('setting vals to '+JSON.stringify(vals));
     formioForm.getComponent(ck).component.data.values = vals;
@@ -356,7 +471,6 @@ function mySearchScriptPredefined(ck,cv){
 function mySearchScriptCustom(ck,cv){
     console.log('mysearchscriptcustom called with params ck='+ck+', cv='+cv);
     var vals = [];
-    formioForm.submission.data[ck] = "";
     formioForm.getComponent(ck).component.data.values = vals;
     if (cv.indexOf('s')==0) {
         vals = [{'value':'1','label':'sonja'},{'value':'3','label':'sasa'}]
@@ -435,14 +549,17 @@ function formFocusListener(comp)
 /**
  * Called by Form.io when a component loses focus
  */
-function formBlurListener()
+function formBlurListener(comp)
 {
-    console.log('onblur for '+comp.key);
-    setDefaultHelpContent();
-    if (appConfiguration && appConfiguration.autocalc === "focuschange")
+    return function(event)
     {
-        TogFormViewer.calculate();
-    }
+        console.log('onblur for '+comp.key+', ev='+JSON.stringify(event));
+        setDefaultHelpContent();
+        if (appConfiguration && appConfiguration.autocalc === "focuschange")
+        {
+            TogFormViewer.calculate();
+        }
+    };
 }
 
 /**
@@ -1763,4 +1880,15 @@ function toggleChanged()
     }
     
     formioForm.checkConditions();
+}
+
+function printJSON(json,title) {
+console.log("JSON name="+title);
+for (var p in json) {    
+  if (typeof json[p]=='object' && !title) {
+    printJSON(json[p],p);
+  } else {
+    console.log(p+'='+json[p]+', t='+(typeof json[p]));
+  }
+}
 }

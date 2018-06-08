@@ -94,6 +94,7 @@ function resetAppConfiguration()
         calcConfSetting: "",
         calcApiPath: "",
         action: "",
+        actionScript: "",
         actionLoading: "",
         actionLoaded: "",
         bingMapsKey: "",
@@ -785,7 +786,10 @@ function setupHeaderConfiguration()
     resolveStringOrBooleanParameter(false,"calc_api_path","calcApiPath",formObj,headerObj,null,true,appConfiguration.calcApiPath); 
 
     // setup action
-    resolveStringOrBooleanParameter(false,"action","action",null,formObj,headerObj,false,appConfiguration.action); 
+    resolveStringOrBooleanParameter(false,"action","action",null,formObj,headerObj,true,appConfiguration.action); 
+
+    // setup actionScript
+    resolveStringOrBooleanParameter(false,"actionScript","actionScript",formObj,headerObj,null,true,appConfiguration.actionScript); 
 
     // setup loading action
     resolveStringOrBooleanParameter(false,"action loading","actionLoading",formObj,headerObj,null,true,appConfiguration.actionLoading); 
@@ -902,7 +906,6 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
 {
     var paramVal = defaultValue;
     var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
-    
     if (paramValFromRPO!=null)
     {
         paramVal = paramValFromRPO;
@@ -911,7 +914,6 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
     {
         var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
         var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
-        
         if (paramValFromUrl && boolValCorrect)
         {
             if (isBoolean)
@@ -1487,20 +1489,23 @@ function executeLoadingOrLoadedScript(isLoadingScript)
     var lname = isLoadingScript ? "loading" : "loaded";
     if (formObj.hasOwnProperty("properties") && formObj.properties!=null && formObj.properties.hasOwnProperty(propertyName))
     {
-        var lScript = "";
-        try {
-            lScript = formObj.properties[propertyName];
-            console.log("Executing "+lname+" script:"+lScript);
-            eval(lScript);
-        } catch (err) {
-            var msg = "Error occurred when executing "+lname+" script:\n\n"+lScript;
-            msg+="\n\nError name: "+err.name;
-            msg+="\n\nError message: "+err.message;
-            msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
-            console.log(msg);
-            alert(msg);                      
-        }
+        var lScript = formObj.properties[propertyName];
+        executeScript(lname,lScript);
     }    
+}
+
+function executeScript(scriptName,script) {
+    try {
+        console.log("Executing "+scriptName+" script:"+script);
+        eval(script);
+    } catch (err) {
+        var msg = "Error occurred when executing "+scriptName+" script:\n\n"+script;
+        msg+="\n\nError name: "+err.name;
+        msg+="\n\nError message: "+err.message;
+        msg+=(err.stack!=null ? "\n\nError stack: "+err.stack : "");
+        console.log(msg);
+        alert(msg);                      
+    }
 }
 
 /**
@@ -2412,11 +2417,6 @@ var TogFormViewer =
         window.showDataHTMLData = data;
     },
 
-    getCustomValues: function(url) 
-    {
-        return [{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
-    },
-    
     // This function should be called from custom button action. It will post appInfo object to the specified URL
     // If the response changes some of the appInfo data, the re-evaluation of the properties will start (like with Loading action)
     executeCustomAction: function(url)

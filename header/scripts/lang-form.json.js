@@ -23,7 +23,8 @@ var langObj = {
             'Number 2': 'aNumber 2',
             'Result': 'Result',
             'The first number to add': 'The first number to add',
-            'The second number to add': 'The second number to add'
+            'The second number to add': 'The second number to add',
+            'Must be 3' : 'The value must be 3'
         },
         'SR': {
             'File Name':'Ime fajla',
@@ -35,7 +36,8 @@ var langObj = {
             'Number b': 'Broj 2',
             'Result': 'Rezultat',
             'The first number to add': 'Prvi sabirak',
-            'The second number to add': 'Drugi sabirak'
+            'The second number to add': 'Drugi sabirak',
+            'Must be 3' : 'Vrednost mora biti 3'
         }
     }
 }

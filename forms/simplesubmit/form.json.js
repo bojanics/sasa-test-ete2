@@ -150,7 +150,7 @@ var formObj={
 			
 		},
 		"headers": [],
-		"url": "https://sasa-test-misc.azurewebsites.net/Add"
+		"aurl": "https://sasa-test-misc.azurewebsites.net/Add"
 	}],
 	"revisions": "",
 	"_vid": 0,

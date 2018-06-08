@@ -603,7 +603,9 @@ var formObj={
 		"properties": {
 			
 		},
-      "custom": "formioForm.submission={'data':{'a':44,'c':55}};"
+        "custom1": "formioForm.submission.data.dlPrograms = {};formioForm.submission=formioForm.submission;",
+        "custom": "formioForm.submission={};",
+        "custom3": "formioForm.submission={'data':{'a':44,'c':55}};"
 	},    
 	{
 		"autofocus": false,

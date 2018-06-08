@@ -27,6 +27,7 @@ var headerObj = {
     "calc_conf_setting": "",
     "calc_api_path": "",
     "action":"Form('{formname}/{formversion}')/Submit",
+    "actionScript" : "",
     "action loading":"Form('{formname}/{formversion}')/Loading",
     "action loaded":"Form('{formname}/{formversion}')/Loaded",
     "bing maps key": "",

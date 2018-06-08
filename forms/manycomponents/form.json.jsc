@@ -26,7 +26,7 @@ var formObj={
 			"minLength": "",
 			"maxLength": "",
 			"pattern": "",
-			"custom": "valid = (input==='3') ? true : 'Must be 3'",
+			"custom": "",
 			"customPrivate": false
 		},
 		"conditional": {
@@ -393,8 +393,7 @@ var formObj={
 		},
 		"properties": {
 			
-		},
-		"isNew": false
+		}
 	},
 	{
 		"input": true,
@@ -461,30 +460,6 @@ var formObj={
 		"properties": {
 			
 		}
-	},	{
-		"autofocus": false,
-		"input": true,
-		"label": "Show data (JSON)",
-		"tableView": false,
-		"key": "showdata",
-		"size": "md",
-		"leftIcon": "",
-		"rightIcon": "",
-		"block": false,
-		"action": "custom",
-		"disableOnInvalid": false,
-		"theme": "primary",
-		"type": "button",
-		"tags": [],
-		"conditional": {
-			"show": "",
-			"when": null,
-			"eq": ""
-		},
-		"properties": {
-			
-		},
-      "custom": "TogFormViewer.showData();"
 	}],
 	"revisions": "",
 	"_vid": 0,
@@ -505,6 +480,6 @@ var formObj={
 	"path": "manycontrols",
 	"project": "599d5201a0434200072250b3",
 	"created": "2018-06-07T07:14:02.854Z",
-	"modified": "2018-06-07T07:18:18.582Z",
+	"modified": "2018-06-07T08:35:34.836Z",
 	"machineName": "ewhyjxtmcncdriz:manycontrols"
 };

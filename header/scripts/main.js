@@ -181,7 +181,13 @@ function generateForm(formReadyCallback)
             }
         };
         
+        
         form.ready.then(function()
+        {
+            console.log('form is ready');
+        });
+
+        form.on('render', function()
         {
            // Executing loaded script when the form is ready
            // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
@@ -191,7 +197,7 @@ function generateForm(formReadyCallback)
             setDefaultHelpContent();
             
             formReadyCallback();
-            console.log('form is ready');
+            console.log('form is rendered');
         });
         
         form.on('submit', function(submission)
@@ -201,7 +207,9 @@ function generateForm(formReadyCallback)
 
         form.on('change', function(event)
         {
-           console.log('onchange '+(event && event.changed && event.changed.component ? event.changed.component.key : '')); 
+            printEvent(null,event,'change');
+                
+           //console.log('onchange '+(event && event.changed && event.changed.component ? event.changed.component.key : '')); 
             if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
             {
                 TogFormViewer.calculate();
@@ -214,67 +222,52 @@ function generateForm(formReadyCallback)
         
         form.on('customEvent', function(event) {
             console.log('action default = '+appConfiguration.action);
-            
-            var action = appConfiguration.action;
-            if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('action')) {
-                action = event.component.properties.action;
-                console.log('button action = '+action);
+            printEvent(null,event,'customEvent');
+            var actionPerformed = false;
+            if (ADAL && appConfiguration.home) {
+                var action = appConfiguration.action;
+                if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('action')) {
+                    action = event.component.properties.action;
+                    console.log('button action for '+event.component.key+' = '+action);
+                }
+                action = handlePlaceholders(action);
+                if (action) {
+                    var url = appConfiguration.home + "/" + action;
+                    console.log('action '+action+' will be executed for '+event.component.key);
+                    appFormDataObj = form.submission.data;
+                    performEventOrCustomAction(url,true);
+                    actionPerformed = true;
+                }
             }
-            action = handlePlaceholders(action);
-            if (appConfiguration.home && action) {
-                var url = appConfiguration.home + "/" + action;
-                console.log('action will be executed');
-                appFormDataObj = form.submission.data;
-                performEventOrCustomAction(url,true);
+            if (!actionPerformed) {
+                var actionScript = appConfiguration.actionScript;
+                if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('actionScript')) {
+                    action = event.component.properties.actionScript;
+                    console.log('button (local) action for '+event.component.key+' = '+actionScript);
+                }
+                if (actionScript) {
+                    console.log('action (local) '+actionScript+' will be executed for '+event.component.key);
+                    executeScript(event.component.key,actionScript);
+                }
             }
         });
 
 
-        form.on('submitButton', function(submission)
-        {
-            console.log('SUBMIT bUTTTON, submission='+submission);
-        });
-        form.on('submitDone', function(submission)
-        {
-            console.log('SUBMIT DONE, submission='+submission);
-        });
-        
-        form.on('render', function()
-        {
-            console.log("FORM is rendered");
-        });
-        
-        form.on('formLoad', function()
-        {
-            console.log("FORM is loaded");
-        });
-        form.on('componentChange', function(comp)
-        {
-            console.log("COMPONENT IS CHANGED");
-        });
         form.on('componentError', function(comp)
         {
-            console.log("COMPONENT ERROR");
+            console.log("COMPONENT ERROR for "+JSON.stringify(comp));
         });
         form.on('error', function()
         {
             console.log("FORM ERROR");
         });
-        form.on('requestButton', function()
+        form.on('prevPage', function()
         {
-            console.log("REQ BUTTON");
+            console.log("PREV PAGE");
         });
-        form.on('requestDone', function()
+        form.on('nextPage', function()
         {
-            console.log("REQ DONE");
-        });
-        form.on('resetForm', function()
-        {
-            console.log("RESET FORM");
-        });
-        form.on('refreshData', function()
-        {
-            console.log("REFRESH DATA");
+            console.log("NEXT PAGE");
         });
         
     });
@@ -333,114 +326,132 @@ function createHooksObj()
             this.addEventListener(input, 'focus', formFocusListener(this));
             this.addEventListener(input, 'blur', formBlurListener(this));
            
-            this.addEventListener(input, 'search', formSearchListener(this));
-            this.addEventListener(input, 'stopSearch', formStopSearchListener(this));
-            
+            this.addEventListener(input, 'search', formSearchListener(this));            
             this.addEventListener(input, 'showDropdown', formShowDropdownListener(this));
             
+            /*
             this.addEventListener(input, 'click', formClickListener(this));
+            this.addEventListener(input, 'dblclick', formDblClickListener(this));
             
             this.addEventListener(input, 'mouseover', formMOListener(this));
+            this.addEventListener(input, 'mousedown', formMDListener(this));
+            this.addEventListener(input, 'mousepress', formMPListener(this));
+            this.addEventListener(input, 'mouseout', formMOTListener(this));
+            this.addEventListener(input, 'mouseup', formMUListener(this));
+            this.addEventListener(input, 'mousemove', formMMListener(this));
+
+// e.g. event.key = A, event.code = keyA, event.ctrlKey = false, event.shiftKey = true, event.altKey = false, event.metaKey = false, event.keyCode = 65
             this.addEventListener(input, 'keypress', formKPListener(this));
             this.addEventListener(input, 'keydown', formKDListener(this));
             this.addEventListener(input, 'keyup', formKUListener(this));
-            this.addEventListener(input, 'change', formCHListener(this));
-            this.addEventListener(input, 'select', formSLListener(this));
-            this.addEventListener(input, 'resize', formRSListener(this));
-            
+            */
         }
 
     };
 }
 
-function formRSListener(comp)
+
+function formMOTListener(comp)
 {
     return function(event) {
-        console.log('onresize for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'mouseout');
     };
 }
-
-function formSLListener(comp)
+function formMUListener(comp)
 {
     return function(event) {
-        console.log('onselect for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'mouseup');
+    };
+}
+function formMMListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mousemove');
     };
 }
 
 function formMOListener(comp)
 {
     return function(event) {
-        console.log('onmouseover for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'mouseover');
     };
 }
-
-function formCHListener(comp)
+function formMDListener(comp)
 {
     return function(event) {
-        console.log('onchange for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'mousedown');
+    };
+}
+function formMPListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mousepress');
     };
 }
 
 function formKPListener(comp)
 {
     return function(event) {
-        console.log('onkeypress for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'keypress');
     };
 }
 function formKDListener(comp)
 {
     return function(event) {
-        console.log('onkeydown for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'keydown');
     };
 }
 function formKUListener(comp)
 {
     return function(event) {
-        console.log('onkeyup for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'keyup');
     };
 }
 
 function formClickListener(comp)
 {
     return function(event) {
-        console.log('onclick for '+comp.key+', ev='+JSON.stringify(event));
+        printEvent(comp,event,'click');
+    };
+}
+function formDblClickListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'dblclick');
     };
 }
 
 function formShowDropdownListener(comp)
 {
     return function() {
-        console.log('onshowdropdown for '+comp.key);
+        printEvent(comp,event,'showdropdown');
 
-var ck = comp.key;
+/*
+        var ck = comp.key;
 
 
-    var vals = [];
-    formioForm.getComponent(ck).component.data.values = vals;
-    if (ck=='selectpredefined') {
-        vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"},{"value": "inPatient","label": "In Patient"},{"value": "travel","label": "Travel"},{"value": "exclusion","label": "Exclusion"}];
-    } else if (ck=='selectcustom') {
-        //vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
-        vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'4','label':'tata'}];
-    }
-    console.log('setting dropd vals to '+JSON.stringify(vals));
-    formioForm.getComponent(ck).component.data.values = vals;
-    formioForm.getComponent(ck).triggerUpdate();
-        
+        var vals = [];
+        formioForm.getComponent(ck).component.data.values = vals;
+        if (ck=='selectpredefined') {
+            vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"},{"value": "inPatient","label": "In Patient"},{"value": "travel","label": "Travel"},{"value": "exclusion","label": "Exclusion"}];
+        } else if (ck=='selectcustom') {
+            //vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'3','label':'sasa'}];
+            vals =[{'value':'1','label':'sonja'},{'value':'2','label':'tamara'},{'value':'4','label':'tata'}];
+        }
+        console.log('setting dropd vals to '+JSON.stringify(vals));
+        formioForm.getComponent(ck).component.data.values = vals;
+        formioForm.getComponent(ck).triggerUpdate();
+*/        
     };
 }
 
 
-function formStopSearchListener(comp)
-{
-    return function(event) {
-        console.log('onstopsearch for '+comp.key+', ev='+JSON.stringify(event));
-    };
-}
 function formSearchListener(comp)
 {
     return function(event) {
-        console.log('onsearch for '+comp.key+',cv='+event.detail.value+',  JSON='+JSON.stringify(comp.component));
+        printEvent(comp,event,'search');
+/*        
+        console.log('onsearch for '+comp.key+',cv='+event.detail.value+',  JSON='+JSON.stringify(comp.component)+', evd='+JSON.stringify(event.detail));        
         if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")) {            
             var sact = comp.component.properties.searchAction;
             var sscr = comp.component.properties.searchScript;
@@ -451,9 +462,10 @@ function formSearchListener(comp)
                 eval(exec);
             }
         }
+*/
     };
 }
-
+/*
 function mySearchScriptPredefined(ck,cv){
     console.log('mysearchscriptpredefined called with params ck='+ck+', cv='+cv);
     var vals = formioForm.getComponent(ck).component.data.values;
@@ -461,7 +473,7 @@ function mySearchScriptPredefined(ck,cv){
     if (cv=='i') {
         vals =[{"value": "inPatient","label": "In Patient"},{"value": "injury","label": "Injury"}];
     } else {
-        //vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"}];
+        vals =[{"value": "outPatient","label": "Out Patient"},{"value": "homeCare","label": "Home Care"},{"value": "ambulance","label": "Ambulance"},{"value": "injury","label": "Injury"},{"value": "dental","label": "Dental"}];
     }
     console.log('setting vals to '+JSON.stringify(vals));
     formioForm.getComponent(ck).component.data.values = vals;
@@ -481,6 +493,7 @@ function mySearchScriptCustom(ck,cv){
     formioForm.getComponent(ck).component.data.values = vals;
     formioForm.getComponent(ck).triggerUpdate();
 }
+*/
 
 /**
  * Returns function which is called by Form.io when component gets focus
@@ -490,7 +503,7 @@ function formFocusListener(comp)
 {
     return function()
     {
-        console.log('onfocus for component '+(comp!=null ? comp.key : "nocomp"));
+        //printEvent(comp,event,'focus');
         $('#divHelp').empty();
         if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
             && comp.component.properties.hasOwnProperty("formhelp"))
@@ -553,7 +566,8 @@ function formBlurListener(comp)
 {
     return function(event)
     {
-        console.log('onblur for '+comp.key+', ev='+JSON.stringify(event));
+        //printEvent(comp,event,'blur');
+
         setDefaultHelpContent();
         if (appConfiguration && appConfiguration.autocalc === "focuschange")
         {
@@ -1886,9 +1900,20 @@ function printJSON(json,title) {
 console.log("JSON name="+title);
 for (var p in json) {    
   if (typeof json[p]=='object' && !title) {
-    printJSON(json[p],p);
+    //printJSON(json[p],p);
+    console.log(p+'='+json[p]+', t='+(typeof json[p]));
   } else {
     console.log(p+'='+json[p]+', t='+(typeof json[p]));
   }
 }
+}
+
+function printEvent(component,event,title) {
+    if (!component && event && event.changed && event.changed.component) {
+        component = event.changed.component;
+    }
+    console.log(title+' for '+(component ? component.key : 'no component')+': ' +(event ? ('type='+event.type+', details='+JSON.stringify(event.details)+', changed='+event.changed) : "No event"));
+    if (event && !event.details && !event.changed) {
+        //printJSON(event,'printingevent');
+    }
 }

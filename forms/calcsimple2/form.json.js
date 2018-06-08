@@ -450,6 +450,7 @@ var formObj = {
 	"machineName": "ewhyjxtmcncdriz:calc",
     "action":"Form('{formname}/{formversion}')/Subtraction",
    "properties": {
+    "actionScript1":"test2();",
     "formtitle": "Calculate 2 numbers",
     "formhelp": "<p>Ovdje se nalazi usporedna analiza ponuda za kasko osiguranje prema parametrima kao &scaron;to su iznos financiranja, valuta i vrsta leasinga.<br />\n<br />\nUspoređena su osiguravajuća dru&scaron;tva Uniqa osiguranje i Wiener osiguranje VIG i iskazane su premije osiguranja.<br />\n<br />\nUkoliko želite tiskani primjerak ponude, možete ga dobiti pritiskom na.</p>\n",
     "elearninglink": "https://en.wikipedia.org/wiki/Operation_(mathematics)",

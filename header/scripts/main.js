@@ -74,21 +74,23 @@ function checkForLoadedAction()
     
     if (appConfiguration.actionLoaded)
     {
-        // Replace placeholders in relative path with available settings
-        var loadedAct = handlePlaceholders(appConfiguration.actionLoaded);
+        var url = appConfiguration.home + "/" + appConfiguration.actionLoaded;
         
-        var url = appConfiguration.home + "/" + loadedAct;
-        
-        performLoadedAction(url);
+        performLoadedAction(url,event);
     }
 }
 
 /**
  * Calls loaded action
  */
-function performLoadedAction(url)
+function performLoadedAction(url,event)
 {
-    var payload = {"appInfo" : TogFormViewer.getAppInfo()};
+    var event = {"type":"Loded","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
+
+    // Replace placeholders in relative path with available settings
+    url = handlePlaceholders(url,event);
+    
+    var payload = {"appInfo" : TogFormViewer.getAppInfo(event)};
     console.log('executing loaded action for url '+url);
     // TODO: Perform loading API call with the given callback
     if (typeof ADAL!== 'undefined' && ADAL) {
@@ -208,7 +210,10 @@ function generateForm(formReadyCallback)
         form.on('change', function(event)
         {
             printEvent(null,event,'change');
-                
+
+            printJSON(event,'eve');
+            printJSON(event.changed,'chngd');
+            //var event = {"type":(isEventAction ? "customEvent" : "customAction"),"controlId":(controlId!=null ? controlId : ""),"controlType":"button","value":""};
            //console.log('onchange '+(event && event.changed && event.changed.component ? event.changed.component.key : '')); 
             if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
             {
@@ -217,6 +222,10 @@ function generateForm(formReadyCallback)
             else
             {
                 calculationResultSet = false;
+            }
+            
+            if (event.changed) {
+                
             }
         });
         
@@ -230,24 +239,23 @@ function generateForm(formReadyCallback)
                     action = event.component.properties.action;
                     console.log('button action for '+event.component.key+' = '+action);
                 }
-                action = handlePlaceholders(action);
                 if (action) {
                     var url = appConfiguration.home + "/" + action;
                     console.log('action '+action+' will be executed for '+event.component.key);
                     appFormDataObj = form.submission.data;
-                    performEventOrCustomAction(url,true);
+                    performEventOrCustomAction(url,true,event.component.key);
                     actionPerformed = true;
                 }
             }
             if (!actionPerformed) {
-                var actionScript = appConfiguration.actionScript;
-                if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('actionScript')) {
-                    action = event.component.properties.actionScript;
-                    console.log('button (local) action for '+event.component.key+' = '+actionScript);
+                var actionLocalScript = appConfiguration.actionLocalScript;
+                if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('actionLocalScript')) {
+                    action = event.component.properties.actionLocalScript;
+                    console.log('button (local) action for '+event.component.key+' = '+actionLocalScript);
                 }
-                if (actionScript) {
-                    console.log('action (local) '+actionScript+' will be executed for '+event.component.key);
-                    executeScript(event.component.key,actionScript);
+                if (actionLocalScript) {
+                    console.log('action (local) '+actionLocalScript+' will be executed for '+event.component.key);
+                    executeScript(event.component.key,actionLocalScript);
                 }
             }
         });
@@ -276,12 +284,15 @@ function generateForm(formReadyCallback)
 /**
  * Calls event action
  */
-function performEventOrCustomAction(url,isEventAction)
+function performEventOrCustomAction(url,isEventAction,controlId)
 {
     if (!appConfiguration.disableActionSpinner) {
         showSpinner();
     }
-    var payload = {"appInfo" : TogFormViewer.getAppInfo()};    
+    var event = {"type":(isEventAction ? "customEvent" : "customAction"),"controlId":(controlId!=null ? controlId : ""),"controlType":"button","value":""};
+    url = handlePlaceholders(url,event);
+
+    var payload = {"appInfo" : TogFormViewer.getAppInfo(event)};    
     console.log("executing "+(isEventAction ? "event" : "custom")+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"isEventAction":isEventAction},onsuccess_eventorcustomaction,onfailure_eventorcustomaction);

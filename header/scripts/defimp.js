@@ -94,9 +94,19 @@ function resetAppConfiguration()
         calcConfSetting: "",
         calcApiPath: "",
         action: "",
-        actionScript: "",
+        actionLocalScript: "",
         actionLoading: "",
         actionLoaded: "",
+        actionFocus: "",
+        actionFocusLocalScript: "",
+        actionBlur: "",
+        actionBlurLocalScript: "",
+        actionChange: "",
+        actionChangeLocalScript: "",
+        actionSearch: "",
+        actionSearchLocalScript: "",
+        actionShowDropdown: "",
+        actionShowDropdownLocalScript: "",
         bingMapsKey: "",
         mapWrapperId: "",
         mapRouteInfoWrapperId: "",
@@ -788,14 +798,44 @@ function setupHeaderConfiguration()
     // setup action
     resolveStringOrBooleanParameter(false,"action","action",null,formObj,headerObj,true,appConfiguration.action); 
 
-    // setup actionScript
-    resolveStringOrBooleanParameter(false,"actionScript","actionScript",formObj,headerObj,null,true,appConfiguration.actionScript); 
+    // setup action local script
+    resolveStringOrBooleanParameter(false,"action local script","actionLocalScript",formObj,headerObj,null,true,appConfiguration.actionLocalScript); 
 
     // setup loading action
     resolveStringOrBooleanParameter(false,"action loading","actionLoading",formObj,headerObj,null,true,appConfiguration.actionLoading); 
     
     // setup loaded action
     resolveStringOrBooleanParameter(false,"action loaded","actionLoaded",formObj,headerObj,null,true,appConfiguration.actionLoaded); 
+
+    // setup focus action
+    resolveStringOrBooleanParameter(false,"action focus","actionFocus",formObj,headerObj,null,true,appConfiguration.actionFocus); 
+
+    // setup focus action local script
+    resolveStringOrBooleanParameter(false,"action focus local script","actionFocusLocalScript",formObj,headerObj,null,true,appConfiguration.actionFocusLocalScript); 
+
+    // setup blur action
+    resolveStringOrBooleanParameter(false,"action blur","actionBlur",formObj,headerObj,null,true,appConfiguration.actionBlur); 
+
+    // setup blur action local script
+    resolveStringOrBooleanParameter(false,"action blur local script","actionBlurLocalScript",formObj,headerObj,null,true,appConfiguration.actionBlurLocalScript); 
+
+    // setup change action
+    resolveStringOrBooleanParameter(false,"action change","actionChange",formObj,headerObj,null,true,appConfiguration.actionChange); 
+
+    // setup change action local script
+    resolveStringOrBooleanParameter(false,"action change local script","actionChangeLocalScript",formObj,headerObj,null,true,appConfiguration.actionChangeLocalScript); 
+
+    // setup search action
+    resolveStringOrBooleanParameter(false,"action search","actionSearch",formObj,headerObj,null,true,appConfiguration.actionSearch); 
+
+    // setup search action local script
+    resolveStringOrBooleanParameter(false,"action search local script","actionSearchLocalScript",formObj,headerObj,null,true,appConfiguration.actionSearchLocalScript); 
+
+    // setup showDropdown action
+    resolveStringOrBooleanParameter(false,"action showDropdown","actionShowDropdown",formObj,headerObj,null,true,appConfiguration.actionShowDropdown); 
+
+    // setup showDropdown action local script
+    resolveStringOrBooleanParameter(false,"action showDropdown local script","actionShowDropdownLocalScript",formObj,headerObj,null,true,appConfiguration.actionShowDropdownLocalScript); 
 
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 
@@ -1544,11 +1584,8 @@ function checkForLoadingCallback()
     // Now we need to find a relative path    
     if (doLoadingCallback)
     {
-        // Replace placeholders in relative path with available settings
-        var loadAct = handlePlaceholders(appConfiguration.actionLoading);
-        
-        var url = appConfiguration.home + "/" + loadAct;
 
+        var url = appConfiguration.home + "/" + appConfiguration.actionLoading;
         performLoadingCallback(url,callbackCount);
     }
     else
@@ -1579,9 +1616,9 @@ function checkForLoadingCallback()
     }
 }
 
-function handlePlaceholders(placeholderStr) {
+function handlePlaceholders(placeholderStr,event) {
     // Replace placeholders in placeholderStr with available settings
-    var placeholders = {"formname":formObj.name,"formversion":(formObj.hasOwnProperty("properties") && formObj.properties!=null ? formObj.properties["formversion"] : null)};
+    var placeholders = {"formname":formObj.name,"formversion":(formObj.hasOwnProperty("properties") && formObj.properties!=null ? formObj.properties["formversion"] : null),"eventtype":event.type,"eventvalue":event.value,"eventcontrolid":event.controlId,"eventcontroltype":event.controlType};
     for (let key in placeholders) {
         placeholderStr = placeholderStr.replace(/({([^}]+)})/g, function(i) {
             let key = i.replace(/{/, '').replace(/}/, '');
@@ -1598,9 +1635,14 @@ function handlePlaceholders(placeholderStr) {
 /**
  * Calls loading callback and set up the APP
  */
-function performLoadingCallback(url,cnt)
+function performLoadingCallback(url,cnt,event)
 {
-    var payload = {"appInfo" : TogFormViewer.getAppInfo()};
+    var event = {"type":"Loding","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
+
+    // Replace placeholders in relative path with available settings
+    url = handlePlaceholders(url,event);
+
+    var payload = {"appInfo" : TogFormViewer.getAppInfo(event)};
     console.log('executing loading action for url '+url+', attempt number '+cnt);
     // TODO: Perform loading API call with the given callback
     if (typeof ADAL!== 'undefined' && ADAL) {
@@ -2262,7 +2304,7 @@ var TogFormViewer =
         }
     },
 
-    getAppInfo: function()
+    getAppInfo: function(event)
     {
         var appInfo = {
             "plugin" : {
@@ -2315,6 +2357,9 @@ var TogFormViewer =
         appInfo.resolvedProperties.userTimeZone = this.getProperty("userTimeZone");
         appInfo.resolvedProperties.userTimeZones = this.getProperty("userTimeZones");
         
+        if (event) {
+            appInfo.event = event;
+        }
         return appInfo;
     },
     

@@ -108,16 +108,18 @@ function parse_string(str,del) {
         var pair = vars[i].split("=");
         
         // If first entry with this name
-        if (typeof query_string[pair[0]] === "undefined") {
-            query_string[pair[0]] = decodeURIComponent(pair[1]);
+        var pn = decodeURIComponent(pair[0]);
+        var pv = decodeURIComponent(pair[1]);
+        if (typeof query_string[pn] === "undefined") {
+            query_string[pn] = pv;
             
             // If second entry with this name
-        } else if (typeof query_string[pair[0]] === "string") {
-            var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
-            query_string[pair[0]] = arr;
+        } else if (typeof query_string[pn] === "string") {
+            var arr = [query_string[pn], pv];
+            query_string[pn] = arr;
             // If third or later entry with this name
         } else {
-            query_string[pair[0]].push(decodeURIComponent(pair[1]));
+            query_string[pn].push(pv);
         }
     }
     

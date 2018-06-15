@@ -54,6 +54,7 @@ function resetAppConfiguration()
         customScript: "",
         onlinemode: false,
         display: "form",
+        title: "Formviewer for MS Azure and Office 365",
         formtitle: "Tog Formviewer",
         formhelp: "",
         processimagelink: "",
@@ -77,6 +78,7 @@ function resetAppConfiguration()
         help: true,
         account: true,
         themeSettings: false,
+        themes: "",
         phraseApp: "false",
         phraseAppProjectId: "",
         phraseAppPrefix: "[[__",
@@ -124,7 +126,10 @@ function resetAppConfiguration()
         triggerResizeChange: false,
         defaultLanguage: "",
         defaultTimeZone: "",
-        disableActionSpinner: false
+        disableActionSpinner: false,
+        menusPath: "",
+        langMenusTopPath: "",
+        langMenusBottomPath: ""
     };
     appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
 }
@@ -935,6 +940,15 @@ function setupHeaderConfiguration()
     
     // Check if we should disable spinner when executing actions
     resolveStringOrBooleanParameter(true,"disableActionSpinner","disableActionSpinner",formObj,headerObj,null,true,appConfiguration.disableActionSpinner); 
+    
+    // Check if the menus definition path has been specified
+    resolveStringOrBooleanParameter(false,"menus","menusPath",formObj,headerObj,null,true,appConfiguration.menusPath); 
+    
+    // Check if the top menu translations definition path has been specified
+    resolveStringOrBooleanParameter(false,"langmenustop","langMenusTopPath",formObj,headerObj,null,true,appConfiguration.langMenusTopPath); 
+    
+    // Check if the the bottom menu translations definition path has been specified
+    resolveStringOrBooleanParameter(false,"langmenusbottom","langMenusBottomPath",formObj,headerObj,null,true,appConfiguration.langMenusBottomPath); 
 }
 
 /**
@@ -1142,6 +1156,39 @@ function customScriptLoaded()
 }
 
 /**
+ * Callback executed when menus.json.js can't be loaded
+ */
+function loadDefaultMenus()
+{
+    window.menusObj = {};
+    
+    // Check if anything else should be loaded
+    checkForAppSetup();
+}
+
+/**
+ * Callback executed when lang-top-menus.json.js can't be loaded
+ */
+function loadDefaultLangTopMenus()
+{
+    window.langTopMenusObj = {};
+    
+    // Check if anything else should be loaded
+    checkForAppSetup();
+}
+
+/**
+ * Callback executed when lang-bottom-menus.json.js can't be loaded
+ */
+function loadDefaultLangBottomMenus()
+{
+    window.langBottomMenusObj = {};
+    
+    // Check if anything else should be loaded
+    checkForAppSetup();
+}
+
+/**
  * Flag which indicates if the themes definition (themes.json.js) loading has been started
  */
 var themeLoadStarted = false;
@@ -1160,6 +1207,21 @@ var timeZonesLoadStarted = false;
  * Flag which indicates if the customScript definition loading has been started
  */
 var customScriptLoadStarted = false;
+
+/**
+ * Flag which indicates if the menus definition loading has been started
+ */
+var menusLoadStarted = false;
+
+/**
+ * Flag which indicates if the top menus translations loading has been started
+ */
+var langTopMenusLoadStarted = false;
+
+/**
+ * Flag which indicates if the bottom menus translations loading has been started
+ */
+var langBottomMenusLoadStarted = false;
 
 /**
  * Checks if all definition files has been loaded.
@@ -1235,6 +1297,39 @@ function checkForAppSetup()
         
         customScriptLoadStarted = true;
     }
+    
+    // Check if the menus.json.js should be loaded
+    if (!menusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        if (appConfiguration.menusPath)
+        {
+            loadScript(appConfiguration.menusPath, checkForAppSetup, loadDefaultMenus);
+        }
+        
+        menusLoadStarted = true;
+    }
+    
+    // Check if the lang-top-menus.json.js should be loadedScript
+    if (!langTopMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        if (appConfiguration.langMenusTopPath)
+        {
+            loadScript(appConfiguration.langMenusTopPath, checkForAppSetup, loadDefaultLangTopMenus);
+        }
+        
+        langTopMenusLoadStarted = true;
+    }
+    
+    // Check if the lang-bottom-menus.json.js should be loadedScript
+    if (!langBottomMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        if (appConfiguration.langMenusBottomPath)
+        {
+            loadScript(appConfiguration.langMenusBottomPath, checkForAppSetup, loadDefaultLangBottomMenus);
+        }
+        
+        langBottomMenusLoadStarted = true;
+    }
         
     if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
@@ -1244,7 +1339,13 @@ function checkForAppSetup()
         && (typeof timeZonesArr !== 'undefined' && timeZonesArr != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["timezones"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"]))))
         && (customScriptLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"])))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"]))))
+        && (typeof menusObj !== 'undefined' && menusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["menus"])
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["menus"]))))
+        && (typeof langTopMenusObj !== 'undefined' && langTopMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenustop"])
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenustop"]))))
+        && (typeof langBottomMenusObj !== 'undefined' && langBottomMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenusbottom"])
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenusbottom"])))))
     {        
         if (document.readyState === 'complete')
         {
@@ -1668,6 +1769,14 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
    appInfoObjFromServer = data.appInfo;
    //appInfoObjFromServer = {};
    //appInfoObjFromServer.resolvedProperties = JSON.parse(JSON.stringify(appConfiguration));
+   // Extended data sent from server which are not part of the submission data
+   // Can be used within forms and custom scripts as project specific data model
+   // The extended data will not be sent back to the server with next API call
+   if (data.extendedData)
+   {
+       TogFormViewer.extendedServerData = data.extendedData;
+   }
+   
    if (appInfoObjFromServer!=null) {
        //appInfoObjFromServer.formObj.title = "FT "+Math.floor((Math.random()*1000)+1);
        var resolvedPropertiesObjFromServer = appInfoObjFromServer.resolvedProperties;
@@ -2467,7 +2576,8 @@ var TogFormViewer =
     executeCustomAction: function(url)
     {
         appFormDataObj = formioForm.submission.data;
-        performEventOrCustomAction(url,false);
+        var myevent = {"type":"customAction","controlId":"","controlType":"button","value":""};            
+        performEventOrCustomAction(url,false,myevent);
     }
 
 }

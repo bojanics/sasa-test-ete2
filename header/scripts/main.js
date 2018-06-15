@@ -41,20 +41,37 @@ function _setupAppInternal()
     fillUserInfo();
     setupPredefinedTheme();
     setInitialTimeZone();
-    
-    // We should show the form after new styles has been loaded to prevent FOUC
-    showContentOnStyleApply(function()
-    {  
-        generateForm(function()
-        {
-            formDestroyed = false;
-            setupPredefinedLanguage();
-            
+    generateForm(function()
+    {
+        formDestroyed = false;
+        setupPredefinedLanguage();
+        checkForLoadedAction();
+    }, function()
+    {
+        // We should show the form after new styles has been loaded to prevent FOUC
+        showContentOnStyleApply(function()
+        {  
             // Embeds a map (for example Bing Map) 
             MapPlugIn.reloadMap();
-            checkForLoadedAction();
+            checkAutofocus(formioForm);
         });
     });
+}
+
+function checkAutofocus(comp)
+{
+    if (comp && comp.component && comp.component.autofocus)
+    {
+        comp.focus();
+    }
+    else if (comp.components)
+    {
+        var componentsInd = 0;
+        for (; componentsInd < comp.components.length; componentsInd++)
+        {
+            checkAutofocus(comp.components[componentsInd]);
+        }
+    }
 }
 
 /**
@@ -117,7 +134,7 @@ function onfailure_loaded(token,url,formdata,additionalConfiguration,err,textSta
 /**
  * Create form with form ready callback paremeter. 
  */
-function generateForm(formReadyCallback) 
+function generateForm(formReadyCallback, formRenderedCallback) 
 {
      Formio.createForm(document.getElementById('formio'), formObj, langObj)
     .then(function(form)
@@ -183,13 +200,7 @@ function generateForm(formReadyCallback)
             }
         };
         
-        
         form.ready.then(function()
-        {
-            console.log('form is ready');
-        });
-
-        form.on('render', function()
         {
            // Executing loaded script when the form is ready
            // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
@@ -199,7 +210,7 @@ function generateForm(formReadyCallback)
             setDefaultHelpContent();
             
             formReadyCallback();
-            console.log('form is rendered');
+            console.log('form is ready');
         });
         
         form.on('submit', function(submission)
@@ -209,12 +220,6 @@ function generateForm(formReadyCallback)
 
         form.on('change', function(event)
         {
-            printEvent(null,event,'change');
-
-            printJSON(event,'eve');
-            printJSON(event.changed,'chngd');
-            //var event = {"type":(isEventAction ? "customEvent" : "customAction"),"controlId":(controlId!=null ? controlId : ""),"controlType":"button","value":""};
-           //console.log('onchange '+(event && event.changed && event.changed.component ? event.changed.component.key : '')); 
             if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
             {
                 TogFormViewer.calculate();
@@ -223,43 +228,24 @@ function generateForm(formReadyCallback)
             {
                 calculationResultSet = false;
             }
+                
             
             if (event.changed) {
-                
+                var myevent = {"type":"customEvent","controlId":(event.changed.component && event.changed.component.key ? event.changed.component.key : ""),"controlType":(event.changed.component&&event.changed.component.type?event.changed.component.type:""),"value":""};
+                execEventAction(event.changed.component,myevent,'action change','actionChange');
             }
         });
         
         form.on('customEvent', function(event) {
-            console.log('action default = '+appConfiguration.action);
-            printEvent(null,event,'customEvent');
-            var actionPerformed = false;
-            if (ADAL && appConfiguration.home) {
-                var action = appConfiguration.action;
-                if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('action')) {
-                    action = event.component.properties.action;
-                    console.log('button action for '+event.component.key+' = '+action);
-                }
-                if (action) {
-                    var url = appConfiguration.home + "/" + action;
-                    console.log('action '+action+' will be executed for '+event.component.key);
-                    appFormDataObj = form.submission.data;
-                    performEventOrCustomAction(url,true,event.component.key);
-                    actionPerformed = true;
-                }
-            }
-            if (!actionPerformed) {
-                var actionLocalScript = appConfiguration.actionLocalScript;
-                if (event.component.hasOwnProperty("properties") && event.component.properties !== null && event.component.properties.hasOwnProperty('actionLocalScript')) {
-                    action = event.component.properties.actionLocalScript;
-                    console.log('button (local) action for '+event.component.key+' = '+actionLocalScript);
-                }
-                if (actionLocalScript) {
-                    console.log('action (local) '+actionLocalScript+' will be executed for '+event.component.key);
-                    executeScript(event.component.key,actionLocalScript);
-                }
-            }
+            var myevent = {"type":"customEvent","controlId":(event && event.component && event.component.key ? event.component.key : ""),"controlType":"button","value":""};            
+            execEventAction(event.component,myevent,'action','action');
         });
 
+        form.on('render', function()
+        {
+            formRenderedCallback();
+            console.log('form is rendered');	    
+        });
 
         form.on('componentError', function(comp)
         {
@@ -281,18 +267,49 @@ function generateForm(formReadyCallback)
     });
 }
 
+function execEventAction(component,myevent,propName,configName) {
+    console.log(configName+' default = '+appConfiguration[configName]);
+    var actionPerformed = false;
+    if (ADAL && appConfiguration.home) {
+        var action = appConfiguration[configName];
+        if (component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName)) {
+            action = component.properties[propName];
+            console.log(myevent.controlType+' action for '+myevent.controlId+' = '+action);
+        }
+        if (action) {
+            var url = appConfiguration.home + "/" + action;
+            console.log(configName+' '+action+' will be executed for '+myevent.controlId);
+            appFormDataObj = form.submission.data;
+            performEventOrCustomAction(url,true,myevent);
+            actionPerformed = true;
+        }
+    }
+    if (!actionPerformed) {
+        var actionLocalScript = appConfiguration[configName+'LocalScript'];
+        console.log(configName+'LocalSript default = '+actionLocalScript);
+        if (component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName+' local script')) {
+            actionLocalScript = component.properties[propName+' local script'];
+            console.log(myevent.controlType+' (local) action for '+myevent.controlId+' = '+actionLocalScript);
+        }
+        if (actionLocalScript) {
+            console.log(configName+' local script '+actionLocalScript+' will be executed for '+myevent.controlId);
+            TogFormViewer.myevent=myevent;
+            executeScript(myevent.controlId,actionLocalScript);
+        }
+    }
+}
+
 /**
  * Calls event action
  */
-function performEventOrCustomAction(url,isEventAction,controlId)
+function performEventOrCustomAction(url,isEventAction,myevent)
 {
     if (!appConfiguration.disableActionSpinner) {
         showSpinner();
     }
-    var event = {"type":(isEventAction ? "customEvent" : "customAction"),"controlId":(controlId!=null ? controlId : ""),"controlType":"button","value":""};
-    url = handlePlaceholders(url,event);
+    url = handlePlaceholders(url,myevent);
 
-    var payload = {"appInfo" : TogFormViewer.getAppInfo(event)};    
+    var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent)};    
     console.log("executing "+(isEventAction ? "event" : "custom")+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"isEventAction":isEventAction},onsuccess_eventorcustomaction,onfailure_eventorcustomaction);
@@ -435,7 +452,8 @@ function formDblClickListener(comp)
 function formShowDropdownListener(comp)
 {
     return function() {
-        printEvent(comp,event,'showdropdown');
+        var myevent = {"type":"showDropdown","controlId":(comp && comp.key ? comp.key : ""),"controlType":comp.type,"value":""};
+        execEventAction(comp,myevent,'action showDropdown','actionShowDropdown');
 
 /*
         var ck = comp.key;
@@ -460,7 +478,9 @@ function formShowDropdownListener(comp)
 function formSearchListener(comp)
 {
     return function(event) {
-        printEvent(comp,event,'search');
+        var myevent = {"type":"search","controlId":(comp && comp.key ? comp.key : ""),"controlType":comp.type,"value":(event&&event.detail&&event.detail.value?event.detail.value:"")};
+        execEventAction(comp,myevent,'action search','actionSearch');
+        
 /*        
         console.log('onsearch for '+comp.key+',cv='+event.detail.value+',  JSON='+JSON.stringify(comp.component)+', evd='+JSON.stringify(event.detail));        
         if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")) {            
@@ -512,9 +532,8 @@ function mySearchScriptCustom(ck,cv){
  */
 function formFocusListener(comp)
 {
-    return function()
+    return function(event)
     {
-        //printEvent(comp,event,'focus');
         $('#divHelp').empty();
         if (comp && comp.hasOwnProperty("component") && comp.component.hasOwnProperty("properties")
             && comp.component.properties.hasOwnProperty("formhelp"))
@@ -567,6 +586,10 @@ function formFocusListener(comp)
             $('#elearninglabel').html(appConfiguration.elearningtext);
             $('#elearninglabel').attr("lang-tran", appConfiguration.elearningtext).attr("lang-form", "true").translate();
         }
+        
+        var myevent = {"type":"focus","controlId":(comp && comp.key ? comp.key : ""),"controlType":(comp&&comp.type?comp.type:""),"value":""};
+        execEventAction(comp,myevent,'action focus','actionFocus');
+
     };
 }
 
@@ -577,13 +600,14 @@ function formBlurListener(comp)
 {
     return function(event)
     {
-        //printEvent(comp,event,'blur');
-
         setDefaultHelpContent();
         if (appConfiguration && appConfiguration.autocalc === "focuschange")
         {
             TogFormViewer.calculate();
         }
+        
+        var myevent = {"type":"blur","controlId":(comp && comp.key ? comp.key : ""),"controlType":(comp&&comp.type?comp.type:""),"value":""};
+        execEventAction(comp,myevent,'action blur','actionBlur');
     };
 }
 
@@ -1685,6 +1709,7 @@ function chooseLanguage()
  */
 function chooseTimeZone()
 {
+    setPositionOfTimeZoneMenu();
     $('#timeZones').show();
 }
 

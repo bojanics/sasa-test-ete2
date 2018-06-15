@@ -68,8 +68,7 @@ var formObj={
 			"json": "",
 			"url": "",
 			"resource": "",
-			"custom1": "values = [\n  {\n    \"value\": \"outPatient\",\n    \"label\": \"Out Patient\"\n  },\n  {\n    \"value\": \"homeCare\",\n    \"label\": \"Home Care\"\n  },\n  {\n    \"value\": \"ambulance\",\n    \"label\": \"Ambulance\"\n  },\n  {\n    \"value\": \"injury\",\n    \"label\": \"Injury\"\n  },\n  {\n    \"value\": \"dental\",\n    \"label\": \"Dental\"\n  },\n  {\n    \"value\": \"inPatient\",\n    \"label\": \"In Patient\"\n  },\n  {\n    \"value\": \"travel\",\n    \"label\": \"Travel\"\n  },\n  {\n    \"value\": \"exclusion\",\n    \"label\": \"Exclusion\"\n  }\n];console.log('values are set for custom script');",
-            "custom": "values = TogFormViewer.getCustomValues('sss');console.log('values are set for TogFormViewer custom script');",
+			"custom": "values = [\n  {\n    \"value\": \"outPatient\",\n    \"label\": \"Out Patient\"\n  },\n  {\n    \"value\": \"homeCare\",\n    \"label\": \"Home Care\"\n  },\n  {\n    \"value\": \"ambulance\",\n    \"label\": \"Ambulance\"\n  },\n  {\n    \"value\": \"injury\",\n    \"label\": \"Injury\"\n  },\n  {\n    \"value\": \"dental\",\n    \"label\": \"Dental\"\n  },\n  {\n    \"value\": \"inPatient\",\n    \"label\": \"In Patient\"\n  },\n  {\n    \"value\": \"travel\",\n    \"label\": \"Travel\"\n  },\n  {\n    \"value\": \"exclusion\",\n    \"label\": \"Exclusion\"\n  }\n];console.log('values are set for custom script');",
 			"headers": [{
 				"value": "",
 				"key": ""

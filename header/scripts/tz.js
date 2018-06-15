@@ -644,6 +644,73 @@ function setSupportedTimeZones(values)
 }
 
 /**
+ * Defines a minimum distance of available time zones list (element with id "timeZones"). 
+ * Distance is mesured from the top of page.
+ */
+var timeZoneMenuMinTopDistance = 12;
+
+/**
+ * Number of time zones visible without a scroll option.
+ */
+var numberOfTimeZonesVisibleWithoutScroll = 20;
+
+/**
+ * Height of every time zone item in list of available time zones.
+ */
+var timeZoneItemHeight = 30;
+
+/**
+ * Sets position of available time zones list (i.e. position from which it will be shown)
+ */
+function setPositionOfTimeZoneMenu()
+{
+    var tzElement = document.getElementById("timeZones");
+    
+    var countTimeZones = Object.keys(supportedTimeZonesMap).length;
+    
+    if (countTimeZones % 2 == 1) 
+    {
+        countTimeZones++;
+    }
+    
+    // By default, up to numberOfTimeZonesVisibleWithoutScroll elements are displayed without the scroll option. Therefore, we are only considering them in the calculation of the position.
+    if (countTimeZones > numberOfTimeZonesVisibleWithoutScroll)
+    {
+        countTimeZones = numberOfTimeZonesVisibleWithoutScroll;
+    }
+    
+    var moveTop = (countTimeZones / 2) * timeZoneItemHeight;
+    
+    // If timeZonesSelect button exists then set position of tzElement in relation to it. 
+    if ($("#timeZonesSelect").length)
+    {
+        var positionOfTZSelectElement = $("#timeZonesSelect").offset();
+        
+        if (positionOfTZSelectElement != null)
+        {
+            var topValue = positionOfTZSelectElement.top - moveTop;
+            
+            // If we exit from the bottom of the window, then we set topValue to return us to the window boundaries.
+            if (topValue + countTimeZones * timeZoneItemHeight > $( window ).height())
+            {
+                topValue = topValue - (topValue + countTimeZones * timeZoneItemHeight - $( window ).height());
+            }
+            
+            if (topValue < timeZoneMenuMinTopDistance) 
+            {
+                topValue = timeZoneMenuMinTopDistance;
+            }
+            
+            // If element exists we set his position.
+            if (tzElement != null)
+            {
+                $(tzElement).css('top', topValue + 'px');
+            }
+        }
+    }
+}
+
+/**
  * Checks if available time zones and user's time zone have been loaded
  */
 function isTimeZoneSettingsLoaded()
@@ -688,6 +755,13 @@ function resetTimeZone()
 {
     timeZoneSelector.selectedTimeZone = timeZoneSelector.currentTimeZone;
     $('#timeZoneName').html(supportedTimeZonesMap[timeZoneSelector.currentTimeZone]);
+    
+    var idTZCheckBox = "#tzCheck" + timeZoneSelector.currentTimeZone;
+    if ($(idTZCheckBox).css('visibility') !== 'visible')
+    {
+        $('#tzarr').find('.ltz-itm-selector-check').css('visibility', 'hidden');
+        $(idTZCheckBox).css('visibility', 'visible');
+    }
 }
 
 /**

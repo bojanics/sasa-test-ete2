@@ -35,7 +35,7 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-			
+            "action change local script":"testChange2();"
 		},
 		"lockKey": true
 	},
@@ -116,6 +116,48 @@ var formObj = {
 		"disabled": true,
 		"isNew": false
 	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"label": "Select predefined",
+		"key": "selectpredefined",
+		"placeholder": "",
+		"data": {
+			"values": [],
+			"json": "",
+			"url": "",
+			"resource": "",
+			"custom": ""
+		},
+		"dataSrc": "values",
+		"valueProperty": "",
+		"defaultValue": "outPatient",
+		"refreshOn": "",
+		"filter": "",
+		"authenticate": false,
+		"template": "<span>{{ item.label }}</span>",
+		"multiple": false,
+		"protected": false,
+		"unique": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false
+		},
+		"type": "select",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+            "action search local script":"testSearch2();",
+		}
+	},    
 	{
 		"autofocus": false,
 		"input": true,
@@ -450,7 +492,12 @@ var formObj = {
 	"machineName": "ewhyjxtmcncdriz:calc",
     "action":"Form('{formname}/{formversion}')/Subtraction",
    "properties": {
-    "actionScript1":"test2();",
+    "action local script":"test3();",
+    "action change local script":"testChange1();",
+    "action focus local script":"testFocus1();",
+    "action blur local script":"testBlur1();",
+    "action search local script":"testSearch1();",
+    "action showDropdown local script":"testShowDropdown1();",
     "formtitle": "Calculate 2 numbers",
     "formhelp": "<p>Ovdje se nalazi usporedna analiza ponuda za kasko osiguranje prema parametrima kao &scaron;to su iznos financiranja, valuta i vrsta leasinga.<br />\n<br />\nUspoređena su osiguravajuća dru&scaron;tva Uniqa osiguranje i Wiener osiguranje VIG i iskazane su premije osiguranja.<br />\n<br />\nUkoliko želite tiskani primjerak ponude, možete ga dobiti pritiskom na.</p>\n",
     "elearninglink": "https://en.wikipedia.org/wiki/Operation_(mathematics)",

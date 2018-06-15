@@ -38,7 +38,7 @@ var headerObj = {
     "action change local script":"",
     "action search":"Form('{formname}/{formversion}')/Search",
     "action search local script":"",
-    "action showDropdown":"Form('{formname}/{formversion}')/showDropdown",
+    "action showDropdown":"Form('{formname}/{formversion}')/ShowDropdown",
     "action showDropdown local script":"",
     "bing maps key": "",
     "map wrapper id": "",
@@ -59,5 +59,8 @@ var headerObj = {
     "defaultLanguage": "EN-GB",
     "timezones": "./defs/timezones.json.js",
     "defaultTimeZone": "UTC",
-    "disableActionSpinner": false
+    "disableActionSpinner": false,
+    "menus": "",
+    "langmenustop": "",
+    "langmenusbottom": ""
 };

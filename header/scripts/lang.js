@@ -54,7 +54,17 @@ function setupLanguageMenu()
  * Defines a minimum distance of available languages list (element with id "languages"). 
  * Distance is mesured from the top of page.
  */
-var languageManuMinTopDistance = 12;
+var languageMenuMinTopDistance = 12;
+
+/**
+ * Number of languages visible without a scroll option.
+ */
+var numberOfLanguagesVisibleWithoutScroll = 20;
+
+/**
+ * Height of every language item in list of available languages.
+ */
+var languageItemHeight = 30;
 
 /**
  * Sets position of available language list (i.e. position from which it will be shown)
@@ -63,20 +73,22 @@ function setPositionOfLanguageMenu()
 {
     var langElement = document.getElementById("languages");
     
-    var countLanguages = 0;
-    for (var propName in languagesMap)
-    {
-        countLanguages++;
-    }
+    var countLanguages = Object.keys(languagesMap).length;
     
     if (countLanguages % 2 == 1) 
     {
         countLanguages++;
     }
     
-    var moveTop = (countLanguages / 2) * 30;
+    // By default, up to numberOfLanguagesVisibleWithoutScroll elements are displayed without the scroll option. Therefore, we are only considering them in the calculation of the position.
+    if (countLanguages > numberOfLanguagesVisibleWithoutScroll)
+    {
+        countLanguages = numberOfLanguagesVisibleWithoutScroll;
+    }
     
-    // if languagesSelect button exists then set position of langElement in relation to it. 
+    var moveTop = (countLanguages / 2) * languageItemHeight;
+    
+    // If languagesSelect button exists then set position of langElement in relation to it. 
     if ($("#languagesSelect").length)
     {
         var positionOfLangSelectElement = $("#languagesSelect").offset();
@@ -85,15 +97,21 @@ function setPositionOfLanguageMenu()
         {
             var topValue = positionOfLangSelectElement.top - moveTop;
             
-            if (topValue < languageManuMinTopDistance) 
+            // If we exit from the bottom of the window, then we set topValue to return us to the window boundaries.
+            if (topValue + countLanguages * languageItemHeight > $( window ).height())
             {
-                topValue = languageManuMinTopDistance;
+                topValue = topValue - (topValue + countLanguages * languageItemHeight - $( window ).height());
             }
             
-            // if element exists we set his position.
+            if (topValue < languageMenuMinTopDistance) 
+            {
+                topValue = languageMenuMinTopDistance;
+            }
+            
+            // If element exists we set his position.
             if (langElement != null)
             {
-                langElement.style = "top: " + topValue + "px;";
+                $(langElement).css('top', topValue + 'px');
             }
         }
     }
@@ -260,6 +278,13 @@ function resetLanguage()
 {
     languageSelector.selectedLanguage = languageSelector.currentLanguage;
     setLanguageSettings(languageSelector.currentLanguage);
+    
+    var idLangCheckBox = "#langCheck" + languageSelector.currentLanguage;
+    if($(idLangCheckBox).css('visibility') !== 'visible')
+    {
+        $('#langarr').find('.ltz-itm-selector-check').css('visibility', 'hidden');
+        $(idLangCheckBox).css('visibility', 'visible');
+    }
 }
 
 /**

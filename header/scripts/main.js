@@ -210,11 +210,12 @@ function generateForm(formReadyCallback, formRenderedCallback)
             setDefaultHelpContent();
             
             formReadyCallback();
+            console.log('form is ready');
         });
         
         form.on('submit', function(submission)
         {
-            console.log(submission);
+            console.log('SUBMIT, submission='+submission);
         });
         
         form.on('change', function(event)
@@ -243,6 +244,24 @@ function generateForm(formReadyCallback, formRenderedCallback)
         form.on('render', function()
         {
             formRenderedCallback();
+            console.log('form is rendered');	    
+        });
+
+        form.on('componentError', function(comp)
+        {
+            console.log("COMPONENT ERROR for "+JSON.stringify(comp));
+        });
+        form.on('error', function()
+        {
+            console.log("FORM ERROR");
+        });
+        form.on('prevPage', function()
+        {
+            console.log("PREV PAGE");
+        });
+        form.on('nextPage', function()
+        {
+            console.log("NEXT PAGE");
         });
         
     });
@@ -338,7 +357,94 @@ function createHooksObj()
             this.addEventListener(input, 'search', formSearchListener(this));            
             this.addEventListener(input, 'showDropdown', formShowDropdownListener(this));
             
+            /*
+            this.addEventListener(input, 'click', formClickListener(this));
+            this.addEventListener(input, 'dblclick', formDblClickListener(this));
+            
+            this.addEventListener(input, 'mouseover', formMOListener(this));
+            this.addEventListener(input, 'mousedown', formMDListener(this));
+            this.addEventListener(input, 'mousepress', formMPListener(this));
+            this.addEventListener(input, 'mouseout', formMOTListener(this));
+            this.addEventListener(input, 'mouseup', formMUListener(this));
+            this.addEventListener(input, 'mousemove', formMMListener(this));
+
+// e.g. event.key = A, event.code = keyA, event.ctrlKey = false, event.shiftKey = true, event.altKey = false, event.metaKey = false, event.keyCode = 65
+            this.addEventListener(input, 'keypress', formKPListener(this));
+            this.addEventListener(input, 'keydown', formKDListener(this));
+            this.addEventListener(input, 'keyup', formKUListener(this));
+            */
         }
+    };
+}
+
+
+function formMOTListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mouseout');
+    };
+}
+function formMUListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mouseup');
+    };
+}
+function formMMListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mousemove');
+    };
+}
+
+function formMOListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mouseover');
+    };
+}
+function formMDListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mousedown');
+    };
+}
+function formMPListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'mousepress');
+    };
+}
+
+function formKPListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'keypress');
+    };
+}
+function formKDListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'keydown');
+    };
+}
+function formKUListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'keyup');
+    };
+}
+
+function formClickListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'click');
+    };
+}
+function formDblClickListener(comp)
+{
+    return function(event) {
+        printEvent(comp,event,'dblclick');
     };
 }
 
@@ -1763,4 +1869,26 @@ function toggleChanged()
     }
     
     formioForm.checkConditions();
+}
+
+function printJSON(json,title) {
+console.log("JSON name="+title);
+for (var p in json) {    
+  if (typeof json[p]=='object' && !title) {
+    //printJSON(json[p],p);
+    console.log(p+'='+json[p]+', t='+(typeof json[p]));
+  } else {
+    console.log(p+'='+json[p]+', t='+(typeof json[p]));
+  }
+}
+}
+
+function printEvent(component,event,title) {
+    if (!component && event && event.changed && event.changed.component) {
+        component = event.changed.component;
+    }
+    console.log(title+' for '+(component ? component.key : 'no component')+': ' +(event ? ('type='+event.type+', details='+JSON.stringify(event.details)+', changed='+event.changed) : "No event"));
+    if (event && !event.details && !event.changed) {
+        //printJSON(event,'printingevent');
+    }
 }

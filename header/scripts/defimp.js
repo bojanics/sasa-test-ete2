@@ -151,6 +151,7 @@ function initAfterADALSetup()
 function beginConfigurationProcess() {
     resetAppConfiguration();
     var appDefFromServer = checkForResolvedPropertyFromTheServer("appDefPath");
+    console.log('adfs='+appDefFromServer);
     if (appDefFromServer!=null)
     {
        appConfiguration.appDefPath = appDefFromServer;
@@ -205,10 +206,12 @@ function loadScript(url, callback, errorHandler)
     scriptElement.onload = callback;
     if (typeof errorHandler === 'undefined')
     {
+        console.log('loads '+url+' with errhandler UNDEFINED');
         scriptElement.onerror = callback;
     }
     else
     {
+        console.log('loads '+url+' with errhandler defined');
         scriptElement.onerror = errorHandler;
     }
     
@@ -317,12 +320,14 @@ function getURIParamForConfiguration(formAndAppObjPropertyName,paramName,appConf
  */
 function loadFormDefinition()
 {
+    console.log("Loading form definition");
     if (appInfoObjFromServer != null && appInfoObjFromServer.formObj != null)
     {
         formObj = appInfoObjFromServer.formObj;
     }
     
     var formDefFromServer = checkForResolvedPropertyFromTheServer("formDefPath");
+    console.log('fdfs='+formDefFromServer);
     if (formDefFromServer != null)
     {
         appConfiguration.formDefPath = formDefFromServer;
@@ -341,6 +346,7 @@ function loadFormDefinition()
     }
     else
     {
+        console.log('fobj loaded, path='+appConfiguration.formDefPath);
         formObjLoaded();
     }
 }
@@ -448,6 +454,7 @@ function setDefaultForm()
  */
 function loadConfigurations()
 {
+    console.log("Loading configurations");
     var brandDef = checkForResolvedPropertyFromTheServer("brandDefPath");
     if (brandDef!=null) {
         appConfiguration.brandDefPath = brandDef;
@@ -559,6 +566,7 @@ function loadConfigurations()
 function brandObjLoaded()
 {
     setupBrandConfiguration();
+    console.log("CFAS brand");
     checkForAppSetup();
 }
 
@@ -596,6 +604,7 @@ function loadDefaultBrand()
 function customizationObjLoaded()
 {
     setupCustomizationConfiguration();
+    console.log("CFAS cust");
     checkForAppSetup();
 }
 
@@ -627,6 +636,7 @@ function loadDefaultCustomization()
 function headerObjLoaded()
 {
     setupHeaderConfiguration();
+    console.log("CFAS hdr");
     checkForAppSetup();
 }
 
@@ -986,6 +996,11 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
     }
     
     appConfiguration[appConfigurationParamName] = paramVal;
+    
+//    var msg = 'rsobp[isb='+isBoolean+',pn='+paramName+',acpn='+appConfigurationParamName+',fo='+firstObj+',so='+secondObj+',cup='+checkUrlParameter+',dv='+defaultValue+']';
+//    console.log(msg);
+//    console.log('r='+paramVal);
+
 }
 
 /**
@@ -1044,6 +1059,7 @@ function themesLoaded() {
     setThemesConfiguration();
     
     // Check if anything else should be loaded
+    console.log("CFAS thms");
     checkForAppSetup();
 }
 
@@ -1080,6 +1096,7 @@ function languagesLoaded()
     setLanguagesConfiguration();
     
     // Check if anything else should be loaded
+    console.log("CFAS lang");
     checkForAppSetup();
 }
 
@@ -1136,6 +1153,7 @@ function customScriptLoaded()
     customScriptLoadedFlag = true;
     
     // Check if anything else should be loaded
+    console.log("CFAS cust script");
     checkForAppSetup();
 }
 
@@ -1214,6 +1232,7 @@ var langBottomMenusLoadStarted = false;
  */
 function checkForAppSetup()
 {
+    console.log("Checking for app setup");
     // Check if the themes.json.js should be loaded
     if (!themeLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
@@ -1263,7 +1282,7 @@ function checkForAppSetup()
         {
             if (appConfiguration.timezones)
             {
-                loadScript(appConfiguration.timezones, checkForAppSetup, loadDefaultTimeZones);
+                loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();}, loadDefaultTimeZones);
             }
         }
         
@@ -1643,6 +1662,7 @@ function checkForLoadingCallback()
     // E.g. the script could be something like: 
     // TogFormViewer.setProperty('appLauncher',false);TogFormViewer.setProperty('environment',false);TogFormViewer.FormioPlugIn.setProperty('formhelp','This is new form help');",    
     executeLoadingOrLoadedScript(true);
+    console.log('cflc, ah='+appConfiguration.home+', AC='+JSON.stringify(appConfiguration));
     if (!appConfiguration.home)
     {
         // We don't have the base URL for the API call so we don't perform a call
@@ -1661,6 +1681,7 @@ function checkForLoadingCallback()
     // appInfoObjFromServer.callbackCount is set only inside handleServerResponseForLoadingAndOtherActions function
     var doLoadingCallback = appConfiguration.actionLoading && (appInfoObjFromServer==null || appInfoObjFromServer.callbackCount==null || callbackCount<4 && formChanged);
     
+    console.log("DLC="+doLoadingCallback+', fc='+formChanged+', cc='+callbackCount+', aiofs='+appInfoObjFromServer+', aiofscbc='+(appInfoObjFromServer!=null ? appInfoObjFromServer.callbackCount : null));
     formChanged = formChanged || callbackCount>1;
     // We found home URL and it is a base address for our call
     // Now we need to find a relative path    
@@ -1673,7 +1694,9 @@ function checkForLoadingCallback()
     else
     {
         appInfoObjFromServer = null;
+        console.log('fd='+formDestroyed+', fc='+formChanged);
         if (!formDestroyed && !formChanged) {
+            console.log('setting only submission');
             formioForm.submission = {"data":appFormDataObj};
             setupPredefinedTheme();
             setInitialTimeZone();
@@ -1686,9 +1709,11 @@ function checkForLoadingCallback()
             });
         } else {            
             if (typeof formioForm !== 'undefined') {
+                console.log('destroying form from cflc');
                 formioForm.destroy();
                 formDestroyed = true;
             }
+            console.log('setting app');
             setupApp();
         }
     }
@@ -1744,7 +1769,8 @@ function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textS
 
 function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
    appInfoObjFromServer = data.appInfo;
-   
+   //appInfoObjFromServer = {};
+   //appInfoObjFromServer.resolvedProperties = JSON.parse(JSON.stringify(appConfiguration));
    // Extended data sent from server which are not part of the submission data
    // Can be used within forms and custom scripts as project specific data model
    // The extended data will not be sent back to the server with next API call
@@ -1753,13 +1779,16 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        TogFormViewer.extendedServerData = data.extendedData;
    }
    
+   console.log("EVENT for hsr = "+JSON.stringify(additionalConfiguration.event));
    if (appInfoObjFromServer!=null) {
+       //appInfoObjFromServer.formObj.title = "FT "+Math.floor((Math.random()*1000)+1);
        var resolvedPropertiesObjFromServer = appInfoObjFromServer.resolvedProperties;
        if (resolvedPropertiesObjFromServer==null) {
            resolvedPropertiesObjFromServer = {};
        }
        
        if (additionalConfiguration.event.type=='search' || additionalConfiguration.event.type=='showDropdown') {
+           console.log('11111: '+appInfoObjFromServer.eventResponse);
           if (appInfoObjFromServer.eventResponse) {
              console.log('setting select component '+additionalConfiguration.event.controlId+' vals to '+JSON.stringify(appInfoObjFromServer.eventResponse));
              formioForm.getComponent(additionalConfiguration.event.controlId).component.data.values = appInfoObjFromServer.eventResponse;
@@ -1767,6 +1796,8 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           }
        }
        
+//       resolvedPropertiesObjFromServer.userLanguage='EN-GB';
+//       resolvedPropertiesObjFromServer.userTheme='cosmo';
        // if server decided that the user should go offline, set ADAL to null
        if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
           ADAL = null;
@@ -1774,23 +1805,36 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        appInfoObjFromServer.callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 0;
        
        //console.log('DATA received ='+JSON.stringify(data));
+       console.log('oldadp='+appConfiguration.appDefPath);
+       console.log('newadp='+resolvedPropertiesObjFromServer.appDefPath);
+       console.log('oldform='+appConfiguration.formDefPath);
+       console.log('newform='+resolvedPropertiesObjFromServer.formDefPath);       
        var appDefChanged = resolvedPropertiesObjFromServer.appDefPath!=null && appConfiguration.appDefPath!=resolvedPropertiesObjFromServer.appDefPath;
+       console.log('adch='+appDefChanged);
        var formChanged = appInfoObjFromServer.formObj!=null && JSON.stringify(formObj)!==JSON.stringify(appInfoObjFromServer.formObj);
        var formPathChanged = resolvedPropertiesObjFromServer.formDefPath!=null && appConfiguration.formDefPath!=resolvedPropertiesObjFromServer.formDefPath;
        formChanged = formChanged || formPathChanged;
+       console.log('fch='+formChanged);
        var brandChanged = resolvedPropertiesObjFromServer.brandDefPath!=null && appConfiguration.brandDefPath!=resolvedPropertiesObjFromServer.brandDefPath;
+       console.log('bch='+brandChanged);
        var customizationChanged = resolvedPropertiesObjFromServer.customizationDefPath!=null && appConfiguration.customizationDefPath!=resolvedPropertiesObjFromServer.customizationDefPath;
+       console.log('cch='+customizationChanged);
        var headerChanged = resolvedPropertiesObjFromServer.headerConfPath!=null && appConfiguration.headerConfPath!=resolvedPropertiesObjFromServer.headerConfPath;
+       console.log('hch='+headerChanged);
        var themesChanged = appInfoObjFromServer.themesObj!=null && JSON.stringify(themesObj)!==JSON.stringify(appInfoObjFromServer.themesObj);
        var themesPathChanged = resolvedPropertiesObjFromServer.themes!=null && appConfiguration.themes!=resolvedPropertiesObjFromServer.themes;
        themesChanged = themesChanged || themesPathChanged;
+       console.log('thc='+themesChanged);
        var userLangsChanged = appInfoObjFromServer.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.userLangsObj);
        var userLangsPathChanged = resolvedPropertiesObjFromServer.userlangs!=null && appConfiguration.userlangs!=resolvedPropertiesObjFromServer.userlangs;
        userLangsChanged = userLangsChanged || userLangsPathChanged;
+       console.log('ulc='+userLangsChanged);
        var timeZonesChanged = appInfoObjFromServer.timeZonesArr!=null && JSON.stringify(timeZonesArr)!==JSON.stringify(appInfoObjFromServer.timeZonesArr);
        var timeZonesPathChanged = resolvedPropertiesObjFromServer.timezones!=null && appConfiguration.timezones!=resolvedPropertiesObjFromServer.timezones;
        timeZonesChanged = timeZonesChanged || timeZonesPathChanged;
+       console.log('tzch='+timeZonesChanged);
        var customScriptChanged = resolvedPropertiesObjFromServer.customScript!=null && appConfiguration.customScript!=resolvedPropertiesObjFromServer.customScript;
+       console.log('csch='+customScriptChanged);
               
        appInfoObjFromServer.formChanged = formChanged;
        
@@ -1933,7 +1977,9 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
    console.log('There were no changes on the server that require re-configuration process');
    // we'll come to this point either if appInfoObjFromServer is null or there were no changes on the server that require re-configuration
    appInfoObjFromServer = null;
+   console.log('fd='+formDestroyed);
    if (!formDestroyed) {
+      console.log('setting only submission');
       formioForm.submission = {"data":appFormDataObj};
       hideSpinner();
    } else {            
@@ -1963,8 +2009,10 @@ function updateFormDefinition(formPath,data)
 
     // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
     if (data) {
+        console.log('sd to '+data);
         appFormDataObj = data;
     } else {
+        console.log('reset data because, data='+data);
         resetFormData();
     }
     
@@ -1997,6 +2045,7 @@ function updateFormDefinition(formPath,data)
  */
 function reloadFormDefinition()
 {
+    console.log('rfd called');
     showSpinner();
     window.formSubmissionData = formioForm.submission;
     
@@ -2011,6 +2060,7 @@ function reloadFormDefinition()
  */
 function setupAppForUpdatedForm() 
 {
+    console.log('setupAppForUpdatedForm');
     generateForm(showFormWithUnchagedData);
 }
 
@@ -2042,6 +2092,7 @@ var TogFormViewer =
             }
             else if (propName === "display" && propValue !== appConfiguration.display && (propValue === "form" || propValue === "wizard")) 
             {
+                console.log('setting display to '+propValue);
                 appConfiguration.display = propValue;
                 formObj["display"] = appConfiguration.display;
                 reloadFormDefinition();

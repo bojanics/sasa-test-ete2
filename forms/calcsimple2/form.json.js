@@ -2,7 +2,48 @@ var formObj = {
 	"type": "form",
 	"tags": [],
 	"owner": "599d5130a0434200072250ab",
-	"components": [{
+	"components": [    {
+        "autofocus": false,
+        "input": true,
+        "tableView": true,
+        "inputType": "text",
+        "inputMask": "",
+        "label": "Event MSG",
+        "key": "msg",
+        "placeholder": "",
+        "prefix": "",
+        "suffix": "",
+        "multiple": false,
+        "defaultValue": "",
+        "protected": false,
+        "unique": false,
+        "persistent": true,
+        "hidden": false,
+        "clearOnHide": true,
+        "spellcheck": true,
+        "validate": {
+            "required": false,
+            "minLength": "",
+            "maxLength": "",
+            "pattern": "",
+            "custom": "",
+            "customPrivate": false
+        },
+        "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+        },
+        "type": "textfield",
+        "inDataGrid": true,
+        "labelPosition": "top",
+        "tags": [],
+        "properties": {
+            "action change":"",
+            "action change local script":""
+        }
+    },
+    {
 		"autofocus": false,
 		"input": true,
 		"tableView": true,
@@ -35,7 +76,8 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-            "action change local script":"testChange2();"
+            "action change local script":"testChange2();",
+            "action change":""
 		},
 		"lockKey": true
 	},

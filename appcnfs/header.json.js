@@ -38,7 +38,7 @@ var headerObj = {
     "action change local script":"",
     "action search":"Form('{formname}/{formversion}')/Search",
     "action search local script":"",
-    "action showDropdown":"Form('{formname}/{formversion}')/showDropdown",
+    "action showDropdown":"Form('{formname}/{formversion}')/ShowDropdown",
     "action showDropdown local script":"",
     "bing maps key": "",
     "map wrapper id": "",

@@ -257,6 +257,37 @@
 }
 
 /**
+ * Menu
+ */
+ .tab {
+    background-color: #fff;
+ }
+ 
+ .tab-wrapper:hover {
+    background-color: #fff;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #eee; 
+ }
+
+.tabbar {
+    background-color: #fff;
+}
+
+.tab-wrapper {
+    color: #666666;
+}
+ 
+.tab .active-tab {
+    color: #000000;    
+}
+
+.active-tab-bottom {
+    color: #000000;
+}
+
+/**
  * PRINT LAYOUT
  */
  

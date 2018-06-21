@@ -216,8 +216,11 @@ body {
     font-family: Arial !important;
 }
 
+/**
+ * ???
+ */
 a {
-    color: #003366 !important;
+    color: #003366;
 }
 
 .text-primary {
@@ -699,6 +702,41 @@ fieldset[disabled] .btn-default.focus {
 .label-default[href]:hover,
 .label-default[href]:focus {
     background-color: #999999 !important;
+}
+
+/**
+ * Menu
+ */
+ .tab {
+    background-color: #fff;
+ }
+ 
+ .tab-wrapper:hover {
+    background-color: #fff;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #e9ecef; 
+ }
+
+.tabbar {
+    background-color: #fff;
+}
+
+.tabbar-button {
+    color: #333;
+}
+
+.tab-wrapper {
+    color: #333;
+}
+ 
+.tab .active-tab {
+    color: #336666;    
+}
+
+.active-tab-bottom {
+    color: #336666;
 }
 
 /**

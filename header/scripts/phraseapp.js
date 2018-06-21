@@ -121,6 +121,18 @@ function applyPhraseAppSettingsChanges()
 function resetPhraseAppSettings()
 {
     phraseSelector.phraseAppSelection = phraseSelector.phraseAppSwitched;
+    
+    // Returns checkBox to it's previous value, because "Cancel" button is pressed.
+    if (phraseSelector.phraseAppSelection)
+    {
+        $("#phraseAppCardCheckBox").removeClass("ms-Icon--Checkbox");
+        $("#phraseAppCardCheckBox").addClass("ms-Icon--CheckboxComposite");
+    }
+    else
+    {
+        $("#phraseAppCardCheckBox").removeClass("ms-Icon--CheckboxComposite");
+        $("#phraseAppCardCheckBox").addClass("ms-Icon--Checkbox");
+    }
 }
 
 function changePhraseAppSelection()

@@ -201,6 +201,37 @@
 }
 
 /**
+ * Menu
+ */
+ .tab {
+    background-color: #F8F5F0;
+ }
+ 
+ .tab-wrapper:hover {
+    background-color: #F8F5F0;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #DFD7CA; 
+ }
+
+.tabbar {
+    background-color: #F8F5F0;
+}
+
+.tab-wrapper {
+    color: #8E8C84;
+}
+ 
+.tab .active-tab {
+    color: #6b9430;    
+}
+
+.active-tab-bottom {
+    color: #6b9430;
+}
+
+/**
  * PRINT LAYOUT
  */
  

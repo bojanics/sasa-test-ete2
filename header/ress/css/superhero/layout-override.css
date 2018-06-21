@@ -196,6 +196,41 @@
     stroke: #b15315;
 }
 
+/**
+ * Menu
+ */
+ .tab {
+    background-color: #2B3E50;
+ }
+ 
+ .tab-wrapper:hover {
+    background-color: #2B3E50;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #4E5D6C; 
+ }
+
+.tabbar {
+    background-color: #2B3E50;
+}
+
+.tabbar-button {
+    color: #fff;
+}
+
+.tab-wrapper {
+    color: #EBEBEB;
+}
+ 
+.tab .active-tab {
+    color: #df691a;    
+}
+
+.active-tab-bottom {
+    color: #df691a;
+}
+
 /*
  * PRINT LAYOUT
  */

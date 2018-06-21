@@ -76,7 +76,7 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-            "action change local script":"testChange2();",
+            "action change local script":"testChange2(togFormViewerEvent);",
             "action change":""
 		},
 		"lockKey": true
@@ -114,7 +114,9 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-			
+    "action focus local script":"testFocus2(togFormViewerEvent);",
+    "action blur local script":"testBlur2(togFormViewerEvent);",			
+    "action change local script":"testChange2(togFormViewerEvent);",			
 		},
 		"lockKey": true,
 		"isNew": false
@@ -197,7 +199,7 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-            "action search local script":"testSearch2();",
+            "action search local script":"testSearch2(togFormViewerEvent);",
 		}
 	},    
 	{
@@ -534,12 +536,12 @@ var formObj = {
 	"machineName": "ewhyjxtmcncdriz:calc",
     "action":"Form('{formname}/{formversion}')/Subtraction",
    "properties": {
-    "action local script":"test3();",
-    "action change local script":"testChange1();",
-    "action focus local script":"testFocus1();",
-    "action blur local script":"testBlur1();",
-    "action search local script":"testSearch1();",
-    "action showDropdown local script":"testShowDropdown1();",
+    "action local script":"test3(togFormViewerEvent);",
+    "action change local script":"testChange1(togFormViewerEvent);",
+    "action focus local script":"testFocus1(togFormViewerEvent);",
+    "action blur local script":"testBlur1(togFormViewerEvent);",
+    "action search local script":"testSearch1(togFormViewerEvent);",
+    "action showDropdown local script":"testShowDropdown1(togFormViewerEvent);",
     "formtitle": "Calculate 2 numbers",
     "formhelp": "<p>Ovdje se nalazi usporedna analiza ponuda za kasko osiguranje prema parametrima kao &scaron;to su iznos financiranja, valuta i vrsta leasinga.<br />\n<br />\nUspoređena su osiguravajuća dru&scaron;tva Uniqa osiguranje i Wiener osiguranje VIG i iskazane su premije osiguranja.<br />\n<br />\nUkoliko želite tiskani primjerak ponude, možete ga dobiti pritiskom na.</p>\n",
     "elearninglink": "https://en.wikipedia.org/wiki/Operation_(mathematics)",

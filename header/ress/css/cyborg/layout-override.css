@@ -203,6 +203,38 @@
 }
 
 /**
+ * Menu
+ */
+ .tab {
+    background-color: #060606;
+ }
+ 
+ .tab-wrapper:hover {
+    background-color: #282828;
+ }
+
+.tabbar {
+    background-color: #060606;
+    color: #fff;
+}
+
+.tabbar-button {
+    color: #fff;
+}
+
+.tab-wrapper {
+    color: #fff;
+}
+ 
+.tab .active-tab {
+    color: #2A9FD6;    
+}
+
+.active-tab-bottom {
+    color: #2A9FD6;
+}
+
+/**
  * PRINT LAYOUT
  */
  

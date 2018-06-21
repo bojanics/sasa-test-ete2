@@ -215,6 +215,37 @@
 }
 
 /**
+ * Menu
+ */
+ .tab {
+    background-color: rgb(244, 244, 244);
+ }
+ 
+ .tab-wrapper:hover {
+    background-color: #fbfbfb;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    border-color: rgba(0, 0, 0, 0.1); 
+ }
+
+.tabbar {
+    background-color: rgb(244, 244, 244);
+}
+
+.tab-wrapper {
+    color: rgb(33, 33, 33);
+}
+ 
+.tab .active-tab {
+    color: #153d6e;    
+}
+
+.active-tab-bottom {
+    color: #153d6e;
+}
+
+/**
  * PRINT LAYOUT
  */
  

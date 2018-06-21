@@ -41,10 +41,12 @@ function _setupAppInternal()
     fillUserInfo();
     setupPredefinedTheme();
     setInitialTimeZone();
+
     generateForm(function()
     {
         formDestroyed = false;
         setupPredefinedLanguage();
+        configureMenu();
         checkForLoadedAction();
     }, function()
     {
@@ -54,6 +56,7 @@ function _setupAppInternal()
             // Embeds a map (for example Bing Map) 
             MapPlugIn.reloadMap();
             checkAutofocus(formioForm);
+            configureChoicesOptions(formioForm);
         });
     });
 }
@@ -70,6 +73,29 @@ function checkAutofocus(comp)
         for (; componentsInd < comp.components.length; componentsInd++)
         {
             checkAutofocus(comp.components[componentsInd]);
+        }
+    }
+}
+
+function configureChoicesOptions(comp)
+{
+    if (comp && comp.type === "select")
+    {
+        if (comp.component.properties && comp.component.properties["choicesOptions"])
+        {
+            $.extend(comp.choices.config, JSON.parse(comp.component.properties["choicesOptions"]));
+        }
+        else if (appConfiguration.choicesOptions)
+        {
+            $.extend(comp.choices.config, appConfiguration.choicesOptions);
+        }
+    }
+    else if (comp.components)
+    {
+        var componentsInd = 0;
+        for (; componentsInd < comp.components.length; componentsInd++)
+        {
+            configureChoicesOptions(comp.components[componentsInd]);
         }
     }
 }
@@ -102,7 +128,7 @@ function checkForLoadedAction()
  */
 function performLoadedAction(url,event)
 {
-    var event = {"type":"Loded","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
+    var event = {"type":"Loaded","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
 
     // Replace placeholders in relative path with available settings
     url = handlePlaceholders(url,event);
@@ -231,7 +257,7 @@ function generateForm(formReadyCallback, formRenderedCallback)
                 
             
             if (event.changed) {
-                var myevent = {"type":"changed","controlId":(event.changed.component && event.changed.component.key ? event.changed.component.key : ""),"controlType":(event.changed.component&&event.changed.component.type?event.changed.component.type:""),"value":""};
+                var myevent = {"type":"change","controlId":(event.changed.component && event.changed.component.key ? event.changed.component.key : ""),"controlType":(event.changed.component&&event.changed.component.type?event.changed.component.type:""),"value":""};
                 execEventAction(event.changed.component,myevent,'action change','actionChange');
             }
         });
@@ -293,8 +319,7 @@ function execEventAction(component,myevent,propName,configName) {
         }
         if (actionLocalScript) {
             console.log(configName+' local script '+actionLocalScript+' will be executed for '+myevent.controlId);
-            TogFormViewer.myevent=myevent;
-            executeScript(myevent.controlId,actionLocalScript);
+            executeScript(myevent.controlId, actionLocalScript, myevent);
         }
     }
 }
@@ -452,7 +477,7 @@ function formShowDropdownListener(comp)
 {
     return function() {
         var myevent = {"type":"showDropdown","controlId":(comp && comp.key ? comp.key : ""),"controlType":comp.type,"value":""};
-        execEventAction(comp,myevent,'action showDropdown','actionShowDropdown');
+        execEventAction(comp.component,myevent,'action showDropdown','actionShowDropdown');
     };
 }
 
@@ -461,7 +486,7 @@ function formSearchListener(comp)
 {
     return function(event) {
         var myevent = {"type":"search","controlId":(comp && comp.key ? comp.key : ""),"controlType":comp.type,"value":(event&&event.detail&&event.detail.value?event.detail.value:"")};
-        execEventAction(comp,myevent,'action search','actionSearch');
+        execEventAction(comp.component,myevent,'action search','actionSearch');
     };
 }
 
@@ -527,7 +552,7 @@ function formFocusListener(comp)
         }
         
         var myevent = {"type":"focus","controlId":(comp && comp.key ? comp.key : ""),"controlType":(comp&&comp.type?comp.type:""),"value":""};
-        execEventAction(comp,myevent,'action focus','actionFocus');
+        execEventAction(comp.component,myevent,'action focus','actionFocus');
 
     };
 }
@@ -546,7 +571,7 @@ function formBlurListener(comp)
         }
         
         var myevent = {"type":"blur","controlId":(comp && comp.key ? comp.key : ""),"controlType":(comp&&comp.type?comp.type:""),"value":""};
-        execEventAction(comp,myevent,'action blur','actionBlur');
+        execEventAction(comp.component,myevent,'action blur','actionBlur');
     };
 }
 
@@ -585,6 +610,12 @@ function setupLayout()
     // Check if we should show the PhraseApp settings
     showPhraseApp();
 
+    // Check if we should show the Test settings
+    showTest();
+    
+    // Check if we should show the Debug settings
+    showDebug();
+    
     // Check if we should show the button which opens the feedback form    
     showFeeedbackButton();
     
@@ -665,13 +696,16 @@ function setupLayout()
             var screenshot = ''; 
         }
         
+        var myevent = {"type":"feedback","controlId":"","controlType":"","value":""};
+        
         var feedbackuser = currentUser.uid; 
         var payload = 
         {
             "feedbacktype": feedbacktype,
             "feedbackcomment": feedbackComment,
             "screenshot": screenshot,
-            "fedbackuser": feedbackuser
+            "fedbackuser": feedbackuser,
+            "appInfo" : TogFormViewer.getAppInfo(myevent)
         };    
         if (checkFeedbackValidity())
         {
@@ -1058,6 +1092,88 @@ function showPhraseApp()
             }
             
             applyPhraseAppSettingsChanges();
+        }
+    }
+    
+}
+
+/**
+ * Check if we should show test settings.
+ */
+function showTest() 
+{
+    var hasTestSettings = false;
+    var testSettingsOn = false;
+    if (appConfiguration.test === true || appConfiguration.test === "true" || appConfiguration.test === "on" || appConfiguration.test === "off")
+    {
+        if (!$('script').filter(function () {
+            return ($(this).attr('src') == "./scripts/test.js");
+        }).length)
+        {
+            loadScript("./scripts/test.js", ((appConfiguration.test === "on") ? showTestSettingsCardAndSwitchOn : showTestSettingsCard), showTestHelperLoadFailedWarning);
+        }
+        else if (appConfiguration.test === "on")
+        {
+            if (!testSelector.testSelection)
+            {
+                changeTestSelection();
+            }
+            
+            applyTestSettingsChanges();
+        }
+    }
+    else
+    {
+        $('#testCardWrapper').hide();
+        if (typeof testSelector !== 'undefined')
+        {
+            if (testSelector.testSelection)
+            {
+                changeTestSelection();
+            }
+            
+            applyTestSettingsChanges();
+        }
+    }
+    
+}
+
+/**
+ * Check if we should show debug settings.
+ */
+function showDebug() 
+{
+    var hasDebugSettings = false;
+    var debugSettingsOn = false;
+    if (appConfiguration.debug === true || appConfiguration.debug === "true" || appConfiguration.debug === "on" || appConfiguration.debug === "off")
+    {
+        if (!$('script').filter(function () {
+            return ($(this).attr('src') == "./scripts/debug.js");
+        }).length)
+        {
+            loadScript("./scripts/debug.js", ((appConfiguration.debug === "on") ? showDebugSettingsCardAndSwitchOn : showDebugSettingsCard), showDebugHelperLoadFailedWarning);
+        }
+        else if (appConfiguration.debug === "on")
+        {
+            if (!debugSelector.debugSelection)
+            {
+                changeDebugSelection();
+            }
+            
+            applyDebugSettingsChanges();
+        }
+    }
+    else
+    {
+        $('#debugCardWrapper').hide();
+        if (typeof debugSelector !== 'undefined')
+        {
+            if (debugSelector.debugSelection)
+            {
+                changeDebugSelection();
+            }
+            
+            applyDebugSettingsChanges();
         }
     }
     
@@ -1807,6 +1923,114 @@ function cancelPhraseAppSwitch(e)
     e.stopPropagation();
     resetPhraseAppSettings();
     $('#phraseAppCard').closeExtendedCard();
+}
+
+/**
+ * Shows the Test card in the settings menu which
+ * switches the Test mode on and off
+ */
+function showTestSettingsCard()
+{
+    $('#saveTest').click(saveTestSwitch);
+    $('#cancelTest').click(cancelTestSwitch);
+    $('#collapseTest').click(cancelTestSwitch);
+    $('#testCardWrapper').show();
+}
+
+/**
+ * Shows the Test card in the settings menu which
+ * switches the Test mode on and off. Switches
+ * the mode on immediately.
+ */
+function showTestSettingsCardAndSwitchOn()
+{
+    showTestSettingsCard();
+    changeTestSelection();
+    applyTestSettingsChanges();
+}
+
+/**
+ * Shows the warning that the test.js hasn't been loaded
+ */
+function showTestHelperLoadFailedWarning()
+{
+    alert('Failed to load Test helper');
+}
+
+/**
+ * Saves changes from the Test switch on/off menu settings and
+ * closes the extended 'Test' settings menu card
+ */
+function saveTestSwitch(e)
+{
+    e.stopPropagation();
+    applyTestSettingsChanges();
+    $('#testCard').closeExtendedCard();
+}
+
+/**
+ * Cancels changes from the Test switch on/off menu settings and
+ * closes the extended 'Test' settings menu card
+ */
+function cancelTestSwitch(e)
+{
+    e.stopPropagation();
+    resetTestSettings();
+    $('#testCard').closeExtendedCard();
+}
+
+/**
+ * Shows the Debug card in the settings menu which
+ * switches the Debug mode on and off
+ */
+function showDebugSettingsCard()
+{
+    $('#saveDebug').click(saveDebugSwitch);
+    $('#cancelDebug').click(cancelDebugSwitch);
+    $('#collapseDebug').click(cancelDebugSwitch);
+    $('#debugCardWrapper').show();
+}
+
+/**
+ * Shows the Debug card in the settings menu which
+ * switches the Debug mode on and off. Switches
+ * the mode on immediately.
+ */
+function showDebugSettingsCardAndSwitchOn()
+{
+    showDebugSettingsCard();
+    changeDebugSelection();
+    applyDebugSettingsChanges();
+}
+
+/**
+ * Shows the warning that the debug.js hasn't been loaded
+ */
+function showDebugHelperLoadFailedWarning()
+{
+    alert('Failed to load Debug helper');
+}
+
+/**
+ * Saves changes from the Debug switch on/off menu settings and
+ * closes the extended 'Debug' settings menu card
+ */
+function saveDebugSwitch(e)
+{
+    e.stopPropagation();
+    applyDebugSettingsChanges();
+    $('#debugCard').closeExtendedCard();
+}
+
+/**
+ * Cancels changes from the Debug switch on/off menu settings and
+ * closes the extended 'Debug' settings menu card
+ */
+function cancelDebugSwitch(e)
+{
+    e.stopPropagation();
+    resetDebugSettings();
+    $('#debugCard').closeExtendedCard();
 }
 
 /**

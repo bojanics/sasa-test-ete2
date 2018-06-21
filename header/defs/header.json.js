@@ -62,5 +62,8 @@ var headerObj = {
     "disableActionSpinner": false,
     "menus": "",
     "langmenustop": "",
-    "langmenusbottom": ""
+    "langmenusbottom": "",
+    "test": false,
+    "debug": false,
+    "choicesOptions": ""
 };

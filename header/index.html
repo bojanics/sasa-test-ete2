@@ -19,6 +19,7 @@
         <script src="./scripts/lang.js"></script>
         <script src="./scripts/tz.js"></script>
         <script src="./scripts/theme.js"></script>
+        <script src="./scripts/menu.js"></script>
         <script src="./scripts/main.js"></script>
         <script src="./scripts/defimp.js"></script>
         <script src="./scripts/auth.js"></script>
@@ -333,6 +334,86 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div id="testCardWrapper" style="display: none">
+                                                        <div id="testCard" class="header-common user-settings-card collapsed-card">
+                                                            <div class="header-common user-settings-card-header">
+                                                                <div class="header-common user-settings-card-header-label">
+                                                                    <span test-value="Test">Test</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-value">
+                                                                <div>
+                                                                    <div id="testValue" class="user-settings-card-value-content">
+                                                                        <span id="testSwitched" test-value="Off">Off</span>
+                                                                    </div>
+                                                                    <div class="header-common user-settings-card-combo-wrapper">
+                                                                        <button type="button" class="user-settings-card-checkbox" onclick="changeTestSelection()">
+                                                                            <span id="testCardCheckBox" class="ms-Icon ms-Icon--Checkbox user-settings-card-checkbox-box"></span>
+                                                                            <span class="user-settings-card-checkbox-label" test-value="On">On</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-footer">
+                                                                <a id="saveTest" class="header-common user-settings-button emphasized">
+                                                                    <span test-value="Save">Save</span>
+                                                                </a>
+                                                                <a id="cancelTest" class="header-common user-settings-button">
+                                                                    <span test-value="Cancel">Cancel</span>
+                                                                </a>
+                                                            </div>
+                                                            <div>
+                                                                <div class="header-common user-settings-card-collapse-area">
+                                                                    <a id="collapseTest" class="user-settings-card-collapse-button">
+                                                                        <span class="ms-Icon2 ms-Icon--chevronUp"></span>
+                                                                    </a>
+                                                                    <div class="user-settings-card-expand-button">
+                                                                        <span class="ms-Icon2 ms-Icon--chevronDown"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="debugCardWrapper" style="display: none">
+                                                        <div id="debugCard" class="header-common user-settings-card collapsed-card">
+                                                            <div class="header-common user-settings-card-header">
+                                                                <div class="header-common user-settings-card-header-label">
+                                                                    <span debug-value="Debug">Debug</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-value">
+                                                                <div>
+                                                                    <div id="debugValue" class="user-settings-card-value-content">
+                                                                        <span id="debugSwitched" debug-value="Off">Off</span>
+                                                                    </div>
+                                                                    <div class="header-common user-settings-card-combo-wrapper">
+                                                                        <button type="button" class="user-settings-card-checkbox" onclick="changeDebugSelection()">
+                                                                            <span id="debugCardCheckBox" class="ms-Icon ms-Icon--Checkbox user-settings-card-checkbox-box"></span>
+                                                                            <span class="user-settings-card-checkbox-label" debug-value="On">On</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="header-common user-settings-card-footer">
+                                                                <a id="saveDebug" class="header-common user-settings-button emphasized">
+                                                                    <span debug-value="Save">Save</span>
+                                                                </a>
+                                                                <a id="cancelDebug" class="header-common user-settings-button">
+                                                                    <span debug-value="Cancel">Cancel</span>
+                                                                </a>
+                                                            </div>
+                                                            <div>
+                                                                <div class="header-common user-settings-card-collapse-area">
+                                                                    <a id="collapseDebug" class="user-settings-card-collapse-button">
+                                                                        <span class="ms-Icon2 ms-Icon--chevronUp"></span>
+                                                                    </a>
+                                                                    <div class="user-settings-card-expand-button">
+                                                                        <span class="ms-Icon2 ms-Icon--chevronDown"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -462,7 +543,7 @@
         </div>
 		<div class="content-wrapper">
             <div class="body-content">
-		        <div id='formio'></div>
+		        <div id='formio' style="padding-top:15px"></div>
             </div>
             <div id="renderIndicator" class="rendered btn" />
             <div id="feedbackInserted" class="feedback-inserted">

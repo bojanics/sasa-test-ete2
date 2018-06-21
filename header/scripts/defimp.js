@@ -129,7 +129,10 @@ function resetAppConfiguration()
         disableActionSpinner: false,
         menusPath: "",
         langMenusTopPath: "",
-        langMenusBottomPath: ""
+        langMenusBottomPath: "",
+        test: "false",
+        debug: "false",
+        choicesOptions: ""
     };
     appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
 }
@@ -745,6 +748,52 @@ function setupHeaderConfiguration()
     // setup phrase app suffix
     resolveStringOrBooleanParameter(false,"phraseapp suffix","phraseAppSuffix",formObj,headerObj,null,true,appConfiguration.phraseAppSuffix); 
     
+    // Check if we should show the Test settings
+    var hasTestSettings = false;
+    var testSettingsOn = false;
+    var hasTestSettingsFromServer = checkForResolvedPropertyFromTheServer("test");
+    var hasTestSettingsUrl = checkForUrlParameter("test");
+    if (hasTestSettingsFromServer === "false" || hasTestSettingsFromServer === "true" || hasTestSettingsFromServer === "on" || hasTestSettingsFromServer === "off")
+    {
+        appConfiguration.test = hasTestSettingsFromServer;
+    }
+    else if (hasTestSettingsUrl === "false" || hasTestSettingsUrl === "true" || hasTestSettingsUrl === "on" || hasTestSettingsUrl === "off")
+    {
+        appConfiguration.test = hasTestSettingsUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("test"))
+    {
+        appConfiguration.test = formObj.properties["test"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("test")
+        && (headerObj["test"] === true || headerObj["test"] === "true" || headerObj["test"] === "on" || headerObj["test"] === "off"))
+    {
+        appConfiguration.test = headerObj["test"];
+    }
+
+    // Check if we should show the Debug settings
+    var hasDebugSettings = false;
+    var debugSettingsOn = false;
+    var hasDebugSettingsFromServer = checkForResolvedPropertyFromTheServer("debug");
+    var hasDebugSettingsUrl = checkForUrlParameter("debug");
+    if (hasDebugSettingsFromServer === "false" || hasDebugSettingsFromServer === "true" || hasDebugSettingsFromServer === "on" || hasDebugSettingsFromServer === "off")
+    {
+        appConfiguration.debug = hasDebugSettingsFromServer;
+    }
+    else if (hasDebugSettingsUrl === "false" || hasDebugSettingsUrl === "true" || hasDebugSettingsUrl === "on" || hasDebugSettingsUrl === "off")
+    {
+        appConfiguration.debug = hasDebugSettingsUrl;
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("debug"))
+    {
+        appConfiguration.debug = formObj.properties["debug"];
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("debug")
+        && (headerObj["debug"] === true || headerObj["debug"] === "true" || headerObj["debug"] === "on" || headerObj["debug"] === "off"))
+    {
+        appConfiguration.debug = headerObj["debug"];
+    }
+
     // Check if we should show the button which opens the feedback form
     resolveStringOrBooleanParameter(true,"feedback","feedback",formObj,headerObj,null,true,appConfiguration.feedback); 
     
@@ -949,6 +998,30 @@ function setupHeaderConfiguration()
     
     // Check if the the bottom menu translations definition path has been specified
     resolveStringOrBooleanParameter(false,"langmenusbottom","langMenusBottomPath",formObj,headerObj,null,true,appConfiguration.langMenusBottomPath); 
+    
+    // Check if we have Choices.js options defined for the whole form (applied to all Select components in the form)
+    var choicesOptionsFromServer = checkForResolvedPropertyFromTheServer("choicesOptions");
+    var choicesOptionsUrl = checkForUrlParameter("choicesOptions");
+    if (choicesOptionsFromServer)
+    {
+        appConfiguration.choicesOptions = choicesOptionsFromServer;
+    }
+    else if (choicesOptionsUrl)
+    {
+        appConfiguration.choicesOptions = JSON.parse(choicesOptionsUrl);
+    }
+    else if (typeof formObj !== 'undefined' && formObj != null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("choicesOptions"))
+    {
+        if (formObj.properties["choicesOptions"])
+        {
+            appConfiguration.choicesOptions = JSON.parse(formObj.properties["choicesOptions"]);
+        }
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("choicesOptions") && headerObj["choicesOptions"])
+    {
+        appConfiguration.choicesOptions = JSON.parse(headerObj["choicesOptions"]);
+    }
+    console.log('CO='+JSON.stringify(appConfiguration.choicesOptions));
 }
 
 /**
@@ -1303,9 +1376,16 @@ function checkForAppSetup()
     // Check if the menus.json.js should be loaded
     if (!menusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appConfiguration.menusPath)
+        if (appInfoObjFromServer != null && appInfoObjFromServer.menusObj != null)
         {
-            loadScript(appConfiguration.menusPath, checkForAppSetup, loadDefaultMenus);
+            menusObj = appInfoObjFromServer.menusObj;
+        }
+        else
+        {
+            if (appConfiguration.menusPath)
+            {
+                loadScript(appConfiguration.menusPath, function() {console.log("CFAS menus");checkForAppSetup();}, loadDefaultMenus);
+            }
         }
         
         menusLoadStarted = true;
@@ -1314,9 +1394,16 @@ function checkForAppSetup()
     // Check if the lang-top-menus.json.js should be loadedScript
     if (!langTopMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appConfiguration.langMenusTopPath)
+        if (appInfoObjFromServer != null && appInfoObjFromServer.langTopMenusObj)
         {
-            loadScript(appConfiguration.langMenusTopPath, checkForAppSetup, loadDefaultLangTopMenus);
+            langTopMenusObj = appInfoObjFromServer.langTopMenusObj;
+        }
+        else
+        {
+            if (appConfiguration.langMenusTopPath)
+            {
+                loadScript(appConfiguration.langMenusTopPath, function() {console.log("CFAS menustop");checkForAppSetup();}, loadDefaultLangTopMenus);
+            }
         }
         
         langTopMenusLoadStarted = true;
@@ -1325,9 +1412,16 @@ function checkForAppSetup()
     // Check if the lang-bottom-menus.json.js should be loadedScript
     if (!langBottomMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
-        if (appConfiguration.langMenusBottomPath)
+        if (appInfoObjFromServer != null && appInfoObjFromServer.langBottomMenusObj)
         {
-            loadScript(appConfiguration.langMenusBottomPath, checkForAppSetup, loadDefaultLangBottomMenus);
+            langBottomMenusObj = appInfoObjFromServer.langBottomMenusObj;
+        }
+        else
+        {
+            if (appConfiguration.langMenusBottomPath)
+            {
+                loadScript(appConfiguration.langMenusBottomPath, function() {console.log("CFAS menusbottom");checkForAppSetup();}, loadDefaultLangBottomMenus);
+            }
         }
         
         langBottomMenusLoadStarted = true;
@@ -1637,7 +1731,7 @@ function executeLoadingOrLoadedScript(isLoadingScript)
     }    
 }
 
-function executeScript(scriptName,script) {
+function executeScript(scriptName,script,togFormViewerEvent) {
     try {
         console.log("Executing "+scriptName+" script:"+script);
         eval(script);
@@ -1705,6 +1799,7 @@ function checkForLoadingCallback()
             // We should show the form after new styles has been loaded to prevent FOUC
             showContentOnStyleApply(function()
             {
+                configureChoicesOptions(formioForm);                
                 hideSpinner();
             });
         } else {            
@@ -1740,7 +1835,7 @@ function handlePlaceholders(placeholderStr,event) {
  */
 function performLoadingCallback(url,cnt,event)
 {
-    var event = {"type":"Loding","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
+    var event = {"type":"Loading","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
 
     // Replace placeholders in relative path with available settings
     url = handlePlaceholders(url,event);
@@ -1769,6 +1864,7 @@ function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textS
 
 function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
    appInfoObjFromServer = data.appInfo;
+   
    //appInfoObjFromServer = {};
    //appInfoObjFromServer.resolvedProperties = JSON.parse(JSON.stringify(appConfiguration));
    // Extended data sent from server which are not part of the submission data
@@ -1834,7 +1930,15 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        timeZonesChanged = timeZonesChanged || timeZonesPathChanged;
        console.log('tzch='+timeZonesChanged);
        var customScriptChanged = resolvedPropertiesObjFromServer.customScript!=null && appConfiguration.customScript!=resolvedPropertiesObjFromServer.customScript;
-       console.log('csch='+customScriptChanged);
+       var menusChanged = appInfoObjFromServer.menusObj!=null && JSON.stringify(menusObj)!==JSON.stringify(appInfoObjFromServer.menusObj);
+       var menusPathChanged = resolvedPropertiesObjFromServer.menusPath!=null && appConfiguration.menusPath!=resolvedPropertiesObjFromServer.menusPath;
+       menusChanged = menusChanged || menusPathChanged;
+       var langMenusTopChanged = appInfoObjFromServer.langTopMenusObj!=null && JSON.stringify(langTopMenusObj)!==JSON.stringify(appInfoObjFromServer.langTopMenusObj);
+       var langMenusTopPathChanged = resolvedPropertiesObjFromServer.langMenusTopPath!=null && appConfiguration.langMenusTopPath!=resolvedPropertiesObjFromServer.langMenusTopPath;
+       langMenusTopChanged = langMenusTopChanged || langMenusTopPathChanged;
+       var langMenusBottomChanged = appInfoObjFromServer.langBottomMenusObj!=null && JSON.stringify(langBottomMenusObj)!==JSON.stringify(appInfoObjFromServer.langBottomMenusObj);
+       var langMenusBottomPathChanged = resolvedPropertiesObjFromServer.langMenusBottomPath!=null && appConfiguration.langMenusBottomPath!=resolvedPropertiesObjFromServer.langMenusBottomPath;
+       langMenusBottomChanged = langMenusBottomChanged || langMenusBottomPathChanged;
               
        appInfoObjFromServer.formChanged = formChanged;
        
@@ -1870,6 +1974,15 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        if (!timeZonesPathChanged) {
            resolvedPropertiesObjFromServer.timezones = appConfiguration.timezones; 
        }
+       if (!menusPathChanged) {
+           resolvedPropertiesObjFromServer.menusPath = appConfiguration.menusPath;
+       }
+       if (!langMenusTopChanged) {
+           resolvedPropertiesObjFromServer.langMenusTopPath = appConfiguration.langMenusTopPath;
+       }
+       if (!langMenusBottomChanged) {
+           resolvedPropertiesObjFromServer.langMenusBottomPath = appConfiguration.langMenusBottomPath;
+       }
        
        if (appDefChanged || formChanged) {
           hasChanges = true;
@@ -1887,11 +2000,17 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           themesObj = null;
           userLangsObj = null;
           timeZonesArr = null;
+          menusObj = null;
+          langTopMenusObj = null;
+          langBottomMenusObj = null;
           themeLoadStarted = false;
           languageLoadStarted = false;
           timeZonesLoadStarted = false;
           customScriptLoadStarted = false;
           customScriptLoadedFlag = false;
+          menusLoadStarted = false;
+          langTopMenusLoadStarted = false;
+          langBottomMenusLoadStarted = false;
        }
        if (brandChanged) {
           hasChanges = true;
@@ -1910,9 +2029,15 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           themesObj = null;
           userLangsObj = null;
           timeZonesArr = null;
+          menusObj = null;
+          langTopMenusObj = null;
+          langBottomMenusObj = null;
           themeLoadStarted = false;
           languageLoadStarted = false;
           timeZonesLoadStarted = false;
+          menusLoadStarted = false;
+          langTopMenusLoadStarted = false;
+          langBottomMenusLoadStarted = false;
        }
        if (themesChanged) {
           hasChanges = true;
@@ -1934,13 +2059,41 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           customScriptLoadStarted = false;
           customScriptLoaded = false;
        }
+       if (menusChanged) {
+          hasChanges = true;
+          menusObj = null;
+          menusLoadStarted = false;
+       }
+       if (langMenusTopChanged) {
+          hasChanges = true;
+          langTopMenusObj = null;
+          langTopMenusLoadStarted = false;
+       }
+       if (langMenusBottomChanged) {
+          hasChanges = true;
+          langBottomMenusObj = null;
+          langBottomMenusLoadStarted = false;
+       }
        if (!hasChanges) {
            // checking for changes in resolvedProperties from the server compared to the ones we sent
            for (var p in appConfiguration) {
-               if (resolvedPropertiesObjFromServer.hasOwnProperty(p) && appConfiguration[p]!==resolvedPropertiesObjFromServer[p]) {
-                  hasChanges = true;
-                  console.log('There were changes in resolved property '+p+' from the server that require re-configuration process, oldValue='+appConfiguration[p]+', newValue='+resolvedPropertiesObjFromServer[p]);
-                  break;
+               //console.log("type of "+p+" is "+(typeof appConfiguration[p]));
+               if (resolvedPropertiesObjFromServer.hasOwnProperty(p)) {                  
+                  if (typeof appConfiguration[p] == "object") {
+                      if (p!="userTimeZones") {
+                        if (JSON.stringify(appConfiguration[p])!==JSON.stringify(resolvedPropertiesObjFromServer[p])) {
+                          hasChanges = true;
+                          console.log('There were changes in resolved property '+p+' from the server that require re-configuration process, oldValue='+JSON.stringify(appConfiguration[p])+', newValue='+JSON.stringify(resolvedPropertiesObjFromServer[p]));
+                          break;
+                        }                          
+                      }
+                  } else {
+                      if (appConfiguration[p]!==resolvedPropertiesObjFromServer[p]) {
+                          hasChanges = true;
+                          console.log('There were changes in resolved property '+p+' from the server that require re-configuration process, oldValue='+appConfiguration[p]+', newValue='+resolvedPropertiesObjFromServer[p]);
+                          break;
+                      }
+                  }
                }
            }
            
@@ -2031,11 +2184,17 @@ function updateFormDefinition(formPath,data)
     themesObj = null;
     userLangsObj = null;
     timeZonesArr = null;
+    menusObj = null;
+    langTopMenusObj = null;
+    langBottomMenusObj = null;
     themeLoadStarted = false;
     languageLoadStarted = false;
     timeZonesLoadStarted = false;    
     customScriptLoadStarted = false;
     customScriptLoadedFlag = false;
+    menusLoadStarted = false;
+    langTopMenusLoadStarted = false;
+    langBottomMenusLoadStarted = false;
 
     beginConfigurationProcess();
 }
@@ -2067,18 +2226,22 @@ function setupAppForUpdatedForm()
 function hideSpinner() {
     $('.header-border').show();
     $('.content-wrapper').show();
+    $('#menuWrapper').show();
     $('.overlay').hide();
 }
 
 function showSpinner() {
     $('.header-border').hide();
     $('.content-wrapper').hide();
+    $('#menuWrapper').hide();
     $('.overlay').show();
 }
 
 var TogFormViewer =
 {
     toggleMenuOpened: false,
+    testFlag: false,
+    debugFlag: false,
     
     FormioPlugIn:
     {
@@ -2135,6 +2298,11 @@ var TogFormViewer =
             {
                 appConfiguration.elearningimagelink = propValue;
             }
+            else if (_checkPropertyValue(propName, propValue, "choicesOptions", "object"))
+            {
+                appConfiguration.choicesOptions = propValue;
+                configureChoicesOptions(formioForm);
+            }
         },
         
         getProperty: function(propName)
@@ -2145,6 +2313,10 @@ var TogFormViewer =
             if (propName === "jumpWidth")
             {
                 return this.jumpWidth;
+            }
+            else if (propName === "choicesOptions")
+            {
+                return appConfiguration.choicesOptions;
             }
         }
     },
@@ -2200,6 +2372,16 @@ var TogFormViewer =
         {
             appConfiguration.phraseApp = propValue;
             showPhraseApp();
+        }
+        else if (_checkPropertyValue(propName, propValue, "test", "boolean")) 
+        {
+            appConfiguration.test = propValue;
+            showTest();
+        }
+        else if (_checkPropertyValue(propName, propValue, "debug", "boolean")) 
+        {
+            appConfiguration.debug = propValue;
+            showDebug();
         }
         else if (_checkPropertyValue(propName, propValue, "phraseAppProjectId", "string")) 
         {
@@ -2456,6 +2638,8 @@ var TogFormViewer =
                 "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
                 "jumpWidth" : this.FormioPlugIn.jumpWidth,
                 "toggleMenuOpened" : this.toggleMenuOpened,
+                "testFlag" : this.testFlag,
+                "debugFlag" : this.debugFlag,
                 "browserInfo" : {
                     "width" : $(window).width(),
                     "height" : $(window).height()
@@ -2469,6 +2653,9 @@ var TogFormViewer =
             "userLangsObj" : typeof userLangsObj === 'undefined' ? '' : userLangsObj,
             "timeZonesArr" : typeof timeZonesArr === 'undefined' ? '' : timeZonesArr,
             "themesObj" : typeof themesObj === 'undefined' ? '' : themesObj,
+            "menusObj" : typeof menusObj === 'undefined' ? '' : menusObj,
+            "langTopMenusObj" : typeof langTopMenusObj === 'undefined' ? '' : langTopMenusObj,
+            "langBottomMenusObj" : typeof langBottomMenusObj === 'undefined' ? '' : langBottomMenusObj,
             "formObj" : formObj,
             "dataObj" : typeof window.formioForm !== 'undefined' && window.formioForm!=null ? formioForm.submission.data : appFormDataObj,
             "resolvedProperties" : appConfiguration,

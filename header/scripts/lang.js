@@ -185,7 +185,7 @@ function applyTranslation()
         setLanguage(languageSelector.selectedLanguage);
     }
     
-    $("[lang-tran],[lang-tran-placeholder]").translate();
+    $("[lang-tran],[lang-tran-placeholder],[lang-tran-menu-top],[lang-tran-menu-bottom] ").translate();
     changeLanguageForThemeSettings(oldLanguage, languageSelector.currentLanguage);
     if (typeof phraseAppSelection !== 'undefined' && phraseAppSelection.phraseAppSwitched)
     {
@@ -236,6 +236,24 @@ function resetBodyTranslation()
                 && langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran-placeholder")] !== undefined)
             {
                 $this.attr("placeholder", langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran-placeholder")]);
+            }
+            
+            if ($this.attr("lang-tran-menu-top") !== undefined && langTopMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
+                && langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-top")] !== undefined)
+            {
+                $this.html(langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-top")]);
+            }
+            
+            // If object langBottomMenusObj undefined we use langTopMenusObj object for bottom menu.
+            if (appConfiguration.langMenusBottomPath && $this.attr("lang-tran-menu-bottom") !== undefined && langBottomMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
+                && langBottomMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")] !== undefined)
+            {
+                $this.html(langBottomMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")]);
+            }
+            else if ($this.attr("lang-tran-menu-bottom") !== undefined && langTopMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
+                && langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")] !== undefined)
+            {
+                $this.html(langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")]);
             }
         });
     };

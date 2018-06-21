@@ -431,6 +431,7 @@ function setupFormConfiguration()
     
     // If the customScript definition path has been specified
     resolveStringOrBooleanParameter(false,"customScript","customScript",formObj,appObj,null,true,appConfiguration.customScript);    
+    console.log('cs='+appConfiguration.customScript);
 }
 
 /**
@@ -706,6 +707,7 @@ function setupHeaderConfiguration()
 	
     // If the userlangs definition path has been specified
     resolveStringOrBooleanParameter(false,"userlangs","userlangs",formObj,headerObj,null,true,appConfiguration.userlangs);
+    console.log('userlangs1='+appConfiguration.userlangs);
     
     // Set up Default Language
     resolveStringOrBooleanParameter(false,"defaultLanguage","defaultLanguage",formObj,headerObj,null,true,appConfiguration.defaultLanguage);  
@@ -1328,6 +1330,7 @@ function checkForAppSetup()
 	// Check if the userlangs.json.js should be loaded
     if (!languageLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        console.log('now handling userlangs, acul='+appConfiguration.userlangs);
         if (appInfoObjFromServer != null && appInfoObjFromServer.userLangsObj != null)
         {
             userLangsObj = appInfoObjFromServer.userLangsObj;
@@ -1337,6 +1340,7 @@ function checkForAppSetup()
         {
             if (appConfiguration.userlangs)
             {
+                console.log('userlangs loading...');
                 loadScript(appConfiguration.userlangs, languagesLoaded, loadDefaultLanguages);
             }
         }
@@ -1799,6 +1803,7 @@ function checkForLoadingCallback()
             // We should show the form after new styles has been loaded to prevent FOUC
             showContentOnStyleApply(function()
             {
+                MapPlugIn.reloadMap();
                 configureChoicesOptions(formioForm);                
                 hideSpinner();
             });
@@ -2080,13 +2085,11 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
                //console.log("type of "+p+" is "+(typeof appConfiguration[p]));
                if (resolvedPropertiesObjFromServer.hasOwnProperty(p)) {                  
                   if (typeof appConfiguration[p] == "object") {
-                      if (p!="userTimeZones") {
-                        if (JSON.stringify(appConfiguration[p])!==JSON.stringify(resolvedPropertiesObjFromServer[p])) {
-                          hasChanges = true;
-                          console.log('There were changes in resolved property '+p+' from the server that require re-configuration process, oldValue='+JSON.stringify(appConfiguration[p])+', newValue='+JSON.stringify(resolvedPropertiesObjFromServer[p]));
-                          break;
-                        }                          
-                      }
+                    if (JSON.stringify(appConfiguration[p])!==JSON.stringify(resolvedPropertiesObjFromServer[p])) {
+                      hasChanges = true;
+                      console.log('There were changes in resolved property '+p+' from the server that require re-configuration process, oldValue='+JSON.stringify(appConfiguration[p])+', newValue='+JSON.stringify(resolvedPropertiesObjFromServer[p]));
+                      break;
+                    }                          
                   } else {
                       if (appConfiguration[p]!==resolvedPropertiesObjFromServer[p]) {
                           hasChanges = true;
@@ -2658,7 +2661,7 @@ var TogFormViewer =
             "langBottomMenusObj" : typeof langBottomMenusObj === 'undefined' ? '' : langBottomMenusObj,
             "formObj" : formObj,
             "dataObj" : typeof window.formioForm !== 'undefined' && window.formioForm!=null ? formioForm.submission.data : appFormDataObj,
-            "resolvedProperties" : appConfiguration,
+            "resolvedProperties" : JSON.parse(JSON.stringify(appConfiguration)),
         };
         
         appInfo.resolvedProperties.userTheme = this.getProperty("userTheme");

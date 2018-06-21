@@ -4,5 +4,5 @@ var appObj = {
     "customizationdefinition": "../cstmz/customization.json.js",
     "headerconfiguration": "../appcnfs/header.json.js",
     "display": "",
-    "customScript": "../custscripts/custom.js"
+    "acustomScript": "../custscripts/custom.js"
 };

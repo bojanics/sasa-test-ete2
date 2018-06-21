@@ -1150,7 +1150,7 @@ function setThemesConfiguration()
 /**
  * Callback executed when themes.json.js can't be loaded
  */
-function loadDefaultThemes()
+function loadDefaultThemes(doNotCheck)
 {
     // We haven't found themes.json.js so we will use the hardcoded themes list
     // defined in the themesMap global variable. We still need to define the
@@ -1159,7 +1159,9 @@ function loadDefaultThemes()
     window.themesObj = defaultThemesMap;
     
     // Check if anything else should be loaded
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
@@ -1187,7 +1189,7 @@ function setLanguagesConfiguration()
 /**
  * Callback executed when userlangs.json.js can't be loaded
  */
-function loadDefaultLanguages()
+function loadDefaultLanguages(doNotCheck)
 {
     // We haven't found userlangs.json.js so we will use the hardcoded languages list
     // defined in the languagesMap global variable. We still need to define the
@@ -1196,13 +1198,15 @@ function loadDefaultLanguages()
     window.userLangsObj = defaultLanguagesMap;
     
     // Check if anything else should be loaded
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
  * Callback executed when timezones.json.js can't be loaded
  */
-function loadDefaultTimeZones()
+function loadDefaultTimeZones(doNotCheck)
 {
     // We haven't found timezones.json.js so we will use the hardcoded time zones list
     // defined in the timeZonesArray global variable. We still need to define the
@@ -1211,7 +1215,9 @@ function loadDefaultTimeZones()
     window.timeZonesArr = timeZonesArray;
     
     // Check if anything else should be loaded
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
@@ -1222,47 +1228,55 @@ var customScriptLoadedFlag = false;
 /**
  * Callback executed when customScript has been loaded
  */
-function customScriptLoaded() 
+function customScriptLoaded(doNotCheck) 
 {
     
     customScriptLoadedFlag = true;
     
     // Check if anything else should be loaded
     console.log("CFAS cust script");
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
  * Callback executed when menus.json.js can't be loaded
  */
-function loadDefaultMenus()
+function loadDefaultMenus(doNotCheck)
 {
     window.menusObj = {};
     
     // Check if anything else should be loaded
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
  * Callback executed when lang-top-menus.json.js can't be loaded
  */
-function loadDefaultLangTopMenus()
+function loadDefaultLangTopMenus(doNotCheck)
 {
     window.langTopMenusObj = {};
     
     // Check if anything else should be loaded
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
  * Callback executed when lang-bottom-menus.json.js can't be loaded
  */
-function loadDefaultLangBottomMenus()
+function loadDefaultLangBottomMenus(doNotCheck)
 {
     window.langBottomMenusObj = {};
     
     // Check if anything else should be loaded
-    checkForAppSetup();
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
 }
 
 /**
@@ -1311,6 +1325,7 @@ function checkForAppSetup()
     // Check if the themes.json.js should be loaded
     if (!themeLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        themeLoadStarted = true;
         if (appInfoObjFromServer != null && appInfoObjFromServer.themesObj != null) 
         {
             themesObj = appInfoObjFromServer.themesObj;
@@ -1321,15 +1336,16 @@ function checkForAppSetup()
             if (appConfiguration.themes)
             {
                 loadScript(appConfiguration.themes, themesLoaded, loadDefaultThemes);
-            }            
-        }
-        
-        themeLoadStarted = true;
+            } else {
+               loadDefaultThemes(true);
+            }               
+        }        
     }
 	
 	// Check if the userlangs.json.js should be loaded
     if (!languageLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        languageLoadStarted = true;
         console.log('now handling userlangs, acul='+appConfiguration.userlangs);
         if (appInfoObjFromServer != null && appInfoObjFromServer.userLangsObj != null)
         {
@@ -1342,15 +1358,16 @@ function checkForAppSetup()
             {
                 console.log('userlangs loading...');
                 loadScript(appConfiguration.userlangs, languagesLoaded, loadDefaultLanguages);
+            } else {
+               loadDefaultLanguages(true);
             }
-        }
-        
-        languageLoadStarted = true;
+        }        
     }
     
     // Check if the timezones.json.js should be loaded
     if (!timeZonesLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        timeZonesLoadStarted = true;
         if (appInfoObjFromServer != null && appInfoObjFromServer.timeZonesArr != null)
         {
             timeZonesArr = appInfoObjFromServer.timeZonesArr;
@@ -1360,26 +1377,29 @@ function checkForAppSetup()
             if (appConfiguration.timezones)
             {
                 loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();}, loadDefaultTimeZones);
+            } else {
+               loadDefaultTimeZones(true);
             }
         }
         
-        timeZonesLoadStarted = true;
     }
 
     // Check if the file, which path is specified at customScript parameter, should be loaded
     if (!customScriptLoadStarted && typeof appObj !== 'undefined' && appObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        customScriptLoadStarted = true;
         if (appConfiguration.customScript)
         {
             loadScript(appConfiguration.customScript, customScriptLoaded);
-        }
-        
-        customScriptLoadStarted = true;
+        } else {
+            customScriptLoaded(true);
+        }   
     }
     
     // Check if the menus.json.js should be loaded
     if (!menusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        menusLoadStarted = true;
         if (appInfoObjFromServer != null && appInfoObjFromServer.menusObj != null)
         {
             menusObj = appInfoObjFromServer.menusObj;
@@ -1389,15 +1409,16 @@ function checkForAppSetup()
             if (appConfiguration.menusPath)
             {
                 loadScript(appConfiguration.menusPath, function() {console.log("CFAS menus");checkForAppSetup();}, loadDefaultMenus);
+            } else {
+               loadDefaultMenus(true);
             }
-        }
-        
-        menusLoadStarted = true;
+        }        
     }
     
     // Check if the lang-top-menus.json.js should be loadedScript
     if (!langTopMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        langTopMenusLoadStarted = true;
         if (appInfoObjFromServer != null && appInfoObjFromServer.langTopMenusObj)
         {
             langTopMenusObj = appInfoObjFromServer.langTopMenusObj;
@@ -1407,15 +1428,16 @@ function checkForAppSetup()
             if (appConfiguration.langMenusTopPath)
             {
                 loadScript(appConfiguration.langMenusTopPath, function() {console.log("CFAS menustop");checkForAppSetup();}, loadDefaultLangTopMenus);
+            } else {
+               loadDefaultLangTopMenus(true);
             }
-        }
-        
-        langTopMenusLoadStarted = true;
+        }        
     }
     
     // Check if the lang-bottom-menus.json.js should be loadedScript
     if (!langBottomMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
+        langBottomMenusLoadStarted = true;
         if (appInfoObjFromServer != null && appInfoObjFromServer.langBottomMenusObj)
         {
             langBottomMenusObj = appInfoObjFromServer.langBottomMenusObj;
@@ -1425,12 +1447,13 @@ function checkForAppSetup()
             if (appConfiguration.langMenusBottomPath)
             {
                 loadScript(appConfiguration.langMenusBottomPath, function() {console.log("CFAS menusbottom");checkForAppSetup();}, loadDefaultLangBottomMenus);
+            } else {
+               loadDefaultLangBottomMenus(true);
             }
-        }
-        
-        langBottomMenusLoadStarted = true;
+        }        
     }
         
+    console.log("cslf="+customScriptLoadedFlag+",appobj"+(typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"]))+",formobj="+(typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"]))));
     if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"]))))
@@ -2062,7 +2085,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        if (customScriptChanged) {
           hasChanges = true;
           customScriptLoadStarted = false;
-          customScriptLoaded = false;
+          customScriptLoadedFlag = false;
        }
        if (menusChanged) {
           hasChanges = true;

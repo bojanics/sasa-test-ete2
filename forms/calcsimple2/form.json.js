@@ -536,6 +536,7 @@ var formObj = {
 	"machineName": "ewhyjxtmcncdriz:calc",
     "action":"Form('{formname}/{formversion}')/Subtraction",
    "properties": {
+    "customScript": "../custscripts/custom.js",
     "action local script":"test3(togFormViewerEvent);",
     "action change local script":"testChange1(togFormViewerEvent);",
     "action focus local script":"testFocus1(togFormViewerEvent);",

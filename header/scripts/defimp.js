@@ -1992,7 +1992,7 @@ function performLoadingCallback(url,cnt,event)
     console.log('executing loading action for url '+url+', attempt number '+cnt);
     // TODO: Perform loading API call with the given callback
     if (typeof ADAL!== 'undefined' && ADAL) {
-        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"callbackCount":cnt,"event":event},onsuccess_loading,onfailure_loading);
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"callbackCount":cnt,"event":event},onsuccess_loading,onfailure_loading,onfailure_loading);
     } else {
         //alert("It is not possible to perform loading because user is not logged-in!");
         console.log("It is not possible to perform loading because user is not logged-in!");
@@ -3290,7 +3290,7 @@ function _performCalculationRemotely()
         payload["Configuration_SettingName"] = appConfiguration.calcConfSetting;
     }
     
-    executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, appConfiguration.calcApiPath, payload, {},onsuccess_calc,onfailure_generic);
+    executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, appConfiguration.calcApiPath, payload, {},onsuccess_calc,onfailure_generic,onfailure_generic);
 }
 
 function _performCalculationLocally()

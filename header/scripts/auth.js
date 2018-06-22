@@ -193,7 +193,7 @@ function getFunctionName(funct) {
  *        API function or get no data
  */
 function getmailboxsettingsdata(url, onsuccesscallback, onfailurecallback) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadalmailboxsettings, url, {}, {}, onsuccesscallback, onfailurecallback);
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadalmailboxsettings, url, {}, {}, onsuccesscallback, onfailurecallback, onfailurecallback);
 }
 
 function getdatanoadalmailboxsettings(token, url, data, conf, onsuccesscallback, onfailurecallback) {
@@ -234,7 +234,7 @@ function getdatanoadalmailboxsettings(token, url, data, conf, onsuccesscallback,
  *        Graph API function or get no data
  */
 function getSupportedTimeZones(onsuccesscallback, onfailurecallback) {
-    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getDataOnAdalSupportedTimeZones, 'https://graph.microsoft.com/beta/me/outlook/supportedTimeZones', {}, {}, onsuccesscallback, onfailurecallback);
+    executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getDataOnAdalSupportedTimeZones, 'https://graph.microsoft.com/beta/me/outlook/supportedTimeZones', {}, {}, onsuccesscallback, onfailurecallback, onfailurecallback);
 }
 
 function getDataOnAdalSupportedTimeZones(token, url, payload, conf, onsuccesscallback, onfailurecallback) {
@@ -513,19 +513,7 @@ function postfeedbackformadal(token, url, payload) {
 
 function getUserPropertyExtensions(fetchLTZ, onsuccesscallback, onfailurecallback) {
     executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", getdatanoadaluserpropertyextensions, "https://graph.microsoft.com/beta/me/?$select=id,displayName&$expand=extensions", {},
-        {}, onsuccesscallback, onfailurecallback,
-        (fetchLTZ ? function() {
-            userPropertyExtensionExists = false;
-            userPropertyExtensionsAvailable = false;
-            TogFormViewer.setProperty("storedUserTheme", "");
-            TogFormViewer.setProperty("storedUserLanguage", "");
-            TogFormViewer.setProperty("storedUserTimeZone", "");
-        } : function() {
-            userPropertyExtensionExists = false;
-            userPropertyExtensionsAvailable = false;
-            TogFormViewer.setProperty("storedUserTheme", "");
-        })
-    );
+        {}, onsuccesscallback, onfailurecallback,onfailurecallback);
 }
 
 /**

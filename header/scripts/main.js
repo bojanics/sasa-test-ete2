@@ -137,7 +137,7 @@ function performLoadedAction(url,event)
     console.log('executing loaded action for url '+url);
     // TODO: Perform loading API call with the given callback
     if (typeof ADAL!== 'undefined' && ADAL) {
-        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":event},onsuccess_loaded,onfailure_loaded);
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":event},onsuccess_loaded,onfailure_loaded,onfailure_loaded);
     } else {
         //alert("It is not possible to perform loaded action because user is not logged-in!");
         console.log("It is not possible to perform loaded action because user is not logged-in!");
@@ -347,7 +347,7 @@ function performEventOrCustomAction(url,myevent)
     var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent)};    
     console.log("executing event "+JSON.stringify(myevent)+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
-        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":myevent},onsuccess_eventorcustomaction,onfailure_eventorcustomaction);
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":myevent},onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
     } else {
         alert("It is not possible to perform event "+JSON.stringify(myevent)+" action for url '"+url+"' because user is not logged-in!");
         hideSpinner();

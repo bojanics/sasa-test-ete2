@@ -1,5 +1,5 @@
 var headerObj = {
-    "use outlook settings": false,
+    "use outlook settings": true,
     "use user property extensions": true,
     "app launcher": true,
     "environment": true,
@@ -28,7 +28,7 @@ var headerObj = {
     "calc_api_path": "https://sasa-test-ete-fnc.azurewebsites.net/Calculation('{calcname}/{calcversion}')/Calculate",
     "action":"Form('{formname}/{formversion}')/Submit",
     "action local script" : "test1();",
-    "aaction loading":"Form('{formname}/{formversion}')/Loading",
+    "action loading":"Form('{formname}/{formversion}')/Loading",
     "action loaded":"Form('{formname}/{formversion}')/Loaded",
     "aaction focus":"Form('{formname}/{formversion}')/Focus",
     "action focus local script":"",

@@ -5,7 +5,6 @@ var formObj={
 	"components": [{
 		"type": "panel",
 		"title": "Page 1",
-		"isNew": false,
 		"components": [{
 			"autofocus": false,
 			"input": true,
@@ -68,20 +67,33 @@ var formObj={
 			"properties": {
 				
 			},
-			"custom": "TogFormViewer.showData();",
-			"isNew": false
+			"custom": "TogFormViewer.showData();"
 		}],
 		"input": false,
 		"key": "page1",
 		"clearOnHide": false,
 		"theme": "default",
 		"tableView": false,
-		"hideLabel": true
+		"hideLabel": true,
+		"breadcrumb": "default",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			"action prevPage local script": "testPrevpage2(togFormViewerEvent);",
+			"action nextPage local script": "testNextpage2(togFormViewerEvent);",
+            "action prevPage":"Form('{formname}/{formversion}')/NextPage",
+            "action nextPage":"Form('{formname}/{formversion}')/PrevPage",
+            
+		},
+		"label": "page1"
 	},
 	{
 		"type": "panel",
 		"title": "Page 2",
-		"isNew": false,
 		"components": [{
 			"autofocus": false,
 			"input": true,
@@ -119,8 +131,7 @@ var formObj={
 			"tags": [],
 			"properties": {
 				
-			},
-			"isNew": false
+			}
 		},
 		{
 			"autofocus": false,
@@ -188,6 +199,13 @@ var formObj={
 	"path": "multipage",
 	"project": "599d5201a0434200072250b3",
 	"created": "2018-06-07T11:08:18.351Z",
-	"modified": "2018-06-07T11:08:18.536Z",
-	"machineName": "ewhyjxtmcncdriz:multipage"
+	"modified": "2018-06-22T08:18:34.209Z",
+	"machineName": "ewhyjxtmcncdriz:multipage",
+   "properties": {
+        "action prevPage local script": "testPrevpage1(togFormViewerEvent);",
+        "action nextPage local script": "testNextpage1(togFormViewerEvent);",
+        "action prevPage":"Form('{formname}/{formversion}')/PrevPage",
+        "action nextPage":"Form('{formname}/{formversion}')/NextPage",
+        
+   }    
 };

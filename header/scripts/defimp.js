@@ -78,7 +78,6 @@ function resetAppConfiguration()
         help: true,
         account: true,
         themeSettings: false,
-        themes: "",
         phraseApp: "false",
         phraseAppProjectId: "",
         phraseAppPrefix: "[[__",
@@ -109,6 +108,32 @@ function resetAppConfiguration()
         actionSearchLocalScript: "",
         actionShowDropdown: "",
         actionShowDropdownLocalScript: "",
+        actionClick: "",
+        actionClickLocalScript: "",
+        actionDblClick: "",
+        actionDblClickLocalScript: "",
+        actionMouseOver: "",
+        actionMouseOverLocalScript: "",
+        actionMouseDown: "",
+        actionMouseDownLocalScript: "",
+        actionMouseOut: "",
+        actionMouseOutLocalScript: "",
+        actionMouseUp: "",
+        actionMouseUpLocalScript: "",
+        actionMouseMove: "",
+        actionMouseMoveLocalScript: "",
+        actionKeyPress: "",
+        actionKeyPressLocalScript: "",
+        actionKeyUp: "",
+        actionKeyUpLocalScript: "",
+        actionKeyDown: "",
+        actionKeyDownLocalScript: "",
+        actionPrevPage: "",
+        actionPrevPageLocalScript: "",
+        actionNextPage: "",
+        actionNextPageLocalScript: "",
+        actionComponentError: "",
+        actionComponentErrorLocalScript: "",
         bingMapsKey: "",
         mapWrapperId: "",
         mapRouteInfoWrapperId: "",
@@ -893,6 +918,84 @@ function setupHeaderConfiguration()
     // setup showDropdown action local script
     resolveStringOrBooleanParameter(false,"action showDropdown local script","actionShowDropdownLocalScript",formObj,headerObj,null,true,appConfiguration.actionShowDropdownLocalScript); 
 
+    // setup click action
+    resolveStringOrBooleanParameter(false,"action click","actionClick",formObj,headerObj,null,true,appConfiguration.actionClick); 
+
+    // setup click action local script
+    resolveStringOrBooleanParameter(false,"action click local script","actionClickLocalScript",formObj,headerObj,null,true,appConfiguration.actionClickLocalScript); 
+
+    // setup dblclick action
+    resolveStringOrBooleanParameter(false,"action dblclick","actionDblClick",formObj,headerObj,null,true,appConfiguration.actionDblClick); 
+
+    // setup dblclick action local script
+    resolveStringOrBooleanParameter(false,"action dblclick local script","actionDblClickLocalScript",formObj,headerObj,null,true,appConfiguration.actionDblClickLocalScript); 
+
+    // setup mouseover action
+    resolveStringOrBooleanParameter(false,"action mouseover","actionMouseOver",formObj,headerObj,null,true,appConfiguration.actionMouseOver); 
+
+    // setup mouseover action local script
+    resolveStringOrBooleanParameter(false,"action mouseover local script","actionMouseOverLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseOverLocalScript); 
+
+    // setup mousedown action
+    resolveStringOrBooleanParameter(false,"action mousedown","actionMouseDown",formObj,headerObj,null,true,appConfiguration.actionMouseDown); 
+
+    // setup mousedown action local script
+    resolveStringOrBooleanParameter(false,"action mousedown local script","actionMouseDownLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseDownLocalScript); 
+
+    // setup mouseout action
+    resolveStringOrBooleanParameter(false,"action mouseout","actionMouseOut",formObj,headerObj,null,true,appConfiguration.actionMouseOut); 
+
+    // setup mouseout action local script
+    resolveStringOrBooleanParameter(false,"action mouseout local script","actionMouseOutLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseOutLocalScript); 
+
+    // setup mouseup action
+    resolveStringOrBooleanParameter(false,"action mouseup","actionMouseUp",formObj,headerObj,null,true,appConfiguration.actionMouseUp); 
+
+    // setup mouseup action local script
+    resolveStringOrBooleanParameter(false,"action mouseup local script","actionMouseUpLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseUpLocalScript); 
+
+    // setup mousemove action
+    resolveStringOrBooleanParameter(false,"action mousemove","actionMouseMove",formObj,headerObj,null,true,appConfiguration.actionMouseMove); 
+
+    // setup mousemove action local script
+    resolveStringOrBooleanParameter(false,"action mousemove local script","actionMouseMoveLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseMoveLocalScript); 
+
+    // setup keypress action
+    resolveStringOrBooleanParameter(false,"action keypress","actionKeyPress",formObj,headerObj,null,true,appConfiguration.actionKeyPress); 
+
+    // setup keypress action local script
+    resolveStringOrBooleanParameter(false,"action keypress local script","actionKeyPressLocalScript",formObj,headerObj,null,true,appConfiguration.actionKeyPressLocalScript); 
+
+    // setup keyup action
+    resolveStringOrBooleanParameter(false,"action keyup","actionKeyUp",formObj,headerObj,null,true,appConfiguration.actionKeyUp); 
+
+    // setup keyup action local script
+    resolveStringOrBooleanParameter(false,"action keyup local script","actionKeyUpLocalScript",formObj,headerObj,null,true,appConfiguration.actionKeyUpLocalScript); 
+
+    // setup keydown action
+    resolveStringOrBooleanParameter(false,"action keydown","actionKeyDown",formObj,headerObj,null,true,appConfiguration.actionKeyDown); 
+
+    // setup keydown action local script
+    resolveStringOrBooleanParameter(false,"action keydown local script","actionKeyDownLocalScript",formObj,headerObj,null,true,appConfiguration.actionKeyDownLocalScript); 
+
+    // setup prevPage action
+    resolveStringOrBooleanParameter(false,"action prevPage","actionPrevPage",formObj,headerObj,null,true,appConfiguration.actionPrevPage); 
+
+    // setup prevPage action local script
+    resolveStringOrBooleanParameter(false,"action prevPage local script","actionPrevPageLocalScript",formObj,headerObj,null,true,appConfiguration.actionPrevPageLocalScript); 
+    
+    // setup nextPage action
+    resolveStringOrBooleanParameter(false,"action nextPage","actionNextPage",formObj,headerObj,null,true,appConfiguration.actionNextPage); 
+
+    // setup nextPage action local script
+    resolveStringOrBooleanParameter(false,"action nextPage local script","actionNextPageLocalScript",formObj,headerObj,null,true,appConfiguration.actionNextPageLocalScript); 
+
+    // setup componentError action
+    resolveStringOrBooleanParameter(false,"action componentError","actionComponentError",formObj,headerObj,null,true,appConfiguration.actionComponentError); 
+
+    // setup componentError action local script
+    resolveStringOrBooleanParameter(false,"action componentError local script","actionComponentErrorLocalScript",formObj,headerObj,null,true,appConfiguration.actionComponentErrorLocalScript); 
+
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 
     
@@ -1033,9 +1136,13 @@ function setupHeaderConfiguration()
  */
 function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationParamName,firstObj,secondObj,thirdObj,checkUrlParameter,defaultValue) 
 {
+    var name2print = "actionPrevPageLocalScript";
     var paramVal = defaultValue;
     var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
     
+    if (appConfigurationParamName==name2print) {
+        console.log(name2print+"["+paramName+"]: param from server="+paramValFromRPO);
+    }
     if (paramValFromRPO!=null)
     {
         paramVal = paramValFromRPO;
@@ -1044,6 +1151,10 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
     {
         var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
         var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
+
+        if (appConfigurationParamName==name2print) {
+            console.log(name2print+"["+paramName+"]: param from URL="+paramValFromUrl+", boolvalcorrect="+boolValCorrect);
+        }
         
         if (paramValFromUrl && boolValCorrect)
         {
@@ -1059,14 +1170,23 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
         else if (typeof firstObj !== 'undefined' && firstObj !== null && firstObj.hasOwnProperty("properties") && firstObj.properties !== null && firstObj.properties.hasOwnProperty(paramName))
         {
             paramVal = firstObj.properties[paramName];
+            if (appConfigurationParamName==name2print) {
+                console.log(name2print+"["+paramName+"]: param from firstObj="+paramValFromUrl);
+            }
         }
         else if (typeof secondObj !== 'undefined' && secondObj !== null && secondObj.hasOwnProperty(paramName))
         {
             paramVal  = secondObj[paramName];
+            if (appConfigurationParamName==name2print) {
+                console.log(name2print+"["+paramName+"]: param from secondObj="+paramValFromUrl);
+            }
         }
         else if (typeof thirdObj !== 'undefined' && thirdObj !== null && thirdObj.hasOwnProperty(paramName))
         {
             paramVal  = thirdObj[paramName];
+            if (appConfigurationParamName==name2print) {
+                console.log(name2print+"["+paramName+"]: param from thirdObj="+paramValFromUrl);
+            }
         }
     }
     
@@ -1392,7 +1512,7 @@ function checkForAppSetup()
         {
             loadScript(appConfiguration.customScript, customScriptLoaded);
         } else {
-            customScriptLoaded(true);
+           customScriptLoaded(true);
         }   
     }
     
@@ -1456,19 +1576,19 @@ function checkForAppSetup()
     console.log("cslf="+customScriptLoadedFlag+",appobj"+(typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"]))+",formobj="+(typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"]))));
     if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"]))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.themes)))
 		&& (typeof userLangsObj !== 'undefined' && userLangsObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["userlangs"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["userlangs"]))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["userlangs"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.userlangs)))
         && (typeof timeZonesArr !== 'undefined' && timeZonesArr != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["timezones"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"]))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.timezones)))
         && (customScriptLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"]))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.customScript)))
         && (typeof menusObj !== 'undefined' && menusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["menus"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["menus"]))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["menus"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.menus)))
         && (typeof langTopMenusObj !== 'undefined' && langTopMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenustop"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenustop"]))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenustop"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenustop)))
         && (typeof langBottomMenusObj !== 'undefined' && langBottomMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenusbottom"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenusbottom"])))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenusbottom"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenusbottom))))
     {        
         if (document.readyState === 'complete')
         {
@@ -1754,13 +1874,13 @@ function executeLoadingOrLoadedScript(isLoadingScript)
     if (formObj.hasOwnProperty("properties") && formObj.properties!=null && formObj.properties.hasOwnProperty(propertyName))
     {
         var lScript = formObj.properties[propertyName];
-        executeScript(lname,lScript);
+        executeScript(lname,lScript,true);
     }    
 }
 
-function executeScript(scriptName,script,togFormViewerEvent) {
+function executeScript(scriptName,script,togFormViewerEvent,log2console) {
     try {
-        console.log("Executing "+scriptName+" script:"+script);
+        if (log2console) console.log("Executing "+scriptName+" script:"+script);
         eval(script);
     } catch (err) {
         var msg = "Error occurred when executing "+scriptName+" script:\n\n"+script;
@@ -1863,7 +1983,7 @@ function handlePlaceholders(placeholderStr,event) {
  */
 function performLoadingCallback(url,cnt,event)
 {
-    var event = {"type":"Loading","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
+    var event = {"type":"Loading","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : null),"controlType":"form","value":null};
 
     // Replace placeholders in relative path with available settings
     url = handlePlaceholders(url,event);
@@ -2802,7 +2922,7 @@ var TogFormViewer =
     executeCustomAction: function(url)
     {
         appFormDataObj = formioForm.submission.data;
-        var myevent = {"type":"customAction","controlId":"","controlType":"button","value":""};            
+        var myevent = {"type":"customAction","controlId":null,"controlType":"button","value":null};            
         performEventOrCustomAction(url,myevent);
     }
        

@@ -40,7 +40,7 @@ var formObj = {
         "tags": [],
         "properties": {
             "action change":"",
-            "action change local script":""
+            "aaction change local script":""
         }
     },
     {
@@ -65,7 +65,7 @@ var formObj = {
 			"step": "any",
 			"integer": "",
 			"multiple": "",
-			"custom": ""
+			"custom": "valid = (input>=1 && input<=100) ? true : 'Must be between 1 and 100'"
 		},
 		"type": "number",
 		"labelPosition": "top",
@@ -76,8 +76,27 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-            "action change local script":"testChange2(togFormViewerEvent);",
-            "action change":""
+            "action focus local script":"testFocus2(togFormViewerEvent);",
+            "action blur local script":"testBlur2(togFormViewerEvent);",			
+            "action change":"",
+            "action click local script":"testClick2(togFormViewerEvent);",
+            "action dblclick local script":"testDblClick2(togFormViewerEvent);",
+            "action mouseover local script":"testMouseover2(togFormViewerEvent);",
+            "action mousedown local script":"testMousedown2(togFormViewerEvent);",
+            "action mouseout local script":"testMouseout2(togFormViewerEvent);",
+            "action mouseup local script":"testMouseup2(togFormViewerEvent);",
+            "action mousemove local script":"testMousemove2(togFormViewerEvent);",
+            "action keypress local script":"testKeypress2(togFormViewerEvent);",
+            "action keyup local script":"testKeyup2(togFormViewerEvent);",
+            "action keydown local script":"testKeydown2(togFormViewerEvent);",
+            "action componentError local script": "testComponenterror2(togFormViewerEvent);",
+            "aaction keyup":"Form('{formname}/{formversion}')/KeyUp",
+            "aaction keydown":"Form('{formname}/{formversion}')/KeyDown",
+            "aaction keypress":"Form('{formname}/{formversion}')/KeyPress",
+            "aaction componentError":"Form('{formname}/{formversion}')/ComponentError",
+            "aaction mousemove":"Form('{formname}/{formversion}')/MouseMove",
+            "aaction mouseout":"Form('{formname}/{formversion}')/MouseOut",
+            "aaction mouseover":"Form('{formname}/{formversion}')/MouseOver",
 		},
 		"lockKey": true
 	},
@@ -103,7 +122,7 @@ var formObj = {
 			"step": "any",
 			"integer": "",
 			"multiple": "",
-			"custom": ""
+			"custom": "valid = (input>=1 && input<=10) ? true : 'Must be between 1 and 10'"
 		},
 		"type": "number",
 		"labelPosition": "top",
@@ -114,9 +133,7 @@ var formObj = {
 			"eq": ""
 		},
 		"properties": {
-    "action focus local script":"testFocus2(togFormViewerEvent);",
-    "action blur local script":"testBlur2(togFormViewerEvent);",			
-    "action change local script":"testChange2(togFormViewerEvent);",			
+            "action change local script":"testChange2(togFormViewerEvent);",			
 		},
 		"lockKey": true,
 		"isNew": false
@@ -537,12 +554,26 @@ var formObj = {
     "action":"Form('{formname}/{formversion}')/Subtraction",
    "properties": {
     "customScript": "../custscripts/custom.js",
-    "action local script":"test3(togFormViewerEvent);",
+    "aaction local script":"test3(togFormViewerEvent);",
     "action change local script":"testChange1(togFormViewerEvent);",
-    "action focus local script":"testFocus1(togFormViewerEvent);",
-    "action blur local script":"testBlur1(togFormViewerEvent);",
-    "action search local script":"testSearch1(togFormViewerEvent);",
-    "action showDropdown local script":"testShowDropdown1(togFormViewerEvent);",
+    "aaction focus local script":"testFocus1(togFormViewerEvent);",
+    "aaction blur local script":"testBlur1(togFormViewerEvent);",
+    "aaction search local script":"testSearch1(togFormViewerEvent);",
+    "aaction showDropdown local script":"testShowDropdown1(togFormViewerEvent);",
+    "aaction click local script":"testClick1(togFormViewerEvent);",
+    "aaction dblclick local script":"testDblClick1(togFormViewerEvent);",
+    "aaction mouseover local script":"testMouseover1(togFormViewerEvent);",
+    "aaction mousedown local script":"testMousedown1(togFormViewerEvent);",
+    "aaction mouseout local script":"testMouseout1(togFormViewerEvent);",
+    "aaction mouseup local script":"testMouseup1(togFormViewerEvent);",
+    "aaction mousemove local script":"testMousemove1(togFormViewerEvent);",
+    "aaction keypress local script":"testKeypress1(togFormViewerEvent);",
+    "aaction keyup local script":"testKeyup1(togFormViewerEvent);",
+    "aaction keydown local script":"testKeydown1(togFormViewerEvent);",
+    "action prevPage local script": "testPrevpage1(togFormViewerEvent);",
+    "action nextPage local script": "testNextpage1(togFormViewerEvent);",
+    "action componentError local script": "testComponenterror1(togFormViewerEvent);",
+    "aaction click":"Form('{formname}/{formversion}')/Click",
     "formtitle": "Calculate 2 numbers",
     "formhelp": "<p>Ovdje se nalazi usporedna analiza ponuda za kasko osiguranje prema parametrima kao &scaron;to su iznos financiranja, valuta i vrsta leasinga.<br />\n<br />\nUspoređena su osiguravajuća dru&scaron;tva Uniqa osiguranje i Wiener osiguranje VIG i iskazane su premije osiguranja.<br />\n<br />\nUkoliko želite tiskani primjerak ponude, možete ga dobiti pritiskom na.</p>\n",
     "elearninglink": "https://en.wikipedia.org/wiki/Operation_(mathematics)",

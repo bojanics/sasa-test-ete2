@@ -148,6 +148,14 @@ function resetAppConfiguration()
         actionResizeLocalScript: "",
         actionSelect: "",
         actionSelectLocalScript: "",
+        actionCut: "",
+        actionCutLocalScript: "",
+        actionCopy: "",
+        actionCopyLocalScript: "",
+        actionPaste: "",
+        actionPasteLocalScript: "",
+        actionScroll: "",
+        actionScrollLocalScript: "",
         bingMapsKey: "",
         mapWrapperId: "",
         mapRouteInfoWrapperId: "",
@@ -1051,6 +1059,30 @@ function setupHeaderConfiguration()
 
     // setup wheel local script
     resolveStringOrBooleanParameter(false,"action wheel local script","actionWheelLocalScript",formObj,headerObj,null,true,appConfiguration.actionWheelLocalScript); 
+
+    // setup cut action
+    resolveStringOrBooleanParameter(false,"action cut","actionCut",formObj,headerObj,null,true,appConfiguration.actionCut); 
+
+    // setup cut local script
+    resolveStringOrBooleanParameter(false,"action cut local script","actionCutLocalScript",formObj,headerObj,null,true,appConfiguration.actionCutLocalScript); 
+
+    // setup copy action
+    resolveStringOrBooleanParameter(false,"action copy","actionCopy",formObj,headerObj,null,true,appConfiguration.actionCopy); 
+
+    // setup copy local script
+    resolveStringOrBooleanParameter(false,"action copy local script","actionCopyLocalScript",formObj,headerObj,null,true,appConfiguration.actionCopyLocalScript); 
+
+    // setup paste action
+    resolveStringOrBooleanParameter(false,"action paste","actionPaste",formObj,headerObj,null,true,appConfiguration.actionPaste); 
+
+    // setup paste local script
+    resolveStringOrBooleanParameter(false,"action paste local script","actionPasteLocalScript",formObj,headerObj,null,true,appConfiguration.actionPasteLocalScript); 
+
+    // setup scroll action
+    resolveStringOrBooleanParameter(false,"action scroll","actionScroll",formObj,headerObj,null,true,appConfiguration.actionScroll); 
+
+    // setup scroll local script
+    resolveStringOrBooleanParameter(false,"action scroll local script","actionScrollLocalScript",formObj,headerObj,null,true,appConfiguration.actionScrollLocalScript); 
 
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 

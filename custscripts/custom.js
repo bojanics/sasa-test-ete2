@@ -259,3 +259,43 @@ function testWheel2(togFormViewerEvent)
 console.log('this is a testWheel2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testCut1(togFormViewerEvent)
+{
+console.log('this is a testCut1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testCut2(togFormViewerEvent)
+{
+console.log('this is a testCut2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testCopy1(togFormViewerEvent)
+{
+console.log('this is a testCopy1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testCopy2(togFormViewerEvent)
+{
+console.log('this is a testCopy2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testPaste1(togFormViewerEvent)
+{
+console.log('this is a testPaste1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testPaste2(togFormViewerEvent)
+{
+console.log('this is a testPaste2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testScroll1(togFormViewerEvent)
+{
+console.log('this is a testScroll1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testScroll2(togFormViewerEvent)
+{
+console.log('this is a testScroll2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+

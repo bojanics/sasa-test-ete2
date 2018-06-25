@@ -1706,7 +1706,7 @@ function setUserSettings(userSettingsSetCallback)
             {
                 outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
             },
-            function(userSettingsSetCallback)
+            function()
             {
                 outlookSettingsErrorCallback(userSettingsSetCallback);
             });
@@ -1731,7 +1731,7 @@ function setUserSettings(userSettingsSetCallback)
             {
                 outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
             },
-            function(userSettingsSetCallback)
+            function()
             {
                 outlookSettingsErrorCallback(userSettingsSetCallback);
             });            
@@ -1812,11 +1812,7 @@ function checkUserSettingsLoaded(userSettingsLoadedCallback)
 {
     if ((!appConfiguration.themeSettings || isThemeSettingsLoaded()) && isLanguageSettingsLoaded() && isTimeZoneSettingsLoaded())
     {
-        //if (userSettingsLoadedCallback) {
-            userSettingsLoadedCallback();
-        //} else {
-            //checkForLoadingCallback();
-        //}
+        userSettingsLoadedCallback();
     }
 }
 

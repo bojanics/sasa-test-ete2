@@ -1,6 +1,6 @@
 var headerObj = {
-    "use outlook settings": false,
-    "use user property extensions": false,
+    "use outlook settings": true,
+    "use user property extensions": true,
     "app launcher": true,
     "environment": true,
     "notifications": true,

@@ -420,7 +420,67 @@ function createHooksObj()
             this.addEventListener(input, 'keyup', formKeyUpListener(this));
             this.addEventListener(input, 'input', formInputListener(this));
             this.addEventListener(input, 'select', formSelectListener(this));
+            this.addEventListener(input, 'cut', formCutListener(this));
+            this.addEventListener(input, 'copy', formCopyListener(this));
+            this.addEventListener(input, 'paste', formPasteListener(this));
+            this.addEventListener(input, 'scroll', formScrollListener(this));
+            /*
+            this.addEventListener(input, 'dragstart', formDragStartListener(this));
+            this.addEventListener(input, 'dragenter', formDragEnterListener(this));
+            this.addEventListener(input, 'drag', formDragListener(this));
+            this.addEventListener(input, 'dragend', formDragEndListener(this));
+            this.addEventListener(input, 'dragleave', formDragLeaveListener(this));
+            this.addEventListener(input, 'dragover', formDragOverListener(this));
+            this.addEventListener(input, 'drop', formDropListener(this));
+            */
         }
+    };
+}
+
+function formCutListener(comp)
+{
+    return function(event) {
+        var sel = "";
+        try {
+            sel = window.getSelection().toString();
+        } catch (e) {
+        }
+        var myevent = {"type":"cut","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
+        execEventAction(comp.component,myevent,'action cut','actionCut');
+    };
+}
+function formCopyListener(comp)
+{
+    return function(event) {
+        var sel = "";
+        try {
+            sel = window.getSelection().toString();
+        } catch (e) {
+        }
+        var myevent = {"type":"copy","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
+        execEventAction(comp.component,myevent,'action copy','actionCopy');
+    };
+}
+function formPasteListener(comp)
+{
+    return function(event) {
+        var sel = "";
+        try {
+            var clipboardData = event.clipboardData || window.clipboardData;
+            sel = clipboardData.getData('Text');
+        } catch (e) {
+        }
+        var myevent = {"type":"paste","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
+        execEventAction(comp.component,myevent,'action paste','actionPaste');
+    };
+}
+
+function formScrollListener(comp)
+{
+    return function(event) {
+        var myevent = {"type":"scroll","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
+        printJSON(event,"scroll");
+        execEventAction(comp.component,myevent,'action paste','actionPaste');
     };
 }
 

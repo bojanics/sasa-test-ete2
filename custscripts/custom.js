@@ -239,5 +239,23 @@ function testSelect2(togFormViewerEvent)
 console.log('this is a testSelect2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testContextmenu1(togFormViewerEvent)
+{
+console.log('this is a testContextmenu1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
 
+function testContextmenu2(togFormViewerEvent)
+{
+console.log('this is a testContextmenu2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testWheel1(togFormViewerEvent)
+{
+console.log('this is a testWheel1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testWheel2(togFormViewerEvent)
+{
+console.log('this is a testWheel2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
 

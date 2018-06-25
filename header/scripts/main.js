@@ -225,7 +225,6 @@ function generateForm(formReadyCallback, formRenderedCallback)
                 formioForm.checkConditions();
             }
             
-            printJSON(event,'resize');
             var myevent = {"type":"resize","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
             execEventAction(null,myevent,'action resize','actionResize',false);            
         };
@@ -407,6 +406,8 @@ function createHooksObj()
             
             this.addEventListener(input, 'click', formClickListener(this));
             this.addEventListener(input, 'dblclick', formDblClickListener(this));
+            this.addEventListener(input, 'contextmenu', formContextMenuListener(this));
+            this.addEventListener(input, 'wheel', formWheelListener(this));
             
             this.addEventListener(input, 'mouseover', formMouseOverListener(this));
             this.addEventListener(input, 'mousedown', formMouseDownListener(this));
@@ -418,7 +419,7 @@ function createHooksObj()
             this.addEventListener(input, 'keydown', formKeyDownListener(this));
             this.addEventListener(input, 'keyup', formKeyUpListener(this));
             this.addEventListener(input, 'input', formInputListener(this));
-            this.addEventListener(input, 'select', formSelectListener(this));            
+            this.addEventListener(input, 'select', formSelectListener(this));
         }
     };
 }
@@ -485,6 +486,20 @@ function formDblClickListener(comp)
     return function(event) {
         var myevent = {"type":"dblclick","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
         execEventAction(comp.component,myevent,'action dblclick','actionDblClick');        
+    };
+}
+function formContextMenuListener(comp)
+{
+    return function(event) {
+        var myevent = {"type":"contextmenu","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
+        execEventAction(comp.component,myevent,'action contextMenu','actionContextMenu');        
+    };
+}
+function formWheelListener(comp)
+{
+    return function(event) {
+        var myevent = {"type":"wheel","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
+        execEventAction(comp.component,myevent,'action wheel','actionWheel',true);
     };
 }
 

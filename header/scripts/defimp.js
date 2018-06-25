@@ -112,6 +112,10 @@ function resetAppConfiguration()
         actionClickLocalScript: "",
         actionDblClick: "",
         actionDblClickLocalScript: "",
+        actionContextMenu: "",
+        actionContextMenuLocalScript: "",
+        actionWheel: "",
+        actionWheelLocalScript: "",
         actionMouseOver: "",
         actionMouseOverLocalScript: "",
         actionMouseDown: "",
@@ -1035,6 +1039,18 @@ function setupHeaderConfiguration()
 
     // setup select local script
     resolveStringOrBooleanParameter(false,"action select local script","actionSelectLocalScript",formObj,headerObj,null,true,appConfiguration.actionSelectLocalScript); 
+
+    // setup contextMenu action
+    resolveStringOrBooleanParameter(false,"action contextMenu","actionContextMenu",formObj,headerObj,null,true,appConfiguration.actionContextMenu); 
+
+    // setup contextMenu local script
+    resolveStringOrBooleanParameter(false,"action contextMenu local script","actionContextMenuLocalScript",formObj,headerObj,null,true,appConfiguration.actionContextMenuLocalScript); 
+
+    // setup wheel action
+    resolveStringOrBooleanParameter(false,"action wheel","actionWheel",formObj,headerObj,null,true,appConfiguration.actionWheel); 
+
+    // setup wheel local script
+    resolveStringOrBooleanParameter(false,"action wheel local script","actionWheelLocalScript",formObj,headerObj,null,true,appConfiguration.actionWheelLocalScript); 
 
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 

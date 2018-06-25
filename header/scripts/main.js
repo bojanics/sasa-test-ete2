@@ -203,7 +203,7 @@ function generateForm(formReadyCallback, formRenderedCallback)
         }
         
         // Trigger form change event (execution of conditional scripts) when the window gets resized
-        window.onresize = function()
+        window.onresize = function(event)
         {
             if (appConfiguration.toggleMenu)
             {
@@ -224,6 +224,10 @@ function generateForm(formReadyCallback, formRenderedCallback)
             {
                 formioForm.checkConditions();
             }
+            
+            printJSON(event,'resize');
+            var myevent = {"type":"resize","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
+            execEventAction(null,myevent,'action resize','actionResize',false);            
         };
         
         window.onbeforeprint=function(event){
@@ -414,10 +418,23 @@ function createHooksObj()
             this.addEventListener(input, 'keydown', formKeyDownListener(this));
             this.addEventListener(input, 'keyup', formKeyUpListener(this));
             this.addEventListener(input, 'input', formInputListener(this));
+            this.addEventListener(input, 'select', formSelectListener(this));            
         }
     };
 }
 
+function formSelectListener(comp)
+{
+    return function(event) {
+        var sel = "";
+        try {
+            sel = window.getSelection().toString();
+        } catch (e) {
+        }
+        var myevent = {"type":"select","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
+        execEventAction(comp.component,myevent,'action select','actionSelect');
+    };
+}
 function formMouseOutListener(comp)
 {
     return function(event) {

@@ -140,6 +140,10 @@ function resetAppConfiguration()
         actionBeforePrintLocalScript: "",
         actionAfterPrint: "",
         actionAfterPrintLocalScript: "",
+        actionResize: "",
+        actionResizeLocalScript: "",
+        actionSelect: "",
+        actionSelectLocalScript: "",
         bingMapsKey: "",
         mapWrapperId: "",
         mapRouteInfoWrapperId: "",
@@ -1019,6 +1023,18 @@ function setupHeaderConfiguration()
 
     // setup afterPrint local script
     resolveStringOrBooleanParameter(false,"action afterPrint local script","actionAfterPrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionAfterPrintLocalScript); 
+
+    // setup resize action
+    resolveStringOrBooleanParameter(false,"action resize","actionResize",formObj,headerObj,null,true,appConfiguration.actionResize); 
+
+    // setup resize local script
+    resolveStringOrBooleanParameter(false,"action resize local script","actionResizeLocalScript",formObj,headerObj,null,true,appConfiguration.actionResizeLocalScript); 
+
+    // setup select action
+    resolveStringOrBooleanParameter(false,"action select","actionSelect",formObj,headerObj,null,true,appConfiguration.actionSelect); 
+
+    // setup select local script
+    resolveStringOrBooleanParameter(false,"action select local script","actionSelectLocalScript",formObj,headerObj,null,true,appConfiguration.actionSelectLocalScript); 
 
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 

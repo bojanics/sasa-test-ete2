@@ -219,7 +219,25 @@ function testAfterprint2(togFormViewerEvent)
 console.log('this is a testAfterprint2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testResize1(togFormViewerEvent)
+{
+console.log('this is a testResize1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
 
+function testResize2(togFormViewerEvent)
+{
+console.log('this is a testResize2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testSelect1(togFormViewerEvent)
+{
+console.log('this is a testSelect1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testSelect2(togFormViewerEvent)
+{
+console.log('this is a testSelect2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
 
 
 

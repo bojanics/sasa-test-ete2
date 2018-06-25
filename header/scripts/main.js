@@ -128,7 +128,7 @@ function checkForLoadedAction()
  */
 function performLoadedAction(url,event)
 {
-    var event = {"type":"Loaded","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":""};
+    var event = {"type":"Loaded","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
 
     // Replace placeholders in relative path with available settings
     url = handlePlaceholders(url,event);
@@ -226,6 +226,15 @@ function generateForm(formReadyCallback, formRenderedCallback)
             }
         };
         
+        window.onbeforeprint=function(event){
+            var myevent = {"type":"beforeprint","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
+            execEventAction(null,myevent,'action beforePrint','actionBeforePrint',false);
+        };
+        window.onafterprint=function(event){
+            var myevent = {"type":"afterprint","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
+            execEventAction(null,myevent,'action afterPrint','actionAfterPrint',false);
+        };
+        
         form.ready.then(function()
         {
            // Executing loaded script when the form is ready
@@ -272,7 +281,7 @@ function generateForm(formReadyCallback, formRenderedCallback)
             formRenderedCallback();
             console.log('form is rendered');	    
         });
-
+        
         form.on('componentError', function(event)
         {
             console.log("COMPONENT ERROR for "+JSON.stringify(event));
@@ -308,7 +317,7 @@ function execEventAction(component,myevent,propName,configName,log2console) {
     var actionPerformed = false;
     if (ADAL && appConfiguration.home) {
         var action = appConfiguration[configName];
-        if (component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName)) {
+        if (component && component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName)) {
             action = component.properties[propName];
             if (log2console) console.log(myevent.controlType+' action for '+myevent.controlId+' = '+action);
         }
@@ -323,7 +332,7 @@ function execEventAction(component,myevent,propName,configName,log2console) {
     if (!actionPerformed) {
         var actionLocalScript = appConfiguration[configName+'LocalScript'];
         if (log2console) console.log(configName+'LocalSript default = '+actionLocalScript);
-        if (component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName+' local script')) {
+        if (component && component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName+' local script')) {
             actionLocalScript = component.properties[propName+' local script'];
             if (log2console) console.log(myevent.controlType+' (local) action for '+myevent.controlId+' = '+actionLocalScript);
         }
@@ -404,11 +413,10 @@ function createHooksObj()
             this.addEventListener(input, 'keypress', formKeyPressListener(this));
             this.addEventListener(input, 'keydown', formKeyDownListener(this));
             this.addEventListener(input, 'keyup', formKeyUpListener(this));
-            
+            this.addEventListener(input, 'input', formInputListener(this));
         }
     };
 }
-
 
 function formMouseOutListener(comp)
 {
@@ -486,6 +494,13 @@ function formKeyUpListener(comp)
     return function(event) {
         var myevent = {"type":"keyup","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createKeyEventJSON(event)};
         execEventAction(comp.component,myevent,'action keyup','actionKeyUp');
+    };
+}
+function formInputListener(comp)
+{
+    return function(event) {
+        var myevent = {"type":"input","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":event.data};
+        execEventAction(comp.component,myevent,'action input','actionInput');        
     };
 }
 
@@ -717,7 +732,7 @@ function setupLayout()
             var screenshot = ''; 
         }
         
-        var myevent = {"type":"feedback","controlId":null,"controlType":null,"value":null};
+        var myevent = {"type":"feedback","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
         
         var feedbackuser = currentUser.uid; 
         var payload = 

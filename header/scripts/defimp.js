@@ -128,12 +128,18 @@ function resetAppConfiguration()
         actionKeyUpLocalScript: "",
         actionKeyDown: "",
         actionKeyDownLocalScript: "",
+        actionInput: "",
+        actionInputLocalScript: "",
         actionPrevPage: "",
         actionPrevPageLocalScript: "",
         actionNextPage: "",
         actionNextPageLocalScript: "",
         actionComponentError: "",
         actionComponentErrorLocalScript: "",
+        actionBeforePrint: "",
+        actionBeforePrintLocalScript: "",
+        actionAfterPrint: "",
+        actionAfterPrintLocalScript: "",
         bingMapsKey: "",
         mapWrapperId: "",
         mapRouteInfoWrapperId: "",
@@ -978,6 +984,12 @@ function setupHeaderConfiguration()
     // setup keydown action local script
     resolveStringOrBooleanParameter(false,"action keydown local script","actionKeyDownLocalScript",formObj,headerObj,null,true,appConfiguration.actionKeyDownLocalScript); 
 
+    // setup input action
+    resolveStringOrBooleanParameter(false,"action input","actionInput",formObj,headerObj,null,true,appConfiguration.actionInput); 
+
+    // setup input action local script
+    resolveStringOrBooleanParameter(false,"action input local script","actionInputLocalScript",formObj,headerObj,null,true,appConfiguration.actionInputLocalScript); 
+
     // setup prevPage action
     resolveStringOrBooleanParameter(false,"action prevPage","actionPrevPage",formObj,headerObj,null,true,appConfiguration.actionPrevPage); 
 
@@ -995,6 +1007,18 @@ function setupHeaderConfiguration()
 
     // setup componentError action local script
     resolveStringOrBooleanParameter(false,"action componentError local script","actionComponentErrorLocalScript",formObj,headerObj,null,true,appConfiguration.actionComponentErrorLocalScript); 
+
+    // setup beforePrint action
+    resolveStringOrBooleanParameter(false,"action beforePrint","actionBeforePrint",formObj,headerObj,null,true,appConfiguration.actionBeforePrint); 
+
+    // setup beforePrint local script
+    resolveStringOrBooleanParameter(false,"action beforePrint local script","actionBeforePrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionBeforePrintLocalScript); 
+
+    // setup afterPrint action
+    resolveStringOrBooleanParameter(false,"action afterPrint","actionAfterPrint",formObj,headerObj,null,true,appConfiguration.actionAfterPrint); 
+
+    // setup afterPrint local script
+    resolveStringOrBooleanParameter(false,"action afterPrint local script","actionAfterPrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionAfterPrintLocalScript); 
 
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 
@@ -1136,7 +1160,7 @@ function setupHeaderConfiguration()
  */
 function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationParamName,firstObj,secondObj,thirdObj,checkUrlParameter,defaultValue) 
 {
-    var name2print = "actionPrevPageLocalScript";
+    var name2print = "actionBeforePrintLocalScript";
     var paramVal = defaultValue;
     var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
     
@@ -1669,7 +1693,16 @@ function setUserSettings(userSettingsSetCallback)
             }
             
             // Find out user's mailbox settings
-            getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', outlookSettingsSuccessCallback, outlookSettingsErrorCallback);
+            //getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', outlookSettingsSuccessCallback, outlookSettingsErrorCallback);
+            getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
+            function(language, timeZone)
+            {
+                outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
+            },
+            function(userSettingsSetCallback)
+            {
+                outlookSettingsErrorCallback(userSettingsSetCallback);
+            });            
         });
         
         if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
@@ -1747,7 +1780,11 @@ function checkUserSettingsLoaded(userSettingsLoadedCallback)
 {
     if ((!appConfiguration.themeSettings || isThemeSettingsLoaded()) && isLanguageSettingsLoaded() && isTimeZoneSettingsLoaded())
     {
-        userSettingsLoadedCallback();
+        //if (userSettingsLoadedCallback) {
+            userSettingsLoadedCallback();
+        //} else {
+            //checkForLoadingCallback();
+        //}
     }
 }
 

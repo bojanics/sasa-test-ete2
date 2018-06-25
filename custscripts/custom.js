@@ -158,6 +158,16 @@ function testKeydown2(togFormViewerEvent)
 console.log('this is a testKeydown2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testInput1(togFormViewerEvent)
+{
+console.log('this is a testInput1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testInput2(togFormViewerEvent)
+{
+console.log('this is a testInput2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
 function testPrevpage1(togFormViewerEvent)
 {
 console.log('this is a testPrevpage1 funct, myevent='+JSON.stringify(togFormViewerEvent));
@@ -189,7 +199,25 @@ function testComponenterror2(togFormViewerEvent)
 console.log('this is a testComponenterror2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testBeforeprint1(togFormViewerEvent)
+{
+console.log('this is a testBeforeprint1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
 
+function testBeforeprint2(togFormViewerEvent)
+{
+console.log('this is a testBeforeprint2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testAfterprint1(togFormViewerEvent)
+{
+console.log('this is a testAfterprint1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testAfterprint2(togFormViewerEvent)
+{
+console.log('this is a testAfterprint2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
 
 
 

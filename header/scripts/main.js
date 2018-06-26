@@ -414,16 +414,23 @@ function createHooksObj()
             this.addEventListener(input, 'mouseout', formMouseOutListener(this));
             this.addEventListener(input, 'mouseup', formMouseUpListener(this));
             this.addEventListener(input, 'mousemove', formMouseMoveListener(this));
+            this.addEventListener(input, 'mouseenter', formMouseEnterListener(this));
+            this.addEventListener(input, 'mouseleave', formMouseLeaveListener(this));
 
             this.addEventListener(input, 'keypress', formKeyPressListener(this));
             this.addEventListener(input, 'keydown', formKeyDownListener(this));
             this.addEventListener(input, 'keyup', formKeyUpListener(this));
             this.addEventListener(input, 'input', formInputListener(this));
             this.addEventListener(input, 'select', formSelectListener(this));
+            
             this.addEventListener(input, 'cut', formCutListener(this));
             this.addEventListener(input, 'copy', formCopyListener(this));
             this.addEventListener(input, 'paste', formPasteListener(this));
+            
             this.addEventListener(input, 'scroll', formScrollListener(this));
+            
+            //this.addEventListener(input, 'RadioStateChange', formRadioStateChangeListener(this)); // we don't need this - change event is covering it
+            //this.addEventListener(input, 'CheckboxStateChange', formCheckboxStateChangeListener(this)); // we don't need this - change event is covering it
             /*
             this.addEventListener(input, 'dragstart', formDragStartListener(this));
             this.addEventListener(input, 'dragenter', formDragEnterListener(this));
@@ -434,6 +441,24 @@ function createHooksObj()
             this.addEventListener(input, 'drop', formDropListener(this));
             */
         }
+    };
+}
+function formRadioStateChangeListener(comp)
+{
+    return function(event) {
+        console.log('rscccccccccccccccccccccccccccccccccccccccccccccccccc');
+        var myevent = {"type":"RadioStateChange","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
+        printJSON(event,"SCS");
+        execEventAction(comp.component,myevent,'action RadioStateChange','actionRadioStateChange');
+    };
+}
+function formCheckboxStateChangeListener(comp)
+{
+    return function(event) {
+        console.log('cscccccccccccccccccccccccccccccccccccccccccccccccccc');
+        var myevent = {"type":"CheckboxStateChange","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
+        printJSON(event,"CSC");
+        execEventAction(comp.component,myevent,'action CheckboxStateChange','actionCheckboxStateChange');
     };
 }
 
@@ -479,7 +504,6 @@ function formScrollListener(comp)
 {
     return function(event) {
         var myevent = {"type":"scroll","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
-        printJSON(event,"scroll");
         execEventAction(comp.component,myevent,'action paste','actionPaste');
     };
 }
@@ -560,6 +584,22 @@ function formWheelListener(comp)
     return function(event) {
         var myevent = {"type":"wheel","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
         execEventAction(comp.component,myevent,'action wheel','actionWheel',true);
+    };
+}
+
+function formMouseEnterListener(comp)
+{
+    return function(event) {
+        var myevent = {"type":"mouseenter","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
+        execEventAction(comp.component,myevent,'action mouseenter','actionMouseEnter');        
+    };
+}
+
+function formMouseLeaveListener(comp)
+{
+    return function(event) {
+        var myevent = {"type":"mouseleave","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
+        execEventAction(comp.component,myevent,'action mouseleave','actionMouseLeave');        
     };
 }
 

@@ -128,6 +128,26 @@ function testMousemove2(togFormViewerEvent)
 console.log('this is a testMousemove2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testMouseenter1(togFormViewerEvent)
+{
+console.log('this is a testMouseenter1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testMouseenter2(togFormViewerEvent)
+{
+console.log('this is a testMouseenter2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testMouseleave1(togFormViewerEvent)
+{
+console.log('this is a testMouseleave1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testMouseleave2(togFormViewerEvent)
+{
+console.log('this is a testMouseleave2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
 function testKeypress1(togFormViewerEvent)
 {
 console.log('this is a testKeypress1 funct, myevent='+JSON.stringify(togFormViewerEvent));

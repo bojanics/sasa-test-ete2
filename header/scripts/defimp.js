@@ -126,6 +126,10 @@ function resetAppConfiguration()
         actionMouseUpLocalScript: "",
         actionMouseMove: "",
         actionMouseMoveLocalScript: "",
+        actionMouseEnter: "",
+        actionMouseEnterLocalScript: "",
+        actionMouseLeave: "",
+        actionMouseLeaveLocalScript: "",
         actionKeyPress: "",
         actionKeyPressLocalScript: "",
         actionKeyUp: "",
@@ -981,6 +985,18 @@ function setupHeaderConfiguration()
 
     // setup mousemove action local script
     resolveStringOrBooleanParameter(false,"action mousemove local script","actionMouseMoveLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseMoveLocalScript); 
+
+    // setup mouseenter action
+    resolveStringOrBooleanParameter(false,"action mouseenter","actionMouseEnter",formObj,headerObj,null,true,appConfiguration.actionMouseEnter); 
+
+    // setup mouseenter action local script
+    resolveStringOrBooleanParameter(false,"action mouseenter local script","actionMouseEnterLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseEnterLocalScript); 
+
+    // setup mouseleave action
+    resolveStringOrBooleanParameter(false,"action mouseleave","actionMouseLeave",formObj,headerObj,null,true,appConfiguration.actionMouseLeave); 
+
+    // setup mouseleave action local script
+    resolveStringOrBooleanParameter(false,"action mouseleave local script","actionMouseLeaveLocalScript",formObj,headerObj,null,true,appConfiguration.actionMouseLeaveLocalScript); 
 
     // setup keypress action
     resolveStringOrBooleanParameter(false,"action keypress","actionKeyPress",formObj,headerObj,null,true,appConfiguration.actionKeyPress); 

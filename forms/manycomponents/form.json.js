@@ -208,8 +208,12 @@ var formObj={
 		"label": "Radio",
 		"key": "radio",
 		"values": [{
-			"value": "",
-			"label": "",
+			"value": "1",
+			"label": "r1",
+			"shortcut": ""
+		},{
+			"value": "2",
+			"label": "r2",
 			"shortcut": ""
 		}],
 		"defaultValue": "",

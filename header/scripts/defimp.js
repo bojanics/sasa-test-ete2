@@ -1040,17 +1040,17 @@ function setupHeaderConfiguration()
     // setup componentError action local script
     resolveStringOrBooleanParameter(false,"action componentError local script","actionComponentErrorLocalScript",formObj,headerObj,null,true,appConfiguration.actionComponentErrorLocalScript); 
 
-    // setup beforePrint action
-    resolveStringOrBooleanParameter(false,"action beforePrint","actionBeforePrint",formObj,headerObj,null,true,appConfiguration.actionBeforePrint); 
+    // setup beforeprint action
+    resolveStringOrBooleanParameter(false,"action beforeprint","actionBeforePrint",formObj,headerObj,null,true,appConfiguration.actionBeforePrint); 
 
-    // setup beforePrint local script
-    resolveStringOrBooleanParameter(false,"action beforePrint local script","actionBeforePrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionBeforePrintLocalScript); 
+    // setup beforeprint local script
+    resolveStringOrBooleanParameter(false,"action beforeprint local script","actionBeforePrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionBeforePrintLocalScript); 
 
-    // setup afterPrint action
-    resolveStringOrBooleanParameter(false,"action afterPrint","actionAfterPrint",formObj,headerObj,null,true,appConfiguration.actionAfterPrint); 
+    // setup afterprint action
+    resolveStringOrBooleanParameter(false,"action afterprint","actionAfterPrint",formObj,headerObj,null,true,appConfiguration.actionAfterPrint); 
 
-    // setup afterPrint local script
-    resolveStringOrBooleanParameter(false,"action afterPrint local script","actionAfterPrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionAfterPrintLocalScript); 
+    // setup afterprint local script
+    resolveStringOrBooleanParameter(false,"action afterprint local script","actionAfterPrintLocalScript",formObj,headerObj,null,true,appConfiguration.actionAfterPrintLocalScript); 
 
     // setup resize action
     resolveStringOrBooleanParameter(false,"action resize","actionResize",formObj,headerObj,null,true,appConfiguration.actionResize); 
@@ -3430,7 +3430,7 @@ function getScript(url) {
     if (!url) return null;
     var scripts = document.getElementsByTagName('script');
     for (var i = scripts.length; i--;) {
-        if (scripts[i].src == url) return scripts[i];
+        if (scripts[i].attributes.src.value === url) return scripts[i];
     }
     return null;
 }

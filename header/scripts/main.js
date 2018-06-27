@@ -231,11 +231,11 @@ function generateForm(formReadyCallback, formRenderedCallback)
         
         window.onbeforeprint=function(event){
             var myevent = {"type":"beforeprint","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
-            execEventAction(null,myevent,'action beforePrint','actionBeforePrint',false);
+            execEventAction(null,myevent,'action beforeprint','actionBeforePrint',false);
         };
         window.onafterprint=function(event){
             var myevent = {"type":"afterprint","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
-            execEventAction(null,myevent,'action afterPrint','actionAfterPrint',false);
+            execEventAction(null,myevent,'action afterprint','actionAfterPrint',false);
         };
         
         form.ready.then(function()

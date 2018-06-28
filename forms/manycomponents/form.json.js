@@ -108,6 +108,48 @@ var formObj={
 		"autofocus": false,
 		"input": true,
 		"tableView": true,
+		"label": "Select predefined",
+		"key": "selectpredefined",
+		"placeholder": "",
+		"data": {
+			"values": [],
+			"json": "",
+			"url": "",
+			"resource": "",
+			"custom": ""
+		},
+		"dataSrc": "values",
+		"valueProperty": "",
+		"defaultValue": "outPatient",
+		"refreshOn": "",
+		"filter": "",
+		"authenticate": false,
+		"template": "<span>{{ item.label }}</span>",
+		"multiple": false,
+		"protected": false,
+		"unique": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false
+		},
+		"type": "select",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+            "action search local script":"testSearch2(togFormViewerEvent);",
+		}
+	},        
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
 		"label": "Text Area",
 		"key": "textArea",
 		"placeholder": "",
@@ -260,8 +302,8 @@ var formObj={
 			"maxMode": "year",
 			"yearRows": 4,
 			"yearColumns": 5,
-			"minDate": null,
-			"maxDate": null,
+			"minDate": "moment()",
+			"maxDate": "moment().add(3,'days')",
 			"datepickerMode": "day"
 		},
 		"timePicker": {

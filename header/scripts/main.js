@@ -201,7 +201,7 @@ function generateForm(formReadyCallback, formRenderedCallback)
         {
             $("#toggleMenu").addClass("header-hidden-element");
         }
-        
+
         // Trigger form change event (execution of conditional scripts) when the window gets resized
         window.onresize = function(event)
         {
@@ -399,6 +399,7 @@ function createHooksObj()
         input: function(input)
         {
             this.addEventListener(input, 'focus', formFocusListener(this));
+
             this.addEventListener(input, 'blur', formBlurListener(this));
            
             this.addEventListener(input, 'search', formSearchListener(this));            
@@ -561,10 +562,40 @@ function formClickListener(comp)
 {
     return function(event) {
         //console.log('c='+JSON.stringify(comp.component));
+        printJWTInfo();
         var myevent = {"type":"click","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
         execEventAction(comp.component,myevent,'action click','actionClick');        
     };
 }
+
+function printJWTInfo() {
+    var IDToken = {};
+    if (ADAL!=null) {
+        try {
+            var encodedIdToken = ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN);
+            var decodedToken = ADAL._decodeJwt(encodedIdToken);
+            if (decodedToken) {
+                    var base64DecodedHeader = ADAL._base64DecodeStringUrlSafe(decodedToken.header);
+                    if (base64DecodedHeader) {
+                        IDToken.header=JSON.parse(base64DecodedHeader);
+                    }
+                    var base64DecodedJWSPayload = ADAL._base64DecodeStringUrlSafe(decodedToken.JWSPayload);
+                    if (base64DecodedJWSPayload) {
+                        IDToken.payload=JSON.parse(base64DecodedJWSPayload);
+                    }
+                    var base64DecodedJWSSignature = ADAL._base64DecodeStringUrlSafe(decodedToken.JWSSig);
+                    if (base64DecodedJWSSignature) {
+                        IDToken.signature=JSON.parse(base64DecodedJWSSignature);
+                    }
+            }
+        } catch (err) {
+            console.log('The id_token could not be decoded', err);
+        }
+    }
+    console.log("IDT="+JSON.stringify(IDToken));
+    return IDToken;
+}
+
 function formDblClickListener(comp)
 {
     return function(event) {

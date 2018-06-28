@@ -26,7 +26,7 @@ var formObj={
 			"minLength": "",
 			"maxLength": "",
 			"pattern": "",
-			"custom": "",
+			"custom": "valid = (input===3) ? true : 'Must be 3'",
 			"customPrivate": false
 		},
 		"conditional": {
@@ -256,8 +256,8 @@ var formObj={
 			"maxMode": "year",
 			"yearRows": 4,
 			"yearColumns": 5,
-			"minDate": null,
-			"maxDate": null,
+			"minDate": "moment()",
+			"maxDate": "moment().add(3,'days')",
 			"datepickerMode": "day"
 		},
 		"timePicker": {
@@ -480,6 +480,6 @@ var formObj={
 	"path": "manycontrols",
 	"project": "599d5201a0434200072250b3",
 	"created": "2018-06-07T07:14:02.854Z",
-	"modified": "2018-06-07T08:35:34.836Z",
+	"modified": "2018-06-28T08:36:32.801Z",
 	"machineName": "ewhyjxtmcncdriz:manycontrols"
 };

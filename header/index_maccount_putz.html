@@ -28,7 +28,7 @@
     <div>
         <div id="labelMA">MSA demo</div>
         <button id="authMA" onclick="loginMA()">Login</button>
-        <button id="callApiButtonMA" class="hidden" onclick="callApiMA()">Call Web API</button>
+        <button id="callApiButtonMA" class="hidden" onclick="callApiMA()">Call Web API</button>        <button id="callGraphButtonMA" class="hidden" onclick="callGraphMA()">Call Graph API</button>
     </div>
     <p/>
     <div>Log:</div>
@@ -38,8 +38,8 @@
 
         var applicationConfig = {                       
             clientIDMA: '01d3f7c3-8755-4d49-b2c6-399158d16fd6"', // Application Id of the registered application in the B2C directory (same as for the function)                        
-            webApiMA: 'https://sasa-test-forlc.azurewebsites.net/api/Add2Numbers',            
-            appUrlMA1: 'https://sasa-test-msal.azurewebsites.net/index_maccount_putz.html',                        appUrlMA: 'https://sasa-test-forlc.azurewebsites.net'
+            webApiMA: 'https://sasa-test-forlc.azurewebsites.net/api/Add2Numbers',                                    graphApiMA: 'https://graph.microsoft.com/beta/me',            
+            appUrlMA: 'https://sasa-test-forlc.azurewebsites.net'
         };
         
     </script>
@@ -75,7 +75,7 @@
 
             var callWebApiButton = document.getElementById('callApiButtonMA');
             callWebApiButton.setAttribute('class', 'visible');            
-        }
+            var callGraphApiButton = document.getElementById('callGraphButtonMA');            callGraphApiButton.setAttribute('class', 'visible');                    }
 
         function updateUIMA_logout() {                        
             var authButton = document.getElementById('authMA');
@@ -95,15 +95,15 @@
             callApiWithZumoTokenMA(clientMA.currentUser.mobileServiceAuthenticationToken);
            
         }            
-
+        function callGraphMA() {            logMessage("token: " + clientMA.currentUser.mobileServiceAuthenticationToken);            callGraphWithZumoTokenMA(clientMA.currentUser.mobileServiceAuthenticationToken);                   }            
         function callApiWithZumoTokenMA(accessToken) {
             // Call the Web API with the AccessToken
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: applicationConfig.webApiMA,
                 headers: {                    
                     'X-ZUMO-AUTH': accessToken                                        
-                },
+                },               data: '{"data":{"a":11,"b":33}}',               contentType: "application/json",
             }).done(function (data) {
                 logMessage("Web APi returned:\n" + JSON.stringify(data));
             })
@@ -111,7 +111,7 @@
                     logMessage("Error calling the Web api:\n" + textStatus);
                 })
         }
-       
+               function callGraphWithZumoTokenMA(accessToken) {            // Call the Web API with the AccessToken            $.ajax({                type: "GET",                url: applicationConfig.graphApiMA,                headers: {                                        'Authentication': 'Bearer '+accessToken                                                        },            }).done(function (data) {                logMessage("Graph APi returned:\n" + JSON.stringify(data));            })                .fail(function (jqXHR, textStatus) {                    logMessage("Error calling the graph api:\n" + textStatus);                })        }
 
         function loggerCallback(logLevel, message, piiLoggingEnabled) {
                 console.log(message);

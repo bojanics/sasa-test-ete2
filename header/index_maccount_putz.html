@@ -1,0 +1,132 @@
+<html>
+<head>
+    <title>Calling a Web API as a user authenticated with Msal.js app</title>
+    <style>
+        .hidden {
+            visibility: hidden
+        }
+
+        .visible {
+            visibility: visible
+        }
+
+        .response {
+            border: solid;
+            border-width: thin;
+            background-color: azure;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- bluebird only needed if this page needs to run on Internet Explorer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js" class="pre"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" class="pre"></script>
+    <script src="//zumo.blob.core.windows.net/sdk/azure-mobile-apps-client.min.js"></script>    
+
+    <h2>Microsoft Account demo</h2>    
+    <div>
+        <div id="labelMA">MSA demo</div>
+        <button id="authMA" onclick="loginMA()">Login</button>
+        <button id="callApiButtonMA" class="hidden" onclick="callApiMA()">Call Web API</button>
+    </div>
+    <p/>
+    <div>Log:</div>
+    <pre class="response"></pre>
+<hr/>
+    <script class="pre">
+
+        var applicationConfig = {                       
+            clientIDMA: '01d3f7c3-8755-4d49-b2c6-399158d16fd6"', // Application Id of the registered application in the B2C directory (same as for the function)                        
+            webApiMA: 'https://sasa-test-forlc.azurewebsites.net/api/Add2Numbers',            
+            appUrlMA1: 'https://sasa-test-msal.azurewebsites.net/index_maccount_putz.html',                        appUrlMA: 'https://sasa-test-forlc.azurewebsites.net'
+        };
+        
+    </script>
+
+    <script>
+        "use strict";        
+
+        var clientMA = new WindowsAzure.MobileServiceClient(applicationConfig.appUrlMA);
+    
+
+        function loginMA() {
+            var options = {
+                    parameters: {
+                        resource: 'https://graph.microsoft.com'
+                    }
+                };
+
+            clientMA.login('microsoftaccount').done(function(results) {
+                
+                logMessage("logged in: " + JSON.stringify(results));
+                updateUIMA();
+            });         
+        }
+
+        function updateUIMA() {            
+            var userName = clientMA.currentUser.userId;
+            logMessage("User '" + userName + "' logged-in");
+            var authButton = document.getElementById('authMA');
+            authButton.innerHTML = 'logout';
+            authButton.setAttribute('onclick', 'logout();');
+            var label = document.getElementById('labelMA');
+            label.innerText = "Hello " + userName;
+
+            var callWebApiButton = document.getElementById('callApiButtonMA');
+            callWebApiButton.setAttribute('class', 'visible');            
+        }
+
+        function updateUIMA_logout() {                        
+            var authButton = document.getElementById('authMA');
+            authButton.innerHTML = 'login';
+            authButton.setAttribute('onclick', 'loginMA();');
+            var label = document.getElementById('labelMA');
+            label.innerText = "MSA demo ";
+
+            var callWebApiButton = document.getElementById('callApiButtonMA');
+            callWebApiButton.setAttribute('class', 'hidden');            
+        }
+
+        function callApiMA() {
+
+            logMessage("token: " + clientMA.currentUser.mobileServiceAuthenticationToken);
+
+            callApiWithZumoTokenMA(clientMA.currentUser.mobileServiceAuthenticationToken);
+           
+        }            
+
+        function callApiWithZumoTokenMA(accessToken) {
+            // Call the Web API with the AccessToken
+            $.ajax({
+                type: "GET",
+                url: applicationConfig.webApiMA,
+                headers: {                    
+                    'X-ZUMO-AUTH': accessToken                                        
+                },
+            }).done(function (data) {
+                logMessage("Web APi returned:\n" + JSON.stringify(data));
+            })
+                .fail(function (jqXHR, textStatus) {
+                    logMessage("Error calling the Web api:\n" + textStatus);
+                })
+        }
+       
+
+        function loggerCallback(logLevel, message, piiLoggingEnabled) {
+                console.log(message);
+            }
+
+        function logout() {
+            // Removes all sessions, need to call AAD endpoint to do full logout
+            clientMA.logout();
+            updateUIMA_logout();
+        }
+
+        function logMessage(s) {
+            document.body.querySelector('.response').appendChild(document.createTextNode('\n' + s));
+        }
+
+    </script>
+</body>
+</html>

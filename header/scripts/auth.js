@@ -36,6 +36,52 @@ var currentUser = {
     personal: false
 };
 
+function _getJWTInfo() {
+    var IDToken = {
+        "header" : null,
+        "payload" : null,
+        "signature" : null
+    };
+    if (ADAL!=null) {
+        try {
+            var encodedIdToken = ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN);
+            var decodedToken = ADAL._decodeJwt(encodedIdToken);
+            if (decodedToken) {
+                try {
+                    var base64DecodedHeader = ADAL._base64DecodeStringUrlSafe(decodedToken.header);
+                    if (base64DecodedHeader) {
+                        IDToken.header=JSON.parse(base64DecodedHeader);
+                    }
+                } catch (e) {
+                    console.log("The id_token's header could not be decoded",e);
+                }
+                try {
+                    var base64DecodedJWSPayload = ADAL._base64DecodeStringUrlSafe(decodedToken.JWSPayload);
+                    if (base64DecodedJWSPayload) {
+                        IDToken.payload=JSON.parse(base64DecodedJWSPayload);
+                    }
+                } catch (e) {
+                    console.log("The id_token's payload could not be decoded",e);
+                }
+                IDToken.signature = decodedToken.JWSSig;
+                /*
+                try {
+                    var base64DecodedJWSSignature = ADAL._base64DecodeStringUrlSafe(decodedToken.JWSSig);
+                    if (base64DecodedJWSSignature) {
+                        IDToken.signature=JSON.parse(base64DecodedJWSSignature);
+                    }
+                } catch (e) {
+                    console.log("The id_token's signature could not be decoded",e);
+                }*/
+            }
+        } catch (err) {
+            console.log("The id_token could not be decoded",err);
+        }
+    }
+    return IDToken;
+}
+
+
 function parseJwt (token) {
    var base64Url = token.split('.')[1];
    var base64 = base64Url.replace('-', '+').replace('_', '/');

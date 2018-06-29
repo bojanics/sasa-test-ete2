@@ -199,7 +199,36 @@ function initAfterADALSetup()
     // set query strings into appFormDataObj
     appFormDataObj = parse_query_string(window.location.search.substring(1));
     
-    beginConfigurationProcess();
+    if (ADAL!=null) {
+        _getopenidconfig();
+    } else {
+        beginConfigurationProcess();
+    }
+}
+
+
+function _getopenidconfig() {
+    console.log('getopenidconfig...');
+    var idt = ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN);
+    var pt = ADAL._extractIdToken(idt);
+    
+    var settings = {
+        "crossDomain": true,
+        "url": pt.iss+".well-known/openid-configuration",
+        "timeout":30000,
+        "method": "GET",        
+    };
+    
+    $.ajax(settings).done(function (data,textStatus,request) {
+        console.log('getopenidconfig call successfully executed, data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
+        TogFormViewer.openidConfiguration = data;
+        //getjwks(data.jwks_uri);
+        beginConfigurationProcess();
+    }).fail(function (err, textStatus, errorThrown) {
+        console.log('getopenidconfig call failed, AJAX REQUEST FAILED:'+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
+        TogFormViewer.openidConfiguration = null;
+        beginConfigurationProcess();
+    });
 }
 
 function beginConfigurationProcess() {
@@ -2903,7 +2932,10 @@ var TogFormViewer =
                     "width" : $(window).width(),
                     "height" : $(window).height()
                 }
-            },            
+            },
+            "IDToken" : _getJWTInfo(),
+            "IDTokenEncoded" : (typeof ADAL=== 'undefined' || ADAL==null ? null : ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN)),
+            "openid-configuration": TogFormViewer.openidConfiguration,
             "appObj" : appObj,
             "headerObj" : headerObj,
             "customizationObj" : customizationObj,

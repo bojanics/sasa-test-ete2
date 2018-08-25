@@ -197,7 +197,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #2B3E50;
@@ -212,11 +212,16 @@
  }
 
 .tabbar {
-    background-color: #2B3E50;
+    background-color: #485563; 
+}
+
+.back-div {
+    background-color: #485563;
+    color: #df691a;
 }
 
 .tabbar-button {
-    color: #fff;
+    color: #ebebeb;
 }
 
 .tab-wrapper {
@@ -229,6 +234,96 @@
 
 .active-tab-bottom {
     color: #df691a;
+}
+
+.side-navigation-wrapper {
+    background-color: #4e5d6c;
+    color: rgb(235, 235, 235);
+    border-color: #4e5d6c #485563 #4e5d6c #4e5d6c;
+    border-right: 1px solid #485563;
+}
+
+.side-navigation-separator-line {
+    background-color: #39444e;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: rgb(235, 235, 235);
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(223, 105, 26);
+    text-shadow: 0 0 4px rgba(223, 105, 26, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: rgb(235, 235, 235);
+}
+
+.nav-wrapper:hover {
+    background-color: #485563;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #485563;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #485563;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #39444e;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #39444e;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #485563;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(223, 105, 26);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #39444e;
+}
+
+.navlinks {
+    color: rgb(235, 235, 235);
+}
+
+.navlinks:hover {
+    color: rgb(235, 235, 235);
+}
+
+.navlinks:focus {
+    color: rgb(235, 235, 235);
+}
+
+.navtitle {
+    color: rgb(235, 235, 235);
+}
+
+.primary-menu-region {
+    background-color: #4e5d6c;
+    color: #ebebeb;
+}
+
+.commandbar-primary-menu-item:hover {
+    color: #ebebeb;
+    background-color: #485563;
+}
+
+.nav-tooltip-list-wrapper {
+    color: #2b3e50;
+}
+
+.nav-tooltip-list-item-img {
+    color: #2b3e50;
 }
 
 /*

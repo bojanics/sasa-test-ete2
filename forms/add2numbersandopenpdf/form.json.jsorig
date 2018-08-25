@@ -1,0 +1,206 @@
+var formObj={
+	"type": "form",
+	"tags": [],
+	"owner": "599d5130a0434200072250ab",
+	"components": [{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "text",
+		"inputMask": "",
+		"label": "API for adding 2 numbers",
+		"key": "add2numbersAPI",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"multiple": false,
+		"defaultValue": "",
+		"protected": false,
+		"unique": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"spellcheck": true,
+		"validate": {
+			"required": false,
+			"minLength": "",
+			"maxLength": "",
+			"pattern": "",
+			"custom": "",
+			"customPrivate": false
+		},
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"type": "textfield",
+		"labelPosition": "top",
+		"inputFormat": "plain",
+		"tags": [],
+		"properties": {
+			
+		},
+		"lockKey": true
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Number 1 (a)",
+		"key": "a",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true,
+		"isNew": false
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Number 2 (b)",
+		"key": "b",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Add",
+		"tableView": false,
+		"key": "add2numbers",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true,
+		"custom": "function handleSuccess(token,url,formdata,additionalConfiguration,data,textStatus,request) {\n      var datamerged = $.extend(formdata.data,data.data);\n      console.log('DATAMERGED='+JSON.stringify(datamerged));   \n      form.submission = {'data':datamerged};\n;newTabWindow.location.replace('https://sasa-test-ete-fnc.azurewebsites.net/getPDF');}\n\nfunction handleFailure(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {\n      console.log(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n      alert(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n}\n\nfunction handleADALError() {\n   alert('ADAL error happened');\n}\n\nfunction addtwonumbers(url,formdata){\n   executeAjaxRequestWithAdalLogic(ADAL.config.clientId,executeAjaxRequest,url,formdata,{},handleSuccess,handleFailure,handleADALError);\n}\n\nvar newTabWindow = null;\nif (typeof ADAL!== 'undefined' && ADAL!=null) {\nnewTabWindow = window.open('../html/waitting_for_pdf.html');\n   addtwonumbers(form.submission.data['add2numbersAPI'],{\"data\":form.submission.data});\n} else {\n   alert(\"To execute this action, user must be authenticated by ADAL!\");\n}"
+	},
+	{
+		"autofocus": false,
+		"input": true,
+		"tableView": true,
+		"inputType": "number",
+		"label": "Result (c)",
+		"key": "c",
+		"placeholder": "",
+		"prefix": "",
+		"suffix": "",
+		"defaultValue": "",
+		"protected": false,
+		"persistent": true,
+		"hidden": false,
+		"clearOnHide": true,
+		"validate": {
+			"required": false,
+			"min": "",
+			"max": "",
+			"step": "any",
+			"integer": "",
+			"multiple": "",
+			"custom": ""
+		},
+		"type": "number",
+		"labelPosition": "top",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+		"lockKey": true,
+		"disabled": true
+	}],
+	"revisions": "",
+	"_vid": 0,
+	"_id": "5b3b23a00e2022f6e7e13a6e",
+	"title": "Add2NumbersAndOpenPDF",
+	"display": "form",
+	"access": [{
+		"roles": ["599d5201a0434200072250b4",
+		"599d5201a0434200072250b5",
+		"599d5201a0434200072250b6"],
+		"type": "read_all"
+	}],
+	"submissionAccess": [],
+	"settings": {
+		
+	},
+	"name": "add2NumbersAndOpenPdf",
+	"path": "add2numbersandopenpdf",
+	"project": "599d5201a0434200072250b3",
+	"created": "2018-07-03T07:20:00.416Z",
+	"modified": "2018-07-03T07:32:04.374Z",
+	"machineName": "ewhyjxtmcncdriz:add2NumbersAndOpenPdf"
+};

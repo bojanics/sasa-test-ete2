@@ -4,23 +4,23 @@
  * and the country component follows 2-letter codes as defined in ISO 3166-1 alpha-2.
  */
 var languagesMap = {};
-languagesMap['BG-BG'] = 'български (България&nbsp;-&nbsp;BG)';
-languagesMap['CS-CZ'] = 'čeština (Česká&nbsp;republika&nbsp;-&nbsp;CZ)';
-languagesMap['DE-AT'] = 'Deutsch (Österreich&nbsp;-&nbsp;AT)';
-languagesMap['ET-EE'] = 'eesti (Eesti&nbsp;-&nbsp;EE)';
-languagesMap['EN-GB'] = 'English (United&nbsp;Kingdom&nbsp;-&nbsp;GB)';
-languagesMap['HR-HR'] = 'hrvatski (Hrvatska&nbsp;-&nbsp;HR)';
-languagesMap['HU-HU'] = 'magyar (Magyarország&nbsp;-&nbsp;HU)';
-languagesMap['KK-KZ'] = 'Қазақ (Қазақстан&nbsp;-&nbsp;KZ)';
-languagesMap['LT-LT'] = 'lietuvių (Lietuva&nbsp;-&nbsp;LT)';
-languagesMap['PL-PL'] = 'polski (Polska&nbsp;-&nbsp;PL)';
-languagesMap['RO-RO'] = 'română (România&nbsp;-&nbsp;RO)';
-languagesMap['SR-LATN-CS'] = 'srpski (Srbija&nbsp;-&nbsp;RS)';
-languagesMap['RU-RU'] = 'русский (Россия&nbsp;-&nbsp;RU)';
-languagesMap['SL-SI'] = 'slovenščina (Slovenija&nbsp;-&nbsp;SI)';
-languagesMap['SK-SK'] = 'slovenčina (Slovensko&nbsp;-&nbsp;SK)';
-languagesMap['TR-TR'] = 'Türkçe (Türkiye&nbsp;-&nbsp;TR)';
-languagesMap['UK-UA'] = 'українська (Україна&nbsp;-&nbsp;UA)';
+languagesMap['bg-BG'] = 'български (България&nbsp;-&nbsp;BG)';
+languagesMap['cs-CZ'] = 'čeština (Česká&nbsp;republika&nbsp;-&nbsp;CZ)';
+languagesMap['de-AT'] = 'Deutsch (Österreich&nbsp;-&nbsp;AT)';
+languagesMap['et-EE'] = 'eesti (Eesti&nbsp;-&nbsp;EE)';
+languagesMap['en-GB'] = 'English (United&nbsp;Kingdom&nbsp;-&nbsp;GB)';
+languagesMap['hr-HR'] = 'hrvatski (Hrvatska&nbsp;-&nbsp;HR)';
+languagesMap['hu-HU'] = 'magyar (Magyarország&nbsp;-&nbsp;HU)';
+languagesMap['kk-KZ'] = 'Қазақ (Қазақстан&nbsp;-&nbsp;KZ)';
+languagesMap['lt-LT'] = 'lietuvių (Lietuva&nbsp;-&nbsp;LT)';
+languagesMap['pl-PL'] = 'polski (Polska&nbsp;-&nbsp;PL)';
+languagesMap['ro-RO'] = 'română (România&nbsp;-&nbsp;RO)';
+languagesMap['sr-Latn-CS'] = 'srpski (Srbija&nbsp;-&nbsp;RS)';
+languagesMap['ru-RU'] = 'русский (Россия&nbsp;-&nbsp;RU)';
+languagesMap['sl-SI'] = 'slovenščina (Slovenija&nbsp;-&nbsp;SI)';
+languagesMap['sk-SK'] = 'slovenčina (Slovensko&nbsp;-&nbsp;SK)';
+languagesMap['tr-TR'] = 'Türkçe (Türkiye&nbsp;-&nbsp;TR)';
+languagesMap['uk-UA'] = 'українська (Україна&nbsp;-&nbsp;UA)';
 var defaultLanguagesMap = languagesMap;
 
 /**
@@ -28,8 +28,8 @@ var defaultLanguagesMap = languagesMap;
  */
 var languageSelector =
 {
-    currentLanguage: 'EN-GB',
-    selectedLanguage: 'EN-GB',
+    currentLanguage: 'en-GB',
+    selectedLanguage: 'en-GB',
     languageInitialized: false
 };
 
@@ -182,7 +182,14 @@ function applyTranslation()
     TogFormViewer.setProperty("userLanguage", languageSelector.currentLanguage);
     if (typeof phraseAppSelection === 'undefined' || !phraseAppSelection.phraseAppSwitched)
     {
-        setLanguage(languageSelector.selectedLanguage);
+        if (isFlatpickrLanguageAlreadyIncluded(languageSelector.selectedLanguage))
+        {
+            setLanguage(languageSelector.selectedLanguage);
+        }
+        else
+        {
+            loadScript("./scripts/vendor/flatpickr/" + getFlatpickrLanguage(languageSelector.selectedLanguage) + ".js", (function(language){ return function() { setLanguage(language); } })(languageSelector.selectedLanguage))
+        }
     }
     
     $("[lang-tran],[lang-tran-placeholder],[lang-tran-menu-top],[lang-tran-menu-bottom] ").translate();
@@ -225,11 +232,11 @@ function resetBodyTranslation()
                 && langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran")] !== undefined)
             {
                 $this.html(langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran")]);
-            } else if ($this.attr("lang-tran") !== undefined && langObj.i18n.resources.hasOwnProperty(languageSelector.selectedLanguage.split(/-(.+)/)[0])
-                && langObj.i18n.resources[languageSelector.selectedLanguage.split(/-(.+)/)[0]].translation[$this.attr("lang-tran")] !== undefined)
+            } else if ($this.attr("lang-tran") !== undefined && langObj.i18n.resources.hasOwnProperty(languageSelector.selectedLanguage)
+                && langObj.i18n.resources[languageSelector.selectedLanguage].translation[$this.attr("lang-tran")] !== undefined)
             {
                 // This case may occur when we need to populate help menu with some texts defined in the form
-                $this.html(langObj.i18n.resources[languageSelector.selectedLanguage.split(/-(.+)/)[0]].translation[$this.attr("lang-tran")]);
+                $this.html(langObj.i18n.resources[languageSelector.selectedLanguage].translation[$this.attr("lang-tran")]);
             }
             
             if ($this.attr("lang-tran-placeholder") !== undefined && langLayoutObj.hasOwnProperty(languageSelector.selectedLanguage)
@@ -238,22 +245,34 @@ function resetBodyTranslation()
                 $this.attr("placeholder", langLayoutObj[languageSelector.selectedLanguage][$this.attr("lang-tran-placeholder")]);
             }
             
-            if ($this.attr("lang-tran-menu-top") !== undefined && langTopMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
+            if (typeof langTopMenusObj === 'object' && Object.keys(langTopMenusObj).length !== 0 && langTopMenusObj != null && $this.attr("lang-tran-menu-top") !== undefined && langTopMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
                 && langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-top")] !== undefined)
             {
                 $this.html(langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-top")]);
             }
+            else if ($this.attr("lang-tran-menu-top") !== undefined)
+            {
+                $this.html($this.attr("lang-tran-menu-top"));
+            }
             
-            // If object langBottomMenusObj undefined we use langTopMenusObj object for bottom menu.
-            if (appConfiguration.langMenusBottomPath && $this.attr("lang-tran-menu-bottom") !== undefined && langBottomMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
+            if (typeof langLeftMenusObj === 'object' && Object.keys(langLeftMenusObj).length !== 0 && langLeftMenusObj != null && $this.attr("lang-tran-menu-left") !== undefined && langLeftMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
+                && langLeftMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-left")] !== undefined)
+            {
+                $this.html(langLeftMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-left")]);
+            }
+            else if ($this.attr("lang-tran-menu-left") !== undefined)
+            {
+                $this.html($this.attr("lang-tran-menu-left"));
+            }
+            
+            if (typeof langBottomMenusObj === 'object' && Object.keys(langBottomMenusObj).length !== 0 && langBottomMenusObj != null && $this.attr("lang-tran-menu-bottom") !== undefined && langBottomMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
                 && langBottomMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")] !== undefined)
             {
                 $this.html(langBottomMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")]);
             }
-            else if ($this.attr("lang-tran-menu-bottom") !== undefined && langTopMenusObj.hasOwnProperty(languageSelector.selectedLanguage)
-                && langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")] !== undefined)
+            else if ($this.attr("lang-tran-menu-bottom") !== undefined)
             {
-                $this.html(langTopMenusObj[languageSelector.selectedLanguage][$this.attr("lang-tran-menu-bottom")]);
+                $this.html($this.attr("lang-tran-menu-bottom"));
             }
         });
     };
@@ -319,43 +338,72 @@ function resetLanguageConfiguration()
  */
 function convertGraphLanguage(graphLanguage)
 {
-    var languageUC = graphLanguage.toUpperCase();
-    if (languagesMap.hasOwnProperty(languageUC))
+    if (languagesMap.hasOwnProperty(graphLanguage))
     {
-        return languageUC;
+        return graphLanguage;
     }
     
-    switch (languageUC)
+    switch (graphLanguage)
     {
-        case "DE-CH":
-        case "DE-DE":
-        case "DE-LI":
-        case "DE-LU":
-            return "DE-AT";
-        case "HR-BA":
-            return "HR-HR";
-        case "RO-MD":
-            return "RO-RO";
-        case "SR-CYRL-CS":
-        case "SR-CYRL-BA":
-            return "SR-LATN-CS";
-        case "EN-US":
-        case "EN-AU":
-        case "EN-CA":
-        case "EN-029":
-        case "EN-BZ":
-        case "EN-IE":
-        case "EN-IN":
-        case "EN-JM":
-        case "EN-MY":
-        case "EN-NZ":
-        case "EN-PH":
-        case "EN-SG":
-        case "EN-TT":
-        case "EN-ZA":
-        case "EN-ZW":
-            return "EN-GB";
+        case "de-CH":
+        case "de-DE":
+        case "de-LI":
+        case "de-LU":
+            return "de-AT";
+        case "hr-BA":
+            return "hr-HR";
+        case "ro-MD":
+            return "ro-RO";
+        case "sr-Cyrl-CS":
+        case "sr-Cyrl-BA":
+            return "sr-Latn-CS";
+        case "en-US":
+        case "en-AU":
+        case "en-CA":
+        case "en-029":
+        case "en-BZ":
+        case "en-IE":
+        case "en-IN":
+        case "en-JM":
+        case "en-MY":
+        case "en-NZ":
+        case "en-PH":
+        case "en-SG":
+        case "en-TT":
+        case "en-ZA":
+        case "en-ZW":
+            return "en-GB";
         default:
-            return languageUC;
+            return graphLanguage;
     }
+}
+
+/**
+ * Converts FormViewer language to lower case language code used by Flatpickr
+ */
+function getFlatpickrLanguage(language)
+{
+    if (language === "kk-KZ")
+    {
+        return "kz";
+    }
+    
+    return language.split(/-(.+)/)[0];
+}
+
+/**
+ * Checks if a Flatpickr localization script for a given language is already included to page
+ */
+function isFlatpickrLanguageAlreadyIncluded(language)
+{
+    var scripts = document.getElementsByTagName("script");
+    for(var i = 0; i < scripts.length; i++)
+    {
+        if(scripts[i].getAttribute('src') === "./scripts/vendor/flatpickr/" + getFlatpickrLanguage(language) + ".js")
+        {
+            return true;
+        }
+    }
+    
+    return false;
 }

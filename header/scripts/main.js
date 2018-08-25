@@ -42,23 +42,31 @@ function _setupAppInternal()
     setupPredefinedTheme();
     setInitialTimeZone();
 
+    // Reset dirty flag
+    TogFormViewer.dirty = false;
+    
     generateForm(function()
     {
         formDestroyed = false;
         setupPredefinedLanguage();
         configureMenu();
         checkForLoadedAction();
-    }, function()
-    {
-        // We should show the form after new styles has been loaded to prevent FOUC
-        showContentOnStyleApply(function()
-        {  
-            // Embeds a map (for example Bing Map) 
-            MapPlugIn.reloadMap();
-            checkAutofocus(formioForm);
-            configureChoicesOptions(formioForm);
-        });
     });
+}
+
+function formRenderedCallback()
+{
+    // We should show the form after new styles has been loaded to prevent FOUC
+    showContentOnStyleApply(function()
+    {  
+        // Embeds a map (for example Bing Map) 
+        MapPlugIn.reloadMap();
+        checkAutofocus(formioForm);
+        configureChoicesOptions(formioForm);
+    });
+    console.log("form data after rendered callback="+JSON.stringify(formioForm.submission.data));
+console.log("ISDIRTY="+TogFormViewer.dirty);    
+setTimeout(function(){console.log("form data after DELAY="+JSON.stringify(formioForm.submission.data));}, 0);
 }
 
 function checkAutofocus(comp)
@@ -119,19 +127,28 @@ function checkForLoadedAction()
     {
         var url = appConfiguration.home + "/" + appConfiguration.actionLoaded;
         
-        performLoadedAction(url,event);
+        performLoadedAction(url);
     }
 }
 
 /**
  * Calls loaded action
  */
-function performLoadedAction(url,event)
+function performLoadedAction(url)
 {
-    var event = {"type":"Loaded","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
+    var event =
+    {
+        "type": "Loaded",
+        "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
+        "controlType": "form",
+        "controlProperties": (formObj.properties ? formObj.properties : null),
+        "value": null
+    };
 
     // Replace placeholders in relative path with available settings
     url = handlePlaceholders(url,event);
+
+    console.log("form data for loaded="+JSON.stringify(formioForm.submission.data));
     
     var payload = {"appInfo" : TogFormViewer.getAppInfo(event)};
     console.log('executing loaded action for url '+url);
@@ -140,7 +157,8 @@ function performLoadedAction(url,event)
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":event},onsuccess_loaded,onfailure_loaded,onfailure_loaded);
     } else {
         //alert("It is not possible to perform loaded action because user is not logged-in!");
-        console.log("It is not possible to perform loaded action because user is not logged-in!");
+        //console.log("It is not possible to perform loaded action because user is not logged-in!");
+        executeAjaxRequest(null, url, payload, {"event":event},onsuccess_loaded,onfailure_loaded,onfailure_loaded);
     }    
 }
 
@@ -160,9 +178,9 @@ function onfailure_loaded(token,url,formdata,additionalConfiguration,err,textSta
 /**
  * Create form with form ready callback paremeter. 
  */
-function generateForm(formReadyCallback, formRenderedCallback) 
+function generateForm(formReadyCallback) 
 {
-     Formio.createForm(document.getElementById('formio'), formObj, langObj)
+    Formio.createForm(document.getElementById('formio'), formObj, langObj)
     .then(function(form)
     {
         form.header =
@@ -177,7 +195,9 @@ function generateForm(formReadyCallback, formRenderedCallback)
         };
         form.header.settings.brand.mainlogopath = $("#mainLogo").find("img").attr("src");
         form.header.settings.brand.faviconpath = $("#pageIcon").attr("href");            
+        console.log("form data before="+JSON.stringify(form.submission.data));
         form.submission = {"data":appFormDataObj};
+        console.log("form data after="+JSON.stringify(form.submission.data));
         form.httprequest =
         {
             protocol : window.location.protocol.substring(0,window.location.protocol.length-1),
@@ -188,7 +208,45 @@ function generateForm(formReadyCallback, formRenderedCallback)
         }
         window.setLanguage = function (lang)
         {
+            flatpickr.localize(flatpickr.l10ns[getFlatpickrLanguage(lang)]);
+            
+            // Set starting day of week to Monday for English
+            if (lang === "en-GB")
+            {
+                flatpickr.l10ns.default.firstDayOfWeek = 1;
+            }
+            
             form.language = lang;
+            
+            // TODO This is a temporary patch for an issue with change event handling.
+            // Starting from form.io v3.0.0-rc.26 change event listener is removed after
+            // form gets translated. Remove this once the issue gets fixed by form.io
+            form.on('change', function(event)
+            {   
+                // If there is a noValidate flag and it is set to true it is a changed event fired when form gets loaded
+                // It is fired if there are checkboxes or datetime components in the form
+                if (event.changed && (!event.changed.flags || !event.changed.flags.noValidate))
+                {
+                    if ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
+                            && event.changed.component.properties["autocalc"] === "fieldchange")
+                        || (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc"))
+                            && appConfiguration && appConfiguration.autocalc === "fieldchange"))
+                    {
+                        TogFormViewer.calculate();
+                    }
+                    
+                    TogFormViewer.FormioPlugIn.setProperty("dirty", true);
+                    var myevent =
+                    {
+                        "type": "change",
+                        "controlId": (event.changed.component ? event.changed.component.key : null),
+                        "controlType": (event.changed.component ? event.changed.component.type : null),
+                        "controlProperties": (event.changed.component && event.changed.component.properties ? event.changed.component.properties : null),
+                        "value": event.changed.value
+                    };
+                    execEventAction(event.changed.component, myevent, 'action change', 'actionChange');
+                }
+            });
         };
         window.formioForm = form;
         
@@ -220,22 +278,50 @@ function generateForm(formReadyCallback, formRenderedCallback)
                 }
             }
             
+            if (appConfiguration.menuPositionThreshold)
+            {
+                recalculateMenuPosition();
+            }
+            
             if (appConfiguration.triggerResizeChange)
             {
                 formioForm.checkConditions();
             }
             
-            var myevent = {"type":"resize","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
-            execEventAction(null,myevent,'action resize','actionResize',false);            
+            var myevent =
+            {
+                "type": "resize",
+                "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
+                "controlType": "form",
+                "controlProperties": (formObj.properties ? formObj.properties : null),
+                "value": null
+            };
+            execEventAction(null, myevent, 'action resize', 'actionResize', false);            
         };
         
-        window.onbeforeprint=function(event){
-            var myevent = {"type":"beforeprint","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
-            execEventAction(null,myevent,'action beforeprint','actionBeforePrint',false);
+        window.onbeforeprint=function(event)
+        {
+            var myevent =
+            {
+                "type": "beforeprint",
+                "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
+                "controlType": "form",
+                "controlProperties": (formObj.properties ? formObj.properties : null),
+                "value": null
+            };
+            execEventAction(null, myevent, 'action beforeprint', 'actionBeforePrint', false);
         };
-        window.onafterprint=function(event){
-            var myevent = {"type":"afterprint","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
-            execEventAction(null,myevent,'action afterprint','actionAfterPrint',false);
+        window.onafterprint=function(event)
+        {
+            var myevent =
+            {
+                "type": "afterprint",
+                "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
+                "controlType": "form",
+                "controlProperties": (formObj.properties ? formObj.properties : null),
+                "value": null
+            };
+            execEventAction(null, myevent, 'action afterprint', 'actionAfterPrint', false);
         };
         
         form.ready.then(function()
@@ -248,68 +334,75 @@ function generateForm(formReadyCallback, formRenderedCallback)
             setDefaultHelpContent();
             
             formReadyCallback();
-            console.log('form is ready');
+            
+            // Perform form rendered callback
+            setTimeout(formRenderedCallback, 0);
         });
+
+        form.on('render', function(event)
+        {
+            console.log("form renderd, data="+JSON.stringify(form.submission.data));
+        });
+        
         
         form.on('submit', function(submission)
         {
-            console.log('SUBMIT, submission='+submission);
+            console.log(submission);
         });
         
-        form.on('change', function(event)
+        form.on('customEvent', function(event)
         {
-            if (!calculationResultSet && appConfiguration && appConfiguration.autocalc === "fieldchange")
+            var myevent =
             {
-                TogFormViewer.calculate();
-            }
-            else
-            {
-                calculationResultSet = false;
-            }
-                
-            
-            if (event.changed) {
-                var myevent = {"type":"change","controlId":(event.changed.component ? event.changed.component.key : null),"controlType":(event.changed.component?event.changed.component.type:null),"value":event.changed.value};
-                execEventAction(event.changed.component,myevent,'action change','actionChange');
-            }
+                "type": "customEvent",
+                "controlId": (event.component ? event.component.key : null),
+                "controlType": "button",
+                "controlProperties": (event.component && event.component.properties ? event.component.properties : null),
+                "value": null
+            };            
+            execEventAction(event.component, myevent, 'action', 'action', true);
         });
-        
-        form.on('customEvent', function(event) {
-            var myevent = {"type":"customEvent","controlId":(event.component ? event.component.key : null),"controlType":"button","value":null};            
-            execEventAction(event.component,myevent,'action','action',true);
-        });
-        
-        form.on('render', function()
-        {
-            formRenderedCallback();
-            console.log('form is rendered');	    
-        });
-        
+
         form.on('componentError', function(event)
         {
-            console.log("COMPONENT ERROR for "+JSON.stringify(event));
-            var myevent = {"type":"componentError","controlId":(event.component ? event.component.key : null),"controlType":(event.component?event.component.type:null),"value":event.message};            
-            execEventAction(event.component,myevent,'action componentError','actionComponentError',true);
+            var myevent =
+            {
+                "type": "componentError",
+                "controlId": (event.component ? event.component.key : null),
+                "controlType": (event.component ? event.component.type : null),
+                "controlProperties": (event.component && event.component.properties ? event.component.properties : null),
+                "value": event.message
+            };            
+            execEventAction(event.component, myevent, 'action componentError', 'actionComponentError', true);
         });
-        form.on('error', function()
-        {
-            console.log("FORM ERROR");
-        });
+
         form.on('prevPage', function(event)
         {
-            console.log("PREV PAGE");
             // event.page is the number of the previous page
             var component = form.getPage(event.page+1);
-            var myevent = {"type":"prevPage","controlId":(component ? component.key : null),"controlType":"panel","value":event.page};                        
-            execEventAction(component,myevent,'action prevPage','actionPrevPage',true);
+            var myevent =
+            {
+                "type": "prevPage",
+                "controlId": (component ? component.key : null),
+                "controlType": "panel",
+                "controlProperties": (component && component.properties ? component.properties : null),
+                "value": event.page
+            };                        
+            execEventAction(component,myevent, 'action prevPage', 'actionPrevPage', true);
         });
         form.on('nextPage', function(event)
         {
-            console.log("NEXT PAGE");
             // event.page is the number of the next page
             var component = form.getPage(event.page-1);
-            var myevent = {"type":"nextPage","controlId":(component ? component.key : null),"controlType":"panel","value":event.page};                        
-            execEventAction(component,myevent,'action nextPage','actionNextPage',true);
+            var myevent =
+            {
+                "type": "nextPage",
+                "controlId": (component ? component.key : null),
+                "controlType": "panel",
+                "controlProperties": (component && component.properties ? component.properties : null),
+                "value": event.page
+            };                        
+            execEventAction(component, myevent, 'action nextPage', 'actionNextPage', true);
         });
         
     });
@@ -318,17 +411,27 @@ function generateForm(formReadyCallback, formRenderedCallback)
 function execEventAction(component,myevent,propName,configName,log2console) {
     if (log2console) console.log(configName+' default = '+appConfiguration[configName]);
     var actionPerformed = false;
-    if (ADAL && appConfiguration.home) {
+    if (appConfiguration.home) {
         var action = appConfiguration[configName];
-        if (component && component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName)) {
-            action = component.properties[propName];
-            if (log2console) console.log(myevent.controlType+' action for '+myevent.controlId+' = '+action);
+        var sendForm = appConfiguration.sendForm;
+        if (component && component.hasOwnProperty("properties") && component.properties !== null) {
+            if (component.properties.hasOwnProperty(propName)) {
+                action = component.properties[propName];
+                if (log2console) console.log(myevent.controlType+' action for '+myevent.controlId+' = '+action);
+            }
+            if (component.properties.hasOwnProperty("sendForm")) {
+                var sfp = component.properties["sendForm"];
+                if (sfp === "false" || sfp === "true") {
+                    sendForm = (sfp==="true");
+                }
+                if (log2console) console.log(myevent.controlType+' sendForm for '+myevent.controlId+' = '+sendForm);
+            }
         }
         if (action) {
             var url = appConfiguration.home + "/" + action;
             if (log2console) console.log(configName+' '+action+' will be executed for '+myevent.controlId);
             appFormDataObj = formioForm.submission.data;
-            performEventOrCustomAction(url,myevent);
+            performEventOrCustomAction(url,myevent,sendForm);
             actionPerformed = true;
         }
     }
@@ -349,31 +452,38 @@ function execEventAction(component,myevent,propName,configName,log2console) {
 /**
  * Calls event action
  */
-function performEventOrCustomAction(url,myevent)
+function performEventOrCustomAction(url,myevent,sendForm)
 {
     if (!appConfiguration.disableActionSpinner) {
         showSpinner();
     }
     url = handlePlaceholders(url,myevent);
 
-    var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent)};    
+    var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent,sendForm)};    
     console.log("executing event "+JSON.stringify(myevent)+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":myevent},onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
     } else {
-        alert("It is not possible to perform event "+JSON.stringify(myevent)+" action for url '"+url+"' because user is not logged-in!");
-        hideSpinner();
+        //alert("It is not possible to perform event "+JSON.stringify(myevent)+" action for url '"+url+"' because user is not logged-in!");
+        //hideSpinner();
+        executeAjaxRequest(null, url, payload, {"event":myevent},onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
     }
 }
 
 /**
  * This function is executed on successful call to event/custom action API. If form definition changed, it will be updated.
  */
-function onsuccess_eventorcustomaction(token,url,formdata,additionalConfiguration,data,textStatus,request) {
-   var msgPart = "event " + JSON.stringify(additionalConfiguration.event) +" action for url '"+url+"'";
-   console.log("Successfully executed "+msgPart+".");
-   //console.log('DATA received ='+JSON.stringify(data));
-   handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
+function onsuccess_eventorcustomaction(token,url,formdata,additionalConfiguration,data,textStatus,request)
+{
+    var msgPart = "event " + JSON.stringify(additionalConfiguration.event) +" action for url '"+url+"'";
+    console.log("Successfully executed "+msgPart+".");
+    //console.log('DATA received ='+JSON.stringify(data));
+    if (additionalConfiguration.event.controlProperties && additionalConfiguration.event.controlProperties["set clean"] === "true")
+    {
+        TogFormViewer.FormioPlugIn.setProperty("dirty", false);
+    }
+    
+    handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
 }
 
 function onfailure_eventorcustomaction(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
@@ -399,7 +509,6 @@ function createHooksObj()
         input: function(input)
         {
             this.addEventListener(input, 'focus', formFocusListener(this));
-
             this.addEventListener(input, 'blur', formBlurListener(this));
            
             this.addEventListener(input, 'search', formSearchListener(this));            
@@ -430,36 +539,7 @@ function createHooksObj()
             
             this.addEventListener(input, 'scroll', formScrollListener(this));
             
-            //this.addEventListener(input, 'RadioStateChange', formRadioStateChangeListener(this)); // we don't need this - change event is covering it
-            //this.addEventListener(input, 'CheckboxStateChange', formCheckboxStateChangeListener(this)); // we don't need this - change event is covering it
-            /*
-            this.addEventListener(input, 'dragstart', formDragStartListener(this));
-            this.addEventListener(input, 'dragenter', formDragEnterListener(this));
-            this.addEventListener(input, 'drag', formDragListener(this));
-            this.addEventListener(input, 'dragend', formDragEndListener(this));
-            this.addEventListener(input, 'dragleave', formDragLeaveListener(this));
-            this.addEventListener(input, 'dragover', formDragOverListener(this));
-            this.addEventListener(input, 'drop', formDropListener(this));
-            */
         }
-    };
-}
-function formRadioStateChangeListener(comp)
-{
-    return function(event) {
-        console.log('rscccccccccccccccccccccccccccccccccccccccccccccccccc');
-        var myevent = {"type":"RadioStateChange","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
-        printJSON(event,"SCS");
-        execEventAction(comp.component,myevent,'action RadioStateChange','actionRadioStateChange');
-    };
-}
-function formCheckboxStateChangeListener(comp)
-{
-    return function(event) {
-        console.log('cscccccccccccccccccccccccccccccccccccccccccccccccccc');
-        var myevent = {"type":"CheckboxStateChange","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
-        printJSON(event,"CSC");
-        execEventAction(comp.component,myevent,'action CheckboxStateChange','actionCheckboxStateChange');
     };
 }
 
@@ -471,10 +551,20 @@ function formCutListener(comp)
             sel = window.getSelection().toString();
         } catch (e) {
         }
-        var myevent = {"type":"cut","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
-        execEventAction(comp.component,myevent,'action cut','actionCut');
+        if (sel!=="") {
+            var myevent =
+            {
+                "type": "cut",
+                "controlId": (comp && comp.component ? comp.component.key : null),
+                "controlType": (comp ? comp.type : null),
+                "controlProperties": (comp && comp.component ? comp.component.properties : null),
+                "value": sel
+            };
+            execEventAction(comp.component, myevent, 'action cut', 'actionCut');
+        }
     };
 }
+
 function formCopyListener(comp)
 {
     return function(event) {
@@ -483,10 +573,20 @@ function formCopyListener(comp)
             sel = window.getSelection().toString();
         } catch (e) {
         }
-        var myevent = {"type":"copy","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
-        execEventAction(comp.component,myevent,'action copy','actionCopy');
+        if (sel!=="") {
+            var myevent =
+            {
+                "type": "copy",
+                "controlId": (comp && comp.component ? comp.component.key : null),
+                "controlType": (comp ? comp.type : null),
+                "controlProperties": (comp && comp.component ? comp.component.properties : null),
+                "value": sel
+            };
+            execEventAction(comp.component, myevent, 'action copy', 'actionCopy');
+        }
     };
 }
+
 function formPasteListener(comp)
 {
     return function(event) {
@@ -496,16 +596,32 @@ function formPasteListener(comp)
             sel = clipboardData.getData('Text');
         } catch (e) {
         }
-        var myevent = {"type":"paste","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
-        execEventAction(comp.component,myevent,'action paste','actionPaste');
+        if (sel!=="") {
+            var myevent =
+            {
+                "type": "paste",
+                "controlId": (comp && comp.component ? comp.component.key : null),
+                "controlType": (comp ? comp.type : null),
+                "controlProperties": (comp && comp.component ? comp.component.properties : null),
+                "value": sel
+            };
+            execEventAction(comp.component, myevent, 'action paste', 'actionPaste');
+        }
     };
 }
 
 function formScrollListener(comp)
 {
     return function(event) {
-        var myevent = {"type":"scroll","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
-        execEventAction(comp.component,myevent,'action paste','actionPaste');
+        var myevent =
+        {
+            "type": "scroll",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": null
+        };
+        execEventAction(comp.component, myevent, 'action paste', 'actionPaste');
     };
 }
 
@@ -517,146 +633,289 @@ function formSelectListener(comp)
             sel = window.getSelection().toString();
         } catch (e) {
         }
-        var myevent = {"type":"select","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":sel};
-        execEventAction(comp.component,myevent,'action select','actionSelect');
+        if (sel!=="") {
+            var myevent =
+            {
+                "type": "select",
+                "controlId": (comp && comp.component ? comp.component.key : null),
+                "controlType": (comp ? comp.type : null),
+                "controlProperties": (comp && comp.component ? comp.component.properties : null),
+                "value": sel
+            };
+            execEventAction(comp.component, myevent, 'action select', 'actionSelect');
+        }
     };
 }
 function formMouseOutListener(comp)
 {
     return function(event) {
-        var myevent = {"type":"mouseout","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mouseout','actionMouseOut');
+        var myevent =
+        {
+            "type": "mouseout",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)};
+        execEventAction(comp.component, myevent, 'action mouseout', 'actionMouseOut');
     };
 }
 function formMouseUpListener(comp)
 {
     return function(event) {
-         var myevent = {"type":"mouseup","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mouseup','actionMouseUp');
+        var myevent =
+        {
+            "type": "mouseup",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action mouseup', 'actionMouseUp');
    };
 }
 function formMouseMoveListener(comp)
 {
     return function(event) {
-        var myevent = {"type":"mousemove","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mousemove','actionMouseMove');
+        var myevent =
+        {
+            "type": "mousemove",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action mousemove', 'actionMouseMove');
     };
 }
 
 function formMouseOverListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"mouseover","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mouseover','actionMouseOver');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "mouseover",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action mouseover', 'actionMouseOver');        
     };
 }
 function formMouseDownListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"mousedown","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mousedown','actionMouseDown');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "mousedown",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action mousedown', 'actionMouseDown');        
     };
 }
 
 function formClickListener(comp)
 {
-    return function(event) {
+    return function(event)
+    {
         //console.log('c='+JSON.stringify(comp.component));
-        var myevent = {"type":"click","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action click','actionClick');        
+        var myevent =
+        {
+            "type": "click",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value":_createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action click', 'actionClick');        
     };
 }
 
 function formDblClickListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"dblclick","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action dblclick','actionDblClick');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "dblclick",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action dblclick', 'actionDblClick');        
     };
 }
 function formContextMenuListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"contextmenu","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action contextMenu','actionContextMenu');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "contextmenu",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action contextMenu', 'actionContextMenu');        
     };
 }
 function formWheelListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"wheel","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action wheel','actionWheel',true);
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "wheel",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action wheel', 'actionWheel', true);
     };
 }
 
 function formMouseEnterListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"mouseenter","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mouseenter','actionMouseEnter');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "mouseenter",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value":_createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action mouseenter', 'actionMouseEnter');        
     };
 }
 
 function formMouseLeaveListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"mouseleave","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createMouseEventJSON(event)};
-        execEventAction(comp.component,myevent,'action mouseleave','actionMouseLeave');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "mouseleave",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createMouseEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action mouseleave', 'actionMouseLeave');        
     };
 }
 
-function _createMouseEventJSON(event) {
+function _createMouseEventJSON(event)
+{
     return {"screenX":event.screenX,"screenY":event.screenY,"clientX":event.clientX,"clientY":event.clientY,"ctrlKey":event.ctrlKey,"shiftKey":event.shiftKey,"altKey":event.altKey,"metaKey":event.metaKey,"button":event.button,"buttons":event.buttons,"pageX":event.pageX,"pageY":event.pageY,"x":event.x,"y":event.y,"offsetX":event.offsetX,"offsetY":event.offsetY,"movementX":event.movementX,"movementY":event.movementY,"which":event.which};
 }
 
 function formKeyPressListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"keypress","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createKeyEventJSON(event)};
-        execEventAction(comp.component,myevent,'action keypress','actionKeyPress');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "keypress",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType":(comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value":_createKeyEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action keypress', 'actionKeyPress');        
     };
 }
 function formKeyDownListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"keydown","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createKeyEventJSON(event)};
-        execEventAction(comp.component,myevent,'action keydown','actionKeyDown');
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "keydown",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createKeyEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action keydown', 'actionKeyDown');
     };
 }
 function formKeyUpListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"keyup","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":_createKeyEventJSON(event)};
-        execEventAction(comp.component,myevent,'action keyup','actionKeyUp');
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "keyup",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": _createKeyEventJSON(event)
+        };
+        execEventAction(comp.component, myevent, 'action keyup', 'actionKeyUp');
     };
 }
 function formInputListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"input","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":event.data};
-        execEventAction(comp.component,myevent,'action input','actionInput');        
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "input",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": event.data
+        };
+        execEventAction(comp.component, myevent, 'action input', 'actionInput');        
     };
 }
 
-function _createKeyEventJSON(event) {
+function _createKeyEventJSON(event)
+{
     // e.g. event.key = A, event.code = keyA, event.ctrlKey = false, event.shiftKey = true, event.altKey = false, event.metaKey = false, event.keyCode = 65, ...
     return {"key":event.key,"keyCode":event.keyCode,"code":event.code,"ctrlKey":event.ctrlKey,"shiftKey":event.shiftKey,"altKey":event.altKey,"metaKey":event.metaKey,"charCode":event.charCode,"isComposing":event.isComposing,"location":event.location,"repeat":event.repeat,"which":event.which};
 }
 
 function formShowDropdownListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"showDropdown","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":null};
-        execEventAction(comp.component,myevent,'action showDropdown','actionShowDropdown',true);
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "showDropdown",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": null
+        };
+        execEventAction(comp.component, myevent, 'action showDropdown', 'actionShowDropdown', true);
     };
 }
 
 
 function formSearchListener(comp)
 {
-    return function(event) {
-        var myevent = {"type":"search","controlId":(comp ? comp.key : null),"controlType":(comp ? comp.type : null),"value":(event.detail&&event.detail.value?event.detail.value:null)};
-        execEventAction(comp.component,myevent,'action search','actionSearch',true);
+    return function(event)
+    {
+        var myevent =
+        {
+            "type": "search",
+            "controlId": (comp && comp.component ? comp.component.key : null),
+            "controlType": (comp ? comp.type : null),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": (event.detail && event.detail.value ? event.detail.value : null)
+        };
+        execEventAction(comp.component, myevent, 'action search', 'actionSearch', true);
     };
 }
 
@@ -721,8 +980,15 @@ function formFocusListener(comp)
             $('#elearninglabel').attr("lang-tran", appConfiguration.elearningtext).attr("lang-form", "true").translate();
         }
         
-        var myevent = {"type":"focus","controlId":(comp && comp.key ? comp.key : ""),"controlType":(comp&&comp.type?comp.type:""),"value":""};
-        execEventAction(comp.component,myevent,'action focus','actionFocus');
+        var myevent =
+        {
+            "type": "focus",
+            "controlId": (comp && comp.component ? comp.component.key : ""),
+            "controlType": (comp ? comp.type : ""),
+            "controlProperties": (comp && comp.component ? comp.component.properties : null),
+            "value": ""
+        };
+        execEventAction(comp.component, myevent, 'action focus', 'actionFocus');
 
     };
 }
@@ -735,13 +1001,23 @@ function formBlurListener(comp)
     return function(event)
     {
         setDefaultHelpContent();
-        if (appConfiguration && appConfiguration.autocalc === "focuschange")
+        if ((comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("autocalc")
+                && comp.component.properties["autocalc"] === "focuschange")
+            || (!(comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("autocalc"))
+                && appConfiguration && appConfiguration.autocalc === "focuschange"))
         {
             TogFormViewer.calculate();
         }
         
-        var myevent = {"type":"blur","controlId":(comp && comp.key ? comp.key : ""),"controlType":(comp&&comp.type?comp.type:""),"value":""};
-        execEventAction(comp.component,myevent,'action blur','actionBlur');
+        var myevent =
+        {
+            "type": "blur",
+            "controlId": (comp && comp.component ? comp.component.key : ""),
+            "controlType": (comp ? comp.type : ""),
+            "controlProperties": (comp.component ? comp.component.properties : null),
+            "value": ""
+        };
+        execEventAction(comp.component, myevent, 'action blur', 'actionBlur');
     };
 }
 
@@ -752,6 +1028,16 @@ function setupLayout()
 {
     // Set up the main logo
     $("#mainLogo").find("img").attr("src", appConfiguration.mainlogopath);
+    
+    // Update width property because width of image without source is not 0 in IE
+    if (!appConfiguration.mainlogopath)
+    {
+        $(".logo-background").css("width", "0");
+    }
+    else
+    {
+        $(".logo-background").css("width", "auto");
+    }
     
     // Display the main logo even if its path is not configured
     // In this case we use hardcoded path
@@ -857,26 +1143,39 @@ function setupLayout()
 
         var feedbacktype = $('#feedbacktype').val(); 
         var feedbackComment = $('#feedbackBasicFormComment').val();
+        var screenshot = ''; 
         if ($('#feedbackBasicFormScreenshotCheckbox').prop('checked') === true)
         {
-            var screenshot = $('#img_val').val(); 
+            screenshot = $('#img_val').val(); 
         }
-        else if ($('#feedbackBasicFormScreenshotCheckbox').prop('checked') === false) 
+        
+        var myevent =
         {
-            var screenshot = ''; 
-        }
+            "type": "feedback",
+            "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
+            "controlType": "form",
+            "controlProperties": (formObj.properties ? formObj.properties : null),
+            "value": null
+        };
         
-        var myevent = {"type":"feedback","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : ""),"controlType":"form","value":null};
-        
-        var feedbackuser = currentUser.uid; 
         var payload = 
         {
-            "feedbacktype": feedbacktype,
-            "feedbackcomment": feedbackComment,
-            "screenshot": screenshot,
-            "fedbackuser": feedbackuser,
             "appInfo" : TogFormViewer.getAppInfo(myevent)
-        };    
+        };
+        payload.appInfo.feedback = {
+            "type": feedbacktype,
+            "comment": feedbackComment,
+            "screenshot": ""
+        };
+        
+        if (screenshot)
+        {
+            payload.appInfo.feedback.screenshot = {
+                "mimetype": "image/png",
+                "image": screenshot.substring(22)
+            };
+        }
+        
         if (checkFeedbackValidity())
         {
             sendfeedback(appConfiguration.feedbackUrlAbsolutePath, payload);
@@ -1617,6 +1916,8 @@ function openUserMenu(userMenuButton)
                             {
                                 contentWrappers[i].classList.add('shrink');
                             }
+                            
+                            $('#bottomMenu').addClass('shrink');
                         }
                     }
                 }
@@ -1676,8 +1977,10 @@ function closeUserMenu()
     {
         for (var contentWrappersIndex = 0; contentWrappersIndex < contentWrappers.length; contentWrappersIndex++)
         {
-        contentWrappers[contentWrappersIndex].classList.remove('shrink');
-    }
+            contentWrappers[contentWrappersIndex].classList.remove('shrink');
+        }
+        
+        $('#bottomMenu').removeClass('shrink');
     }
     
     $('#transparentbutton').removeClass('rsp-hidden');
@@ -2265,24 +2568,25 @@ function toggleChanged()
     formioForm.checkConditions();
 }
 
-function printJSON(json,title) {
-console.log("JSON name="+title);
-for (var p in json) {    
-  if (typeof json[p]=='object' && !title) {
-    //printJSON(json[p],p);
-    console.log(p+'='+json[p]+', t='+(typeof json[p]));
-  } else {
-    console.log(p+'='+json[p]+', t='+(typeof json[p]));
-  }
-}
-}
-
-function printEvent(component,event,title) {
-    if (!component && event && event.changed && event.changed.component) {
-        component = event.changed.component;
+/**
+ * Recalculates menu position based on browser inner width, configured menu position and menu position threshold.
+ * Top or left menus are changed to bottom menu if browser inner width is less than the threshold.
+ */
+function recalculateMenuPosition()
+{
+    if (window.innerWidth <= appConfiguration.menuPositionThreshold && TogFormViewer.getProperty("menuPosition") !== "bottom")
+    {
+        TogFormViewer.setProperty("menuPosition", "bottom");
     }
-    console.log(title+' for '+(component ? component.key : 'no component')+': ' +(event ? ('type='+event.type+', details='+JSON.stringify(event.details)+', changed='+event.changed) : "No event"));
-    if (event && !event.details && !event.changed) {
-        //printJSON(event,'printingevent');
+    else if (window.innerWidth > appConfiguration.menuPositionThreshold && TogFormViewer.getProperty("menuPosition") === "bottom")
+    {
+        if (appConfiguration.menuPosition === "left")
+        {
+            TogFormViewer.setProperty("menuPosition", "left");
+        }
+        else if (appConfiguration.menuPosition === "top")
+        {
+            TogFormViewer.setProperty("menuPosition", "top");
+        }
     }
 }

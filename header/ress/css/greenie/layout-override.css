@@ -1,3 +1,15 @@
+.warning > input {
+    text-align: center;
+    font-weight: bold;
+    color: #cc3333;
+}
+
+.warningtext {
+    text-align: center;
+    font-weight: bold;
+    color: #cc3333;
+}
+
 .indicator {
     text-align: right;
 }
@@ -180,7 +192,7 @@
 
 .feedback-overall-anchor:hover > div > svg > .path-anchor-second {
     fill: #ffffff;
-    stroke: ##002c57;
+    stroke: #002c57;
 }
 
 .feedback-overall-anchor-active {
@@ -264,11 +276,10 @@ a.bg-primary:focus {
 }
 
 .btn-default {
-    color: #333 !important; 
-}
+    color: #ffffff !important; }
 
 .btn-primary:hover {
-    background-color: #002c57 !important;
+    background-color: #003366 !important;
     border-color: #002c57 !important;
 }
 
@@ -643,19 +654,19 @@ fieldset[disabled] .btn-success.focus {
 }
 
 .btn-default {
-    background-color: #cccccc !important;
-    border-color: #cccccc !important;
+    background-color: #336699 !important;
+    border-color: #003366 !important;
 }
 
 .btn-default:focus,
 .btn-default.focus {
-    background-color: #999999 !important;
-    border-color: #8c8c8c !important;
+    background-color: #003366 !important;
+    border-color: #000000 !important;
 }
 
 .btn-default:hover {
-    background-color: #999999 !important;
-    border-color: #999999 !important;
+    background-color: #003366 !important;
+    border-color: #000000 !important;
 }
 
 .btn-default:active,
@@ -705,7 +716,7 @@ fieldset[disabled] .btn-default.focus {
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #fff;
@@ -720,7 +731,12 @@ fieldset[disabled] .btn-default.focus {
  }
 
 .tabbar {
-    background-color: #fff;
+    background-color: #f5f5f5; 
+}
+
+.back-div {
+    background-color: #f5f5f5;
+    color: #336666;
 }
 
 .tabbar-button {
@@ -737,6 +753,96 @@ fieldset[disabled] .btn-default.focus {
 
 .active-tab-bottom {
     color: #336666;
+}
+
+.side-navigation-wrapper {
+    background-color: #f5f5f5;
+    color: rgb(51, 51, 51);
+    border-color: #f5f5f5 #eeeeee #f5f5f5 #f5f5f5;
+    border-right: 1px solid #eeeeee;
+}
+
+.side-navigation-separator-line {
+    background-color: #cccccc;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: rgb(51, 51, 51);
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(51, 102, 102);
+    text-shadow: 0 0 4px rgba(51, 102, 102, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: rgb(51, 51, 51);
+}
+
+.nav-wrapper:hover {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #cccccc;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #cccccc;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(51, 102, 102);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #cccccc;
+}
+
+.navlinks {
+    color: rgb(51, 51, 51);
+}
+
+.navlinks:hover {
+    color: rgb(51, 51, 51);
+}
+
+.navlinks:focus {
+    color: rgb(51, 51, 51);
+}
+
+.navtitle {
+    color: rgb(51, 51, 51);
+}
+
+.primary-menu-region {
+    background-color: #f8f8f8;
+    color: #777;
+}
+
+.commandbar-primary-menu-item:hover {
+    color: #333;
+    background-color: #f8f8f8;
+}
+
+.nav-tooltip-list-wrapper {
+    color: rgb(51, 51, 51);
+}
+
+.nav-tooltip-list-item-img {
+    color: rgb(51, 51, 51);
 }
 
 /**

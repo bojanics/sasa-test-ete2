@@ -209,7 +209,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #fff; 
@@ -224,7 +224,16 @@
  }
 
 .tabbar {
-    background-color: #fff; 
+    background-color: #ecf0f1; 
+}
+
+.back-div {
+    background-color: #ecf0f1;
+    color: #007942;
+}
+
+.tabbar-button {
+    color: rgb(44, 62, 80);
 }
 
 .tab-wrapper {
@@ -237,6 +246,96 @@
 
 .active-tab-bottom {
     color: #007942;
+}
+
+.side-navigation-wrapper {
+    background-color: #ecf0f1;
+    color: rgb(44, 62, 80);
+    border-color: #ecf0f1 #95a5a6 #ecf0f1 #ecf0f1;
+    border-right: 1px solid #95a5a6;
+}
+
+.side-navigation-separator-line {
+    background-color: #798d8f;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: rgb(44, 62, 80);
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(18, 143, 118);
+    text-shadow: 0 0 4px rgba(18, 143, 118, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: rgb(44, 62, 80);
+}
+
+.nav-wrapper:hover {
+    background-color: #95a5a6;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #95a5a6;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #95a5a6;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #798d8f;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #798d8f;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #95a5a6;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(44, 62, 80);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #798d8f;
+}
+
+.navlinks {
+    color: rgb(44, 62, 80);
+}
+
+.navlinks:hover {
+    color: rgb(44, 62, 80);
+}
+
+.navlinks:focus {
+    color: rgb(44, 62, 80);
+}
+
+.navtitle {
+    color: rgb(44, 62, 80);
+}
+
+.primary-menu-region {
+    background-color: #2C3E50;
+    color: #fff;
+}
+
+.commandbar-primary-menu-item:hover {
+    background-color: #2C3E50;
+    color: rgb(0, 121, 66);
+}
+
+.nav-tooltip-list-wrapper {
+    color: rgb(44, 62, 80);
+}
+
+.nav-tooltip-list-item-img {
+    color: rgb(44, 62, 80);
 }
 
 /**

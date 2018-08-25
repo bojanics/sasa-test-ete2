@@ -6,6 +6,11 @@
         <link rel="stylesheet" href="./ress/css/fabric.min.css">
         <link id="layoutstyle" href="./ress/css/layout.css" rel="stylesheet">
 		<link href="./ress/css/formio.full.min.css" rel="stylesheet">
+        <link href="./ress/css/glyphicons.css" rel="stylesheet">
+        <link href="./ress/css/glyphicons-filetypes.css" rel="stylesheet">
+        <link href="./ress/css/glyphicons-halflings.css" rel="stylesheet">
+        <link href="./ress/css/glyphicons-social.css" rel="stylesheet">
+        <link href="./ress/css/font-awesome-all.min.css" rel="stylesheet">
 		<!--###PLATFORM.CSS###-->
 		<!--###CORDOVA.JS###-->
 		<script src="./scripts/vendor/formio.full.min.js"></script>
@@ -36,7 +41,7 @@
             <div class="header-wrapper">
                 <div class="header-common header-left">
                     <div class="header-common app-header app-menu rsp-lar-visible">
-                        <button type="button" class="header-common app-menu-button appl-button" onclick="openAppLauncher(this)"
+                        <button type="button" class="header-common app-menu-button appl-button" onclick="openAppLauncher(this)">
                             <span class="header-common app-menu-button-label"><i class="ms-Icon ms-Icon--Waffle icon-font-size-24" aria-hidden="true"></i></span>
                         </button>
                     </div>
@@ -543,9 +548,9 @@
         </div>
 		<div class="content-wrapper">
             <div class="body-content">
-		        <div id='formio' style="padding-top:15px"></div>
+		        <div id='formio' style="padding-top:10px"></div>
             </div>
-            <div id="renderIndicator" class="rendered btn" />
+            <div id="renderIndicator" class="rendered btn" style="padding: 0"></div>
             <div id="feedbackInserted" class="feedback-inserted">
                 <a id="feedbackContainer" class="feedback-container" onclick="showFeedbackDialog();" href="javascript:void(0)" data-clicking="custom">
                     <div class="feedback-button">

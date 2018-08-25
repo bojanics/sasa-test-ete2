@@ -1,5 +1,5 @@
 var langLayoutObj = {
-    'BG-BG': {
+    'bg-BG': {
         'Apply theme': 'Прилагане на тема: ',
         'Cancel': 'Отказ',
         'Choose your favorite theme.': 'Изберете любимата си тема.',
@@ -37,7 +37,7 @@ var langLayoutObj = {
         'Theme': 'Тема',
         'Your apps': 'Вашите приложения'
     },
-    'CS-CZ': {
+    'cs-CZ': {
         'Apply theme': 'Použít motiv: ',
         'Cancel': 'Zrušit',
         'Choose your favorite theme.': 'Zvolte svůj oblíbený motiv.',
@@ -75,7 +75,7 @@ var langLayoutObj = {
         'Theme': 'Motiv',
         'Your apps': 'Vaše aplikace'
     },
-    'DE-AT': {
+    'de-AT': {
         'Apply theme': 'Design anwenden: ',
         'Cancel': 'Abbrechen',
         'Choose your favorite theme.': 'Wählen Sie Ihr Lieblingsdesign aus.',
@@ -113,7 +113,7 @@ var langLayoutObj = {
         'Theme': 'Design',
         'Your apps': 'Ihre Apps'
     },
-    'ET-EE': {
+    'et-EE': {
         'Apply theme': 'Rakenda kujundus: ',
         'Cancel': 'Loobu',
         'Choose your favorite theme.': 'Saate valida oma lemmikkujunduse.',
@@ -151,7 +151,7 @@ var langLayoutObj = {
         'Theme': 'Kujundus',
         'Your apps': 'Teie rakendused'
     },
-    'EN-GB': {
+    'en-GB': {
         'Apply theme': 'Apply theme: ',
         'Cancel': 'Cancel',
         'Choose your favorite theme.': 'Choose your favorite theme.',
@@ -189,7 +189,7 @@ var langLayoutObj = {
         'Theme': 'Theme',
         'Your apps': 'Your apps'
     },
-    'HR-HR': {
+    'hr-HR': {
         'Apply theme': 'Primijeni temu: ',
         'Cancel': 'Odustani',
         'Choose your favorite theme.': 'Odaberite omiljenu temu.',
@@ -227,7 +227,7 @@ var langLayoutObj = {
         'Theme': 'Tema',
         'Your apps': 'Vaše aplikacije'
     },
-    'HU-HU': {
+    'hu-HU': {
         'Apply theme': 'Téma alkalmazása: ',
         'Cancel': 'Mégse',
         'Choose your favorite theme.': 'A kedvenc téma kiválasztása.',
@@ -265,7 +265,7 @@ var langLayoutObj = {
         'Theme': 'Téma',
         'Your apps': 'Saját appok'
     },
-    'KK-KZ': {
+    'kk-KZ': {
         'Apply theme': 'Тақырыпты қолдану: ',
         'Cancel': 'Бас тарту',
         'Choose your favorite theme.': 'Сүйікті тақырыбыңызды таңдаңыз.',
@@ -303,7 +303,7 @@ var langLayoutObj = {
         'Theme': 'Тақырып',
         'Your apps': 'Бағдарламаларыңыз'
     },
-    'LT-LT': {
+    'lt-LT': {
         'Apply theme': 'Taikyti temą: ',
         'Cancel': 'Atšaukti',
         'Choose your favorite theme.': 'Pasirinkite mėgstamą temą.',
@@ -341,7 +341,7 @@ var langLayoutObj = {
         'Theme': 'Tema',
         'Your apps': 'Jūsų programos'
     },
-    'PL-PL': {
+    'pl-PL': {
         'Apply theme': 'Zastosuj motyw: ',
         'Cancel': 'Anuluj',
         'Choose your favorite theme.': 'Wybierz ulubiony motyw.',
@@ -379,7 +379,7 @@ var langLayoutObj = {
         'Theme': 'Motyw',
         'Your apps': 'Twoje aplikacje'
     },
-    'RO-RO': {
+    'ro-RO': {
         'Apply theme': 'Aplicați tema: ',
         'Cancel': 'Anulare',
         'Choose your favorite theme.': 'Alegeți tema preferată.',
@@ -417,7 +417,7 @@ var langLayoutObj = {
         'Theme': 'Temă',
         'Your apps': 'Aplicațiile dvs.'
     },
-    'SR-LATN-CS': {
+    'sr-Latn-CS': {
         'Apply theme': 'Primena teme: ',
         'Cancel': 'Otkaži',
         'Choose your favorite theme.': 'Odaberite svoju omiljenu temu.',
@@ -455,7 +455,7 @@ var langLayoutObj = {
         'Theme': 'Tema',
         'Your apps': 'Vaše aplikacije'
     },
-    'RU-RU': {
+    'ru-RU': {
         'Apply theme': 'Применить тему: ',
         'Cancel': 'Отмена',
         'Choose your favorite theme.': 'Выберите понравившуюся тему.',
@@ -493,7 +493,7 @@ var langLayoutObj = {
         'Theme': 'Тема',
         'Your apps': 'Ваши приложения'
     },
-    'SL-SI': {
+    'sl-SI': {
         'Apply theme': 'Uporabite temo: ',
         'Cancel': 'Prekliči',
         'Choose your favorite theme.': 'Izberite priljubljeno temo.',
@@ -531,7 +531,7 @@ var langLayoutObj = {
         'Theme': 'Tema',
         'Your apps': 'Vaše aplikacije'
     },
-    'SK-SK': {
+    'sk-SK': {
         'Apply theme': 'Použiť motív: ',
         'Cancel': 'Zrušiť',
         'Choose your favorite theme.': 'Vyberte si obľúbený motív.',
@@ -569,7 +569,7 @@ var langLayoutObj = {
         'Theme': 'Motív',
         'Your apps': 'Vaše aplikácie'
     },
-    'TR-TR': {
+    'tr-TR': {
         'Apply theme': 'Temayı uygula: ',
         'Cancel': 'İptal',
         'Choose your favorite theme.': 'Beğendiğiniz temayı seçin.',
@@ -607,7 +607,7 @@ var langLayoutObj = {
         'Theme': 'Tema',
         'Your apps': 'Uygulamalarınız'
     },
-    'UK-UA': {
+    'uk-UA': {
         'Apply theme': 'Застосувати тему: ',
         'Cancel': 'Скасувати',
         'Choose your favorite theme.': 'Виберіть улюблену тему.',

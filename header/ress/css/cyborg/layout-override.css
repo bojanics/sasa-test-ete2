@@ -203,7 +203,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #060606;
@@ -214,12 +214,16 @@
  }
 
 .tabbar {
-    background-color: #060606;
-    color: #fff;
+    background-color: #3c3c3c; 
+}
+
+.back-div {
+    background-color: #3c3c3c;
+    color: #2A9FD6;
 }
 
 .tabbar-button {
-    color: #fff;
+    color: #888888;
 }
 
 .tab-wrapper {
@@ -232,6 +236,96 @@
 
 .active-tab-bottom {
     color: #2A9FD6;
+}
+
+.side-navigation-wrapper {
+    background-color: #282828;
+    color: white;
+    border-color: #282828 #222222 #282828 #282828;
+    border-right: 1px solid #222222;
+}
+
+.side-navigation-separator-line {
+    background-color: #424242;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: #888888;
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(42, 159, 214);
+    text-shadow: 0 0 4px rgba(42, 159, 214, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: white;
+}
+
+.nav-wrapper:hover {
+    background-color: #222222;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #222222;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #222222;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #424242;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #424242;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #222222;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(42, 159, 214);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #424242;
+}
+
+.navlinks {
+    color: white;
+}
+
+.navlinks:hover {
+    color: white;
+}
+
+.navlinks:focus {
+    color: white;
+}
+
+.navtitle {
+    color: white;
+}
+
+.primary-menu-region {
+    background-color: #222222; 
+    color: #888888;
+}
+
+.commandbar-primary-menu-item:hover {
+    background-color: #222222;
+    color: #ffffff;
+}
+
+.nav-tooltip-list-wrapper {
+    color: #888888;
+}
+
+.nav-tooltip-list-item-img {
+    color: #888888;
 }
 
 /**

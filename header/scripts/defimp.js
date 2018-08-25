@@ -15,11 +15,6 @@ var appURLQueryParameters = {};
 var appFormDataObj = {};
 
 /**
- * Used to avoid infinite loop when performing calculations on field change.
- */
-var calculationResultSet = false;
-
-/**
  * Default form object if specified form is not found.
  */
 var defaultFormObj = {"type":"form","tags":[],"access":[{"roles":["5a05516e35677f0001aeef6f","5a05516e35677f0001aeef70","5a05516e35677f0001aeef71"],"type":"read_all"}],"submissionAccess":[],"owner":"594fd15f7684cc005c2280ae","components":[{"hideLabel":false,"clearOnHide":false,"components":[{"hideLabel":false,"clearOnHide":false,"columns":[{"pull":0,"push":0,"offset":0,"width":6,"components":[{"hideLabel":false,"lockKey":true,"properties":{"formhelp":"This example shows how to add two numbers","fieldhelp":"The first number to add","elearninglink":"https://en.wikipedia.org/wiki/Operation_(mathematics)","elearningimagelink":"http://www.sparklebox.co.uk/wp-content/uploads/1-1231.jpg","processimagelink":"https://i.stack.imgur.com/MjNuE.gif","processlink":"https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers"},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"number","validate":{"required":false,"min":0,"max":9999,"step":"any","integer":"","multiple":"","custom":""},"clearOnHide":true,"hidden":false,"persistent":true,"protected":false,"defaultValue":"","suffix":"","prefix":"","placeholder":"","key":"a","label":"Number 1","inputType":"number","tableView":true,"input":true,"labelPosition":"top"}]},{"pull":0,"push":0,"offset":0,"width":6,"components":[{"hideLabel":false,"lockKey":true,"properties":{"elearninglink":"https://en.wikipedia.org/wiki/Operation_(mathematics)","elearningimagelink":"http://www.sparklebox.co.uk/wp-content/uploads/1-1231.jpg","fieldhelp":"The second number to add","formhelp":"This example shows how to add two numbers","processimagelink":"https://i.stack.imgur.com/MjNuE.gif","processlink":"https://stackoverflow.com/questions/12256948/bitwise-operations-to-add-two-numbers"},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"number","validate":{"required":false,"min":0,"max":9999,"step":"any","integer":"","multiple":"","custom":""},"clearOnHide":true,"hidden":false,"persistent":true,"protected":false,"defaultValue":"","suffix":"","prefix":"","placeholder":"","key":"b","label":"Number 2","inputType":"number","tableView":true,"input":true,"labelPosition":"top"}]}],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"columns","key":"columns","tableView":false,"input":false},{"hideLabel":false,"custom":"function addtwonumbers(url,formdata){\n   executeAjaxRequestWithAdalLogic(ADAL.config.clientId,addtwonumbersnoadal,url,formdata);\n}\n\nfunction addtwonumbersnoadal(token,url,formdata) {\n   var settings = {\n     \"crossDomain\": true,     \n     \"url\": url,\n     \"timeout\":30000,\n     \"method\": \"POST\",\n     \"headers\": {\n       \"content-type\": \"application/json\",\n       \"authorization\": \"Bearer \"+token,\n       \"cache-control\": \"no-cache\"\n     },\n     \"data\": JSON.stringify(formdata),\n     \"dataType\": 'json',\n     \"contentType\": 'application/json'                          \n   }\n\n   $.ajax(settings).done(function (data,textStatus,request) {\n      document.getElementById('mymessage').innerHTML='Calculation successfully performed!';\n      //console.log('data='+JSON.stringify(data));\n      //console.log('formdata='+JSON.stringify(formdata));\n      var datamerged = $.extend(formdata.data,data.data);\n      var datamergedstring = JSON.stringify(datamerged);\n      //console.log('datamerged='+datamergedstring);\n      var initjson = JSON.parse('{\"data\":'+datamergedstring+'}');\n      \n      form.submission = initjson;      \n   }).fail(function (err, textStatus, errorThrown) {\n      document.getElementById('mymessage').innerHTML='Failed to calculate two numbers!';\n      console.log(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n      alert(\"AJAX REQUEST FAILED:\"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown+\", url=\"+url+\",formdata=\"+(formdata!=null ? JSON.stringify(formdata) : null));\n   });\n}\n\naddtwonumbers(form.submission.data['API_add_url'],{\"data\":form.submission.data});","input":true,"label":"Add two numbers","tableView":false,"key":"addtwonumbers","size":"md","leftIcon":"","rightIcon":"","block":false,"action":"custom","disableOnInvalid":false,"theme":"primary","type":"button","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""},"event":"add2numbers","lockKey":true},{"hideLabel":false,"input":true,"tableView":true,"inputType":"number","label":"Result","key":"c","placeholder":"","prefix":"","suffix":"","defaultValue":"","protected":false,"persistent":true,"hidden":false,"clearOnHide":true,"validate":{"custom":"","multiple":"","integer":"","step":"any","max":"","min":"","required":false},"type":"number","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""},"lockKey":true,"disabled":true,"labelPosition":"top"},{"hideLabel":false,"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"type":"button","theme":"success","disableOnInvalid":false,"action":"submit","block":false,"rightIcon":"","leftIcon":"","size":"md","key":"submit","tableView":false,"label":"Do all the crazy things in green","input":true}],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Complete Test","input":false,"key":"panel"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Encryption","input":false,"key":"panel27"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel24","input":false,"title":"All form.io Controls","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Current User","input":false,"key":"panel21"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Branding","input":false,"key":"panel20"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Language","input":false,"key":"panel19"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Header Features","input":false,"key":"panel18"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel25","input":false,"title":"CDN Content","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"CDN Token","input":false,"key":"panel2"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Event Grid","input":false,"key":"panel3"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Service Bus","input":false,"key":"panel23"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Mail","input":false,"key":"panel4"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"PDF","input":false,"key":"panel5"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"SMS","input":false,"key":"panel6"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"WhatsApp","input":false,"key":"panel7"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Slack","input":false,"key":"panel9"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Teams","input":false,"key":"panel10"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Excel Calculation","input":false,"key":"panel8"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"WebBase Cache","input":false,"key":"panel11"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"SQL Server","input":false,"key":"panel12"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Preview","input":false,"key":"panel15"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"DokStore","input":false,"key":"panel14"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"CosmosDB","input":false,"key":"panel13"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Polizze erzeugen","input":false,"key":"panel16"},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"Schaden erzeugen","input":false,"key":"panel17"},{"hideLabel":false,"clearOnHide":false,"components":[],"key":"panel26","input":false,"title":"Dokument ablegen","theme":"default","tableView":false,"type":"panel","breadcrumb":"default","tags":[],"conditional":{"eq":"","when":null,"show":""},"properties":{"":""}},{"hideLabel":false,"clearOnHide":false,"components":[],"properties":{"":""},"conditional":{"show":"","when":null,"eq":""},"tags":[],"breadcrumb":"default","type":"panel","tableView":false,"theme":"default","title":"In context translation","input":false,"key":"panel22"}],"created":"2017-11-12T12:49:28.153Z","revisions":"","_vid":0,"_id":"5a08435835677f0001af052d","machineName":"nezcjzowfnfwzny:end2end","modified":"2018-02-02T02:51:31.574Z","title":"Formviewer for MS Azure and Office 365","display":"form","name":"end2end","path":"end2end","project":"5a05516e35677f0001aeef6e","properties":{"formtitle":"Tog Formviewer"}};
@@ -52,11 +47,13 @@ function resetAppConfiguration()
         userlangs: "",
         timezones: "",
         customScript: "",
+        customCss: "",
         onlinemode: false,
         display: "form",
         title: "Formviewer for MS Azure and Office 365",
         formtitle: "Tog Formviewer",
         formhelp: "",
+        formname: "",
         processimagelink: "",
         processlink: "",
         processtext: "Click the gear icon below to see the business process...",
@@ -160,6 +157,8 @@ function resetAppConfiguration()
         actionPasteLocalScript: "",
         actionScroll: "",
         actionScrollLocalScript: "",
+        actionDirtyChanged: "",
+        actionDirtyChangedLocalScript: "",
         bingMapsKey: "",
         mapWrapperId: "",
         mapRouteInfoWrapperId: "",
@@ -178,12 +177,17 @@ function resetAppConfiguration()
         defaultLanguage: "",
         defaultTimeZone: "",
         disableActionSpinner: false,
+        menuPosition: "top",
+        menuPositionThreshold: "",
         menusPath: "",
         langMenusTopPath: "",
+        langMenusLeftPath: "",
         langMenusBottomPath: "",
         test: "false",
         debug: "false",
-        choicesOptions: ""
+        choicesOptions: "",
+        sendForm: false,
+        formTranslation: ""
     };
     appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
 }
@@ -200,6 +204,27 @@ function initAfterADALSetup()
     appFormDataObj = parse_query_string(window.location.search.substring(1));
     
     if (ADAL!=null) {
+        var signeduser = ADAL!=null ? ADAL.getCachedUser() : null;
+        if (signeduser) {
+            if (signeduser.profile.upn) {
+                // For work or school accounts (tenant members)
+                currentUser.member = true;
+                currentUser.personal = false;
+                currentUser.uid = signeduser.profile.upn;
+            } else if (signeduser.profile.idp === "live.com") {
+                // For personal accounts
+                currentUser.member = false;
+                currentUser.personal = true;
+                currentUser.uid = signeduser.profile.email;
+            } else {
+                // For work or school accounts which are guests
+                currentUser.member = false;
+                currentUser.personal = false;
+                currentUser.uid = signeduser.profile.email;
+            }
+            currentUser.name = signeduser.profile.name;        
+        }
+        
         _getopenidconfig();
     } else {
         beginConfigurationProcess();
@@ -208,7 +233,7 @@ function initAfterADALSetup()
 
 
 function _getopenidconfig() {
-    console.log('getopenidconfig...');
+    console.log('getting openid-configuration...');
     var idt = ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN);
     var pt = ADAL._extractIdToken(idt);
     
@@ -222,7 +247,6 @@ function _getopenidconfig() {
     $.ajax(settings).done(function (data,textStatus,request) {
         console.log('getopenidconfig call successfully executed, data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
         TogFormViewer.openidConfiguration = data;
-        //getjwks(data.jwks_uri);
         beginConfigurationProcess();
     }).fail(function (err, textStatus, errorThrown) {
         console.log('getopenidconfig call failed, AJAX REQUEST FAILED:'+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
@@ -234,7 +258,6 @@ function _getopenidconfig() {
 function beginConfigurationProcess() {
     resetAppConfiguration();
     var appDefFromServer = checkForResolvedPropertyFromTheServer("appDefPath");
-    console.log('adfs='+appDefFromServer);
     if (appDefFromServer!=null)
     {
        appConfiguration.appDefPath = appDefFromServer;
@@ -289,12 +312,10 @@ function loadScript(url, callback, errorHandler)
     scriptElement.onload = callback;
     if (typeof errorHandler === 'undefined')
     {
-        console.log('loads '+url+' with errhandler UNDEFINED');
         scriptElement.onerror = callback;
     }
     else
     {
-        console.log('loads '+url+' with errhandler defined');
         scriptElement.onerror = errorHandler;
     }
     
@@ -403,14 +424,12 @@ function getURIParamForConfiguration(formAndAppObjPropertyName,paramName,appConf
  */
 function loadFormDefinition()
 {
-    console.log("Loading form definition");
     if (appInfoObjFromServer != null && appInfoObjFromServer.formObj != null)
     {
         formObj = appInfoObjFromServer.formObj;
     }
     
     var formDefFromServer = checkForResolvedPropertyFromTheServer("formDefPath");
-    console.log('fdfs='+formDefFromServer);
     if (formDefFromServer != null)
     {
         appConfiguration.formDefPath = formDefFromServer;
@@ -429,7 +448,6 @@ function loadFormDefinition()
     }
     else
     {
-        console.log('fobj loaded, path='+appConfiguration.formDefPath);
         formObjLoaded();
     }
 }
@@ -487,6 +505,12 @@ function setupFormConfiguration()
         appConfiguration.title = formObj["title"];
     }
     
+    // Set up the form name
+    if (formObj && formObj.hasOwnProperty("name"))
+    {
+        appConfiguration.formname = formObj["name"];
+    }
+
     // Set up form title
     resolveStringOrBooleanParameter(false,"formtitle","formtitle",formObj,null,null,false,appConfiguration.formtitle); 
     
@@ -510,8 +534,10 @@ function setupFormConfiguration()
     resolveStringOrBooleanParameter(false,"elearninglink","elearninglink",formObj,null,null,false,appConfiguration.elearninglink); 
     
     // If the customScript definition path has been specified
-    resolveStringOrBooleanParameter(false,"customScript","customScript",formObj,appObj,null,true,appConfiguration.customScript);    
-    console.log('cs='+appConfiguration.customScript);
+    resolveStringOrBooleanParameter(false,"customScript","customScript",formObj,appObj,null,true,appConfiguration.customScript);
+    
+    // If the customCss definition path has been specified
+    resolveStringOrBooleanParameter(false,"customCss","customCss",formObj,appObj,null,true,appConfiguration.customCss);
 }
 
 /**
@@ -538,7 +564,6 @@ function setDefaultForm()
  */
 function loadConfigurations()
 {
-    console.log("Loading configurations");
     var brandDef = checkForResolvedPropertyFromTheServer("brandDefPath");
     if (brandDef!=null) {
         appConfiguration.brandDefPath = brandDef;
@@ -650,7 +675,6 @@ function loadConfigurations()
 function brandObjLoaded()
 {
     setupBrandConfiguration();
-    console.log("CFAS brand");
     checkForAppSetup();
 }
 
@@ -688,7 +712,6 @@ function loadDefaultBrand()
 function customizationObjLoaded()
 {
     setupCustomizationConfiguration();
-    console.log("CFAS cust");
     checkForAppSetup();
 }
 
@@ -720,7 +743,6 @@ function loadDefaultCustomization()
 function headerObjLoaded()
 {
     setupHeaderConfiguration();
-    console.log("CFAS hdr");
     checkForAppSetup();
 }
 
@@ -753,9 +775,10 @@ function setupHeaderConfiguration()
     }
     else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties") && formObj.properties.hasOwnProperty("form width percent"))
     {
-        if (!isNaN(formObj.properties["form width percent"]) && 0.1 < formObj.properties["form width percent"] && formObj.properties["form width percent"] <= 100)
+        var formWidthPercentAsNumber = Number(formObj.properties["form width percent"]);
+        if (!isNaN(formWidthPercentAsNumber) && 0.1 < formWidthPercentAsNumber && formWidthPercentAsNumber <= 100)
         {
-            appConfiguration.formWidthPercent = formObj.properties["form width percent"];
+            appConfiguration.formWidthPercent = formWidthPercentAsNumber;
         }
     }
     else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("form width percent") && !isNaN(headerObj["form width percent"])
@@ -787,7 +810,6 @@ function setupHeaderConfiguration()
 	
     // If the userlangs definition path has been specified
     resolveStringOrBooleanParameter(false,"userlangs","userlangs",formObj,headerObj,null,true,appConfiguration.userlangs);
-    console.log('userlangs1='+appConfiguration.userlangs);
     
     // Set up Default Language
     resolveStringOrBooleanParameter(false,"defaultLanguage","defaultLanguage",formObj,headerObj,null,true,appConfiguration.defaultLanguage);  
@@ -1127,7 +1149,13 @@ function setupHeaderConfiguration()
     resolveStringOrBooleanParameter(false,"action scroll","actionScroll",formObj,headerObj,null,true,appConfiguration.actionScroll); 
 
     // setup scroll local script
-    resolveStringOrBooleanParameter(false,"action scroll local script","actionScrollLocalScript",formObj,headerObj,null,true,appConfiguration.actionScrollLocalScript); 
+    resolveStringOrBooleanParameter(false,"action scroll local script","actionScrollLocalScript",formObj,headerObj,null,true,appConfiguration.actionScrollLocalScript);
+
+    // setup dirty changed action
+    resolveStringOrBooleanParameter(false,"action dirty changed","actionDirtyChanged",formObj,headerObj,null,true,appConfiguration.actionDirtyChanged); 
+
+    // setup dirty changed local script
+    resolveStringOrBooleanParameter(false,"action dirty changed local script","actionDirtyChangedLocalScript",formObj,headerObj,null,true,appConfiguration.actionDirtyChangedLocalScript);    
 
     // Set up Bing Maps key https://msdn.microsoft.com/en-us/library/ff428642.aspx
     resolveStringOrBooleanParameter(false,"bing maps key","bingMapsKey",formObj,headerObj,null,true,appConfiguration.bingMapsKey); 
@@ -1173,7 +1201,7 @@ function setupHeaderConfiguration()
     {
         if (!isNaN(formObj.properties["map center latitude"]))
         {
-            appConfiguration.mapCenterLatitude = formObj.properties["map center latitude"];
+            appConfiguration.mapCenterLatitude = Number(formObj.properties["map center latitude"]);
         }
     }
     else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("map center latitude") && headerObj["map center latitude"])
@@ -1201,7 +1229,7 @@ function setupHeaderConfiguration()
     {
         if (!isNaN(formObj.properties["map center longitude"]))
         {
-            appConfiguration.mapCenterLongitude = formObj.properties["map center longitude"];
+            appConfiguration.mapCenterLongitude = Number(formObj.properties["map center longitude"]);
         }
     }
     else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("map center longitude") && headerObj["map center longitude"])
@@ -1228,13 +1256,50 @@ function setupHeaderConfiguration()
     // Check if we should disable spinner when executing actions
     resolveStringOrBooleanParameter(true,"disableActionSpinner","disableActionSpinner",formObj,headerObj,null,true,appConfiguration.disableActionSpinner); 
     
+    // Set up menu position
+    resolveStringOrBooleanParameter(false,"menuposition","menuPosition",formObj,headerObj,null,true,appConfiguration.menuPosition);
+    TogFormViewer.menuPosition = appConfiguration.menuPosition;
+    
+    // Set up menu position threshold (minimum window width when menu position is changed from top or left to bottom)
+    var menuPositionThresholdUrlOrFromServer = checkForResolvedPropertyFromTheServer("menuPositionThreshold");
+    if (menuPositionThresholdUrlOrFromServer==null) {
+        menuPositionThresholdUrlOrFromServer = checkForUrlParameter("menupositionthreshold");
+    }
+    if (menuPositionThresholdUrlOrFromServer)
+    {
+        if (!isNaN(menuPositionThresholdUrlOrFromServer))
+        {
+            appConfiguration.menuPositionThreshold = menuPositionThresholdUrlOrFromServer;
+        }
+    }
+    else if (typeof formObj !== 'undefined' && formObj !== null && formObj.hasOwnProperty("properties")
+        && formObj.properties !== null && formObj.properties.hasOwnProperty("menupositionthreshold"))
+    {
+        if (!isNaN(formObj.properties["menupositionthreshold"]))
+        {
+            appConfiguration.menuPositionThreshold = Number(formObj.properties["menupositionthreshold"]);
+        }
+    }
+    else if (typeof headerObj !== 'undefined' && headerObj !== null && headerObj.hasOwnProperty("menupositionthreshold") && headerObj["menupositionthreshold"])
+    {
+        if (!isNaN(headerObj["menupositionthreshold"]))
+        {
+            appConfiguration.menuPositionThreshold = headerObj["menupositionthreshold"];
+        }
+    }
+    
+    recalculateMenuPosition();
+    
     // Check if the menus definition path has been specified
     resolveStringOrBooleanParameter(false,"menus","menusPath",formObj,headerObj,null,true,appConfiguration.menusPath); 
     
     // Check if the top menu translations definition path has been specified
     resolveStringOrBooleanParameter(false,"langmenustop","langMenusTopPath",formObj,headerObj,null,true,appConfiguration.langMenusTopPath); 
     
-    // Check if the the bottom menu translations definition path has been specified
+    // Check if the left menu translations definition path has been specified
+    resolveStringOrBooleanParameter(false,"langmenusleft","langMenusLeftPath",formObj,headerObj,null,true,appConfiguration.langMenusLeftPath); 
+    
+    // Check if the bottom menu translations definition path has been specified
     resolveStringOrBooleanParameter(false,"langmenusbottom","langMenusBottomPath",formObj,headerObj,null,true,appConfiguration.langMenusBottomPath); 
     
     // Check if we have Choices.js options defined for the whole form (applied to all Select components in the form)
@@ -1259,7 +1324,13 @@ function setupHeaderConfiguration()
     {
         appConfiguration.choicesOptions = JSON.parse(headerObj["choicesOptions"]);
     }
-    console.log('CO='+JSON.stringify(appConfiguration.choicesOptions));
+
+    // Check if we should send formObj to the server as a part of appInfo object
+    resolveStringOrBooleanParameter(true,"sendForm","sendForm",formObj,headerObj,null,true,appConfiguration.sendForm);
+    
+    // Check if form translation path has been specified
+    resolveStringOrBooleanParameter(false,"formtranslation","formTranslation",formObj,headerObj,null,true,appConfiguration.formTranslation);
+    
 }
 
 /**
@@ -1269,13 +1340,9 @@ function setupHeaderConfiguration()
  */
 function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationParamName,firstObj,secondObj,thirdObj,checkUrlParameter,defaultValue) 
 {
-    var name2print = "actionBeforePrintLocalScript";
     var paramVal = defaultValue;
     var paramValFromRPO = checkForResolvedPropertyFromTheServer(appConfigurationParamName);
     
-    if (appConfigurationParamName==name2print) {
-        console.log(name2print+"["+paramName+"]: param from server="+paramValFromRPO);
-    }
     if (paramValFromRPO!=null)
     {
         paramVal = paramValFromRPO;
@@ -1284,10 +1351,6 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
     {
         var paramValFromUrl = checkUrlParameter ? checkForUrlParameter(paramName) : "";
         var boolValCorrect = !isBoolean || paramValFromUrl === "false" || paramValFromUrl === "true";
-
-        if (appConfigurationParamName==name2print) {
-            console.log(name2print+"["+paramName+"]: param from URL="+paramValFromUrl+", boolvalcorrect="+boolValCorrect);
-        }
         
         if (paramValFromUrl && boolValCorrect)
         {
@@ -1302,33 +1365,27 @@ function resolveStringOrBooleanParameter(isBoolean,paramName,appConfigurationPar
         }
         else if (typeof firstObj !== 'undefined' && firstObj !== null && firstObj.hasOwnProperty("properties") && firstObj.properties !== null && firstObj.properties.hasOwnProperty(paramName))
         {
-            paramVal = firstObj.properties[paramName];
-            if (appConfigurationParamName==name2print) {
-                console.log(name2print+"["+paramName+"]: param from firstObj="+paramValFromUrl);
+            var paramValFromObj = firstObj.properties[paramName];
+            var bvc = !isBoolean || paramValFromObj === "false" || paramValFromObj === "true";
+            if (isBoolean) {
+                if (bvc) {
+                    paramVal = (firstObj.properties[paramName]==='true');
+                }
+            } else {
+                paramVal = firstObj.properties[paramName];
             }
         }
         else if (typeof secondObj !== 'undefined' && secondObj !== null && secondObj.hasOwnProperty(paramName))
         {
             paramVal  = secondObj[paramName];
-            if (appConfigurationParamName==name2print) {
-                console.log(name2print+"["+paramName+"]: param from secondObj="+paramValFromUrl);
-            }
         }
         else if (typeof thirdObj !== 'undefined' && thirdObj !== null && thirdObj.hasOwnProperty(paramName))
         {
             paramVal  = thirdObj[paramName];
-            if (appConfigurationParamName==name2print) {
-                console.log(name2print+"["+paramName+"]: param from thirdObj="+paramValFromUrl);
-            }
         }
     }
     
     appConfiguration[appConfigurationParamName] = paramVal;
-    
-//    var msg = 'rsobp[isb='+isBoolean+',pn='+paramName+',acpn='+appConfigurationParamName+',fo='+firstObj+',so='+secondObj+',cup='+checkUrlParameter+',dv='+defaultValue+']';
-//    console.log(msg);
-//    console.log('r='+paramVal);
-
 }
 
 /**
@@ -1387,7 +1444,6 @@ function themesLoaded() {
     setThemesConfiguration();
     
     // Check if anything else should be loaded
-    console.log("CFAS thms");
     checkForAppSetup();
 }
 
@@ -1426,7 +1482,6 @@ function languagesLoaded()
     setLanguagesConfiguration();
     
     // Check if anything else should be loaded
-    console.log("CFAS lang");
     checkForAppSetup();
 }
 
@@ -1487,7 +1542,25 @@ function customScriptLoaded(doNotCheck)
     customScriptLoadedFlag = true;
     
     // Check if anything else should be loaded
-    console.log("CFAS cust script");
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
+}
+
+/**
+ * Flag which indicates that customCss has been loaded
+ */
+var customCssLoadedFlag = false;
+
+/**
+ * Callback executed when customCss has been loaded
+ */
+function customCssLoaded(doNotCheck) 
+{
+    
+    customCssLoadedFlag = true;
+    
+    // Check if anything else should be loaded
     if (!doNotCheck || (typeof doNotCheck=='object')) {
         checkForAppSetup();
     }
@@ -1499,7 +1572,8 @@ function customScriptLoaded(doNotCheck)
 function loadDefaultMenus(doNotCheck)
 {
     window.menusObj = {};
-    
+    TogFormViewer.activeMenuKey = "";
+
     // Check if anything else should be loaded
     if (!doNotCheck || (typeof doNotCheck=='object')) {
         checkForAppSetup();
@@ -1520,6 +1594,19 @@ function loadDefaultLangTopMenus(doNotCheck)
 }
 
 /**
+ * Callback executed when lang-left-menus.json.js can't be loaded
+ */
+function loadDefaultLangLeftMenus(doNotCheck)
+{
+    window.langLeftMenusObj = {};
+    
+    // Check if anything else should be loaded
+    if (!doNotCheck || (typeof doNotCheck=='object')) {
+        checkForAppSetup();
+    }
+}
+
+/**
  * Callback executed when lang-bottom-menus.json.js can't be loaded
  */
 function loadDefaultLangBottomMenus(doNotCheck)
@@ -1530,6 +1617,36 @@ function loadDefaultLangBottomMenus(doNotCheck)
     if (!doNotCheck || (typeof doNotCheck=='object')) {
         checkForAppSetup();
     }
+}
+
+/**
+ * Callback executed when form translations have been loaded
+ */
+function formTranslationsLoaded()
+{
+    $.extend(langObj, tranFormObj);
+    
+    // Check if anything else should be loaded
+    checkForAppSetup();
+}
+
+/**
+ * Callback executed when tran-form.json.js can't be loaded
+ */
+function loadDefaultFormTranslations()
+{
+    loadScript(appConfiguration.formDefPath.substring(0, appConfiguration.formDefPath.length - 12) + "tran-form.json.js", formTranslationsLoaded, formTranslationsLoadFailed);
+}
+
+/**
+ * Callback executed when a default tran-form.json.js can't be loaded
+ */
+function formTranslationsLoadFailed()
+{
+    window.tranFormObj = {};
+    
+    // Check if anything else should be loaded
+    checkForAppSetup();
 }
 
 /**
@@ -1553,6 +1670,11 @@ var timeZonesLoadStarted = false;
 var customScriptLoadStarted = false;
 
 /**
+ * Flag which indicates if the custom css loading has been started
+ */
+var customCssLoadStarted = false;
+
+/**
  * Flag which indicates if the menus definition loading has been started
  */
 var menusLoadStarted = false;
@@ -1563,9 +1685,19 @@ var menusLoadStarted = false;
 var langTopMenusLoadStarted = false;
 
 /**
+ * Flag which indicates if the left menus translations loading has been started
+ */
+var langLeftMenusLoadStarted = false;
+
+/**
  * Flag which indicates if the bottom menus translations loading has been started
  */
 var langBottomMenusLoadStarted = false;
+
+/**
+ * Flag which indicates if the form translations loading has been started
+ */
+var formTranslationLoadStarted = false;
 
 /**
  * Checks if all definition files has been loaded.
@@ -1574,7 +1706,6 @@ var langBottomMenusLoadStarted = false;
  */
 function checkForAppSetup()
 {
-    console.log("Checking for app setup");
     // Check if the themes.json.js should be loaded
     if (!themeLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
@@ -1599,7 +1730,6 @@ function checkForAppSetup()
     if (!languageLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
         languageLoadStarted = true;
-        console.log('now handling userlangs, acul='+appConfiguration.userlangs);
         if (appInfoObjFromServer != null && appInfoObjFromServer.userLangsObj != null)
         {
             userLangsObj = appInfoObjFromServer.userLangsObj;
@@ -1609,7 +1739,6 @@ function checkForAppSetup()
         {
             if (appConfiguration.userlangs)
             {
-                console.log('userlangs loading...');
                 loadScript(appConfiguration.userlangs, languagesLoaded, loadDefaultLanguages);
             } else {
                loadDefaultLanguages(true);
@@ -1629,7 +1758,7 @@ function checkForAppSetup()
         {
             if (appConfiguration.timezones)
             {
-                loadScript(appConfiguration.timezones, function() {console.log("CFAS tzn");checkForAppSetup();}, loadDefaultTimeZones);
+                loadScript(appConfiguration.timezones, checkForAppSetup, loadDefaultTimeZones);
             } else {
                loadDefaultTimeZones(true);
             }
@@ -1649,6 +1778,25 @@ function checkForAppSetup()
         }   
     }
     
+    // Check if the file, which path is specified at customCss parameter, should be loaded
+    if (!customCssLoadStarted && typeof appObj !== 'undefined' && appObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        customCssLoadStarted = true;
+        if (appConfiguration.customCss)
+        {
+            var customCssElem = document.createElement("link");
+            customCssElem.rel = "stylesheet";
+            customCssElem.href = appConfiguration.customCss;
+            customCssElem.onreadystatechange = customCssLoaded;
+            customCssElem.onload = customCssLoaded;
+            customCssElem.onerror = customCssLoaded;
+            var layoutStyleNode = document.getElementById("layoutstyle");
+            layoutStyleNode.parentNode.insertBefore(customCssElem, layoutStyleNode.nextSibling);
+        } else {
+           customCssLoaded(true);
+        }   
+    }
+    
     // Check if the menus.json.js should be loaded
     if (!menusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
@@ -1661,7 +1809,7 @@ function checkForAppSetup()
         {
             if (appConfiguration.menusPath)
             {
-                loadScript(appConfiguration.menusPath, function() {console.log("CFAS menus");checkForAppSetup();}, loadDefaultMenus);
+                loadScript(appConfiguration.menusPath, checkForAppSetup, loadDefaultMenus);
             } else {
                loadDefaultMenus(true);
             }
@@ -1680,9 +1828,28 @@ function checkForAppSetup()
         {
             if (appConfiguration.langMenusTopPath)
             {
-                loadScript(appConfiguration.langMenusTopPath, function() {console.log("CFAS menustop");checkForAppSetup();}, loadDefaultLangTopMenus);
+                loadScript(appConfiguration.langMenusTopPath, checkForAppSetup, loadDefaultLangTopMenus);
             } else {
                loadDefaultLangTopMenus(true);
+            }
+        }        
+    }
+    
+    // Check if the lang-left-menus.json.js should be loadedScript
+    if (!langLeftMenusLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        langLeftMenusLoadStarted = true;
+        if (appInfoObjFromServer != null && appInfoObjFromServer.langLeftMenusObj)
+        {
+            langLeftMenusObj = appInfoObjFromServer.langLeftMenusObj;
+        }
+        else
+        {
+            if (appConfiguration.langMenusLeftPath)
+            {
+                loadScript(appConfiguration.langMenusLeftPath, checkForAppSetup, loadDefaultLangLeftMenus);
+            } else {
+               loadDefaultLangLeftMenus(true);
             }
         }        
     }
@@ -1699,14 +1866,26 @@ function checkForAppSetup()
         {
             if (appConfiguration.langMenusBottomPath)
             {
-                loadScript(appConfiguration.langMenusBottomPath, function() {console.log("CFAS menusbottom");checkForAppSetup();}, loadDefaultLangBottomMenus);
+                loadScript(appConfiguration.langMenusBottomPath, checkForAppSetup, loadDefaultLangBottomMenus);
             } else {
                loadDefaultLangBottomMenus(true);
             }
         }        
     }
+    
+    if (!formTranslationLoadStarted && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        formTranslationLoadStarted = true;
+        if (appConfiguration.formTranslation)
+        {
+            loadScript(appConfiguration.formTranslation, formTranslationsLoaded, loadDefaultFormTranslations);
+        }
+        else
+        {
+            loadDefaultFormTranslations();
+        }
+    }
         
-    console.log("cslf="+customScriptLoadedFlag+",appobj"+(typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"]))+",formobj="+(typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"]))));
     if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["themes"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.themes)))
@@ -1716,12 +1895,16 @@ function checkForAppSetup()
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["timezones"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.timezones)))
         && (customScriptLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customScript"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customScript"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.customScript)))
+        && (customCssLoadedFlag || (typeof appObj !== 'undefined' && appObj != null && !(appObj["customCss"])
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["customCss"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.customCss)))
         && (typeof menusObj !== 'undefined' && menusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["menus"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["menus"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.menus)))
         && (typeof langTopMenusObj !== 'undefined' && langTopMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenustop"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenustop"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenustop)))
         && (typeof langBottomMenusObj !== 'undefined' && langBottomMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenusbottom"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenusbottom"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenusbottom))))
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenusbottom"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenusbottom)))
+        && (typeof tranFormObj !== 'undefined' && tranFormObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["formtranslation"])
+            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["formtranslation"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.formTranslation))))
     {        
         if (document.readyState === 'complete')
         {
@@ -1854,7 +2037,16 @@ function setUserSettings(userSettingsSetCallback)
             // Setup language, time zone and theme configuration
             setupLanguageConfiguration(language);
             setupTimeZoneConfiguration(timeZone);
-            setupThemeConfiguration(theme);
+            
+            // We don't use stored theme configuration when theme settings are switched off
+            if (appConfiguration.themeSettings)
+            {
+                setupThemeConfiguration(theme);
+            }
+            else
+            {
+                setupThemeConfiguration();
+            }
             
             // We perform the callback immidiately because we performed only one API call
             userSettingsSetCallback();
@@ -1906,7 +2098,7 @@ function setupLanguageConfiguration(storedLanguage)
     }
     
     TogFormViewer.setProperty("storedUserLanguage", storedLanguage);
-    console.log("Mailbox settings language = " + languageSelector.selectedLanguage);
+    console.log("Mailbox settings language = " + storedLanguage);
     var userLanguageFromRPO = checkForResolvedPropertyFromTheServer("userLanguage");
     if (userLanguageFromRPO && languagesMap[userLanguageFromRPO])
     {
@@ -1937,7 +2129,7 @@ function setupTimeZoneConfiguration(storedTimeZone)
     }
     
     TogFormViewer.setProperty("storedUserTimeZone", storedTimeZone);
-    console.log("Mailbox settings time zone = " + timeZoneSelector.selectedTimeZone);
+    console.log("Mailbox settings time zone = " + storedTimeZone);
     var timeZoneFromRPO = checkForResolvedPropertyFromTheServer("userTimeZone");
     if (timeZoneFromRPO && supportedTimeZonesMap[timeZoneFromRPO])
     {
@@ -2020,11 +2212,19 @@ function executeLoadingOrLoadedScript(isLoadingScript)
     }    
 }
 
-function executeScript(scriptName,script,togFormViewerEvent,log2console) {
-    try {
+function executeScript(scriptName,script,togFormViewerEvent,log2console)
+{
+    try
+    {
         if (log2console) console.log("Executing "+scriptName+" script:"+script);
         eval(script);
-    } catch (err) {
+        if (togFormViewerEvent.controlProperties && togFormViewerEvent.controlProperties["set clean"] === "true")
+        {
+            TogFormViewer.FormioPlugIn.setProperty("dirty", false);
+        }
+    }
+    catch (err)
+    {
         var msg = "Error occurred when executing "+scriptName+" script:\n\n"+script;
         msg+="\n\nError name: "+err.name;
         msg+="\n\nError message: "+err.message;
@@ -2045,7 +2245,6 @@ function checkForLoadingCallback()
     // E.g. the script could be something like: 
     // TogFormViewer.setProperty('appLauncher',false);TogFormViewer.setProperty('environment',false);TogFormViewer.FormioPlugIn.setProperty('formhelp','This is new form help');",    
     executeLoadingOrLoadedScript(true);
-    console.log('cflc, ah='+appConfiguration.home+', AC='+JSON.stringify(appConfiguration));
     if (!appConfiguration.home)
     {
         // We don't have the base URL for the API call so we don't perform a call
@@ -2064,7 +2263,6 @@ function checkForLoadingCallback()
     // appInfoObjFromServer.callbackCount is set only inside handleServerResponseForLoadingAndOtherActions function
     var doLoadingCallback = appConfiguration.actionLoading && (appInfoObjFromServer==null || appInfoObjFromServer.callbackCount==null || callbackCount<4 && formChanged);
     
-    console.log("DLC="+doLoadingCallback+', fc='+formChanged+', cc='+callbackCount+', aiofs='+appInfoObjFromServer+', aiofscbc='+(appInfoObjFromServer!=null ? appInfoObjFromServer.callbackCount : null));
     formChanged = formChanged || callbackCount>1;
     // We found home URL and it is a base address for our call
     // Now we need to find a relative path    
@@ -2077,9 +2275,7 @@ function checkForLoadingCallback()
     else
     {
         appInfoObjFromServer = null;
-        console.log('fd='+formDestroyed+', fc='+formChanged);
         if (!formDestroyed && !formChanged) {
-            console.log('setting only submission');
             formioForm.submission = {"data":appFormDataObj};
             setupPredefinedTheme();
             setInitialTimeZone();
@@ -2094,11 +2290,9 @@ function checkForLoadingCallback()
             });
         } else {            
             if (typeof formioForm !== 'undefined') {
-                console.log('destroying form from cflc');
                 formioForm.destroy();
                 formDestroyed = true;
             }
-            console.log('setting app');
             setupApp();
         }
     }
@@ -2107,6 +2301,17 @@ function checkForLoadingCallback()
 function handlePlaceholders(placeholderStr,event) {
     // Replace placeholders in placeholderStr with available settings
     var placeholders = {"formname":formObj.name,"formversion":(formObj.hasOwnProperty("properties") && formObj.properties!=null ? formObj.properties["formversion"] : null),"eventtype":event.type,"eventvalue":event.value,"eventcontrolid":event.controlId,"eventcontroltype":event.controlType};
+    // Add all simple properties from the submission as possible placeholders
+    for (var p in appFormDataObj) {
+        //console.log("type of "+p+" is "+(typeof appConfiguration[p]));
+        if (!placeholders.hasOwnProperty(p)) {
+            var val = appFormDataObj[p];
+            if (typeof val !== "object" && val!=null) {
+                placeholders[p]=val.toString();  
+            }
+        }
+    }
+    
     for (let key in placeholders) {
         placeholderStr = placeholderStr.replace(/({([^}]+)})/g, function(i) {
             let key = i.replace(/{/, '').replace(/}/, '');
@@ -2123,9 +2328,16 @@ function handlePlaceholders(placeholderStr,event) {
 /**
  * Calls loading callback and set up the APP
  */
-function performLoadingCallback(url,cnt,event)
+function performLoadingCallback(url,cnt)
 {
-    var event = {"type":"Loading","controlId":(formObj.hasOwnProperty("_id") ? formObj._id : null),"controlType":"form","value":null};
+    var event =
+    {
+        "type": "Loading",
+        "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : null),
+        "controlType": "form",
+        "controlProperties": (formObj.properties ? formObj.properties : null),
+        "value": null
+    };
 
     // Replace placeholders in relative path with available settings
     url = handlePlaceholders(url,event);
@@ -2137,8 +2349,9 @@ function performLoadingCallback(url,cnt,event)
         executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"callbackCount":cnt,"event":event},onsuccess_loading,onfailure_loading,onfailure_loading);
     } else {
         //alert("It is not possible to perform loading because user is not logged-in!");
-        console.log("It is not possible to perform loading because user is not logged-in!");
-        setupApp();
+        //console.log("It is not possible to perform loading because user is not logged-in!");
+        //setupApp();
+        executeAjaxRequest(null, url, payload, {"callbackCount":cnt,"event":event},onsuccess_loading,onfailure_loading,onfailure_loading);
     }    
 }
 
@@ -2155,8 +2368,6 @@ function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textS
 function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
    appInfoObjFromServer = data.appInfo;
    
-   //appInfoObjFromServer = {};
-   //appInfoObjFromServer.resolvedProperties = JSON.parse(JSON.stringify(appConfiguration));
    // Extended data sent from server which are not part of the submission data
    // Can be used within forms and custom scripts as project specific data model
    // The extended data will not be sent back to the server with next API call
@@ -2165,16 +2376,13 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        TogFormViewer.extendedServerData = data.extendedData;
    }
    
-   console.log("EVENT for hsr = "+JSON.stringify(additionalConfiguration.event));
    if (appInfoObjFromServer!=null) {
-       //appInfoObjFromServer.formObj.title = "FT "+Math.floor((Math.random()*1000)+1);
        var resolvedPropertiesObjFromServer = appInfoObjFromServer.resolvedProperties;
        if (resolvedPropertiesObjFromServer==null) {
            resolvedPropertiesObjFromServer = {};
        }
        
        if (additionalConfiguration.event.type=='search' || additionalConfiguration.event.type=='showDropdown') {
-           console.log('11111: '+appInfoObjFromServer.eventResponse);
           if (appInfoObjFromServer.eventResponse) {
              console.log('setting select component '+additionalConfiguration.event.controlId+' vals to '+JSON.stringify(appInfoObjFromServer.eventResponse));
              formioForm.getComponent(additionalConfiguration.event.controlId).component.data.values = appInfoObjFromServer.eventResponse;
@@ -2182,53 +2390,53 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           }
        }
        
-//       resolvedPropertiesObjFromServer.userLanguage='EN-GB';
-//       resolvedPropertiesObjFromServer.userTheme='cosmo';
        // if server decided that the user should go offline, set ADAL to null
        if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
           ADAL = null;
        }
        appInfoObjFromServer.callbackCount = additionalConfiguration!=null && additionalConfiguration.callbackCount!=null ? additionalConfiguration.callbackCount : 0;
        
+       // Update read/write runtime properties
+       if (appInfoObjFromServer.runtimeProperties) {
+          if (appInfoObjFromServer.runtimeProperties.hasOwnProperty("dirty")
+              && typeof appInfoObjFromServer.runtimeProperties.dirty === "boolean"
+          && TogFormViewer.dirty !== appInfoObjFromServer.runtimeProperties.dirty) {
+             TogFormViewer.FormioPlugIn.setProperty("dirty", appInfoObjFromServer.runtimeProperties.dirty);
+          }
+       }
+       
        //console.log('DATA received ='+JSON.stringify(data));
-       console.log('oldadp='+appConfiguration.appDefPath);
-       console.log('newadp='+resolvedPropertiesObjFromServer.appDefPath);
-       console.log('oldform='+appConfiguration.formDefPath);
-       console.log('newform='+resolvedPropertiesObjFromServer.formDefPath);       
        var appDefChanged = resolvedPropertiesObjFromServer.appDefPath!=null && appConfiguration.appDefPath!=resolvedPropertiesObjFromServer.appDefPath;
-       console.log('adch='+appDefChanged);
        var formChanged = appInfoObjFromServer.formObj!=null && JSON.stringify(formObj)!==JSON.stringify(appInfoObjFromServer.formObj);
        var formPathChanged = resolvedPropertiesObjFromServer.formDefPath!=null && appConfiguration.formDefPath!=resolvedPropertiesObjFromServer.formDefPath;
        formChanged = formChanged || formPathChanged;
-       console.log('fch='+formChanged);
        var brandChanged = resolvedPropertiesObjFromServer.brandDefPath!=null && appConfiguration.brandDefPath!=resolvedPropertiesObjFromServer.brandDefPath;
-       console.log('bch='+brandChanged);
        var customizationChanged = resolvedPropertiesObjFromServer.customizationDefPath!=null && appConfiguration.customizationDefPath!=resolvedPropertiesObjFromServer.customizationDefPath;
-       console.log('cch='+customizationChanged);
        var headerChanged = resolvedPropertiesObjFromServer.headerConfPath!=null && appConfiguration.headerConfPath!=resolvedPropertiesObjFromServer.headerConfPath;
-       console.log('hch='+headerChanged);
-       var themesChanged = appInfoObjFromServer.themesObj!=null && JSON.stringify(themesObj)!==JSON.stringify(appInfoObjFromServer.themesObj);
+       //var themesChanged = appInfoObjFromServer.themesObj!=null && JSON.stringify(themesObj)!==JSON.stringify(appInfoObjFromServer.themesObj);
        var themesPathChanged = resolvedPropertiesObjFromServer.themes!=null && appConfiguration.themes!=resolvedPropertiesObjFromServer.themes;
-       themesChanged = themesChanged || themesPathChanged;
-       console.log('thc='+themesChanged);
+       var themesChanged = /*themesChanged ||*/ themesPathChanged;
        var userLangsChanged = appInfoObjFromServer.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.userLangsObj);
        var userLangsPathChanged = resolvedPropertiesObjFromServer.userlangs!=null && appConfiguration.userlangs!=resolvedPropertiesObjFromServer.userlangs;
        userLangsChanged = userLangsChanged || userLangsPathChanged;
-       console.log('ulc='+userLangsChanged);
-       var timeZonesChanged = appInfoObjFromServer.timeZonesArr!=null && JSON.stringify(timeZonesArr)!==JSON.stringify(appInfoObjFromServer.timeZonesArr);
+       //var timeZonesChanged = appInfoObjFromServer.timeZonesArr!=null && JSON.stringify(timeZonesArr)!==JSON.stringify(appInfoObjFromServer.timeZonesArr);
        var timeZonesPathChanged = resolvedPropertiesObjFromServer.timezones!=null && appConfiguration.timezones!=resolvedPropertiesObjFromServer.timezones;
-       timeZonesChanged = timeZonesChanged || timeZonesPathChanged;
-       console.log('tzch='+timeZonesChanged);
+       var timeZonesChanged = /*timeZonesChanged ||*/ timeZonesPathChanged;
        var customScriptChanged = resolvedPropertiesObjFromServer.customScript!=null && appConfiguration.customScript!=resolvedPropertiesObjFromServer.customScript;
+       var customCssChanged = resolvedPropertiesObjFromServer.customCss!=null && appConfiguration.customCss!=resolvedPropertiesObjFromServer.customCss;
        var menusChanged = appInfoObjFromServer.menusObj!=null && JSON.stringify(menusObj)!==JSON.stringify(appInfoObjFromServer.menusObj);
        var menusPathChanged = resolvedPropertiesObjFromServer.menusPath!=null && appConfiguration.menusPath!=resolvedPropertiesObjFromServer.menusPath;
        menusChanged = menusChanged || menusPathChanged;
        var langMenusTopChanged = appInfoObjFromServer.langTopMenusObj!=null && JSON.stringify(langTopMenusObj)!==JSON.stringify(appInfoObjFromServer.langTopMenusObj);
        var langMenusTopPathChanged = resolvedPropertiesObjFromServer.langMenusTopPath!=null && appConfiguration.langMenusTopPath!=resolvedPropertiesObjFromServer.langMenusTopPath;
        langMenusTopChanged = langMenusTopChanged || langMenusTopPathChanged;
+       var langMenusLeftChanged = appInfoObjFromServer.langLeftMenusObj!=null && JSON.stringify(langLeftMenusObj)!==JSON.stringify(appInfoObjFromServer.langLeftMenusObj);
+       var langMenusLeftPathChanged = resolvedPropertiesObjFromServer.langMenusLeftPath!=null && appConfiguration.langMenusLeftPath!=resolvedPropertiesObjFromServer.langMenusLeftPath;
+       langMenusLeftChanged = langMenusLeftChanged || langMenusLeftPathChanged;
        var langMenusBottomChanged = appInfoObjFromServer.langBottomMenusObj!=null && JSON.stringify(langBottomMenusObj)!==JSON.stringify(appInfoObjFromServer.langBottomMenusObj);
        var langMenusBottomPathChanged = resolvedPropertiesObjFromServer.langMenusBottomPath!=null && appConfiguration.langMenusBottomPath!=resolvedPropertiesObjFromServer.langMenusBottomPath;
        langMenusBottomChanged = langMenusBottomChanged || langMenusBottomPathChanged;
+       var formTranslationChanged = resolvedPropertiesObjFromServer.formTranslation!=null && appConfiguration.formTranslation!=resolvedPropertiesObjFromServer.formTranslation;
               
        appInfoObjFromServer.formChanged = formChanged;
        
@@ -2270,8 +2478,14 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        if (!langMenusTopChanged) {
            resolvedPropertiesObjFromServer.langMenusTopPath = appConfiguration.langMenusTopPath;
        }
+       if (!langMenusLeftChanged) {
+           resolvedPropertiesObjFromServer.langMenusLeftPath = appConfiguration.langMenusLeftPath;
+       }
        if (!langMenusBottomChanged) {
            resolvedPropertiesObjFromServer.langMenusBottomPath = appConfiguration.langMenusBottomPath;
+       }
+       if (!formTranslationChanged) {
+           resolvedPropertiesObjFromServer.formTranslation = appConfiguration.formTranslation;
        }
        
        if (appDefChanged || formChanged) {
@@ -2293,14 +2507,18 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           menusObj = null;
           langTopMenusObj = null;
           langBottomMenusObj = null;
+          tranFormObj = null;
           themeLoadStarted = false;
           languageLoadStarted = false;
           timeZonesLoadStarted = false;
           customScriptLoadStarted = false;
+          customCssLoadStarted = false;
           customScriptLoadedFlag = false;
+          customCssLoadedFlag = false;
           menusLoadStarted = false;
           langTopMenusLoadStarted = false;
           langBottomMenusLoadStarted = false;
+          formTranslationLoadStarted = false;
        }
        if (brandChanged) {
           hasChanges = true;
@@ -2322,12 +2540,14 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           menusObj = null;
           langTopMenusObj = null;
           langBottomMenusObj = null;
+          tranFormObj = null;
           themeLoadStarted = false;
           languageLoadStarted = false;
           timeZonesLoadStarted = false;
           menusLoadStarted = false;
           langTopMenusLoadStarted = false;
           langBottomMenusLoadStarted = false;
+          formTranslationLoadStarted = false;
        }
        if (themesChanged) {
           hasChanges = true;
@@ -2349,6 +2569,11 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           customScriptLoadStarted = false;
           customScriptLoadedFlag = false;
        }
+       if (customCssChanged) {
+          hasChanges = true;
+          customCssLoadStarted = false;
+          customCssLoadedFlag = false;
+       }
        if (menusChanged) {
           hasChanges = true;
           menusObj = null;
@@ -2359,10 +2584,20 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           langTopMenusObj = null;
           langTopMenusLoadStarted = false;
        }
+       if (langMenusLeftChanged) {
+          hasChanges = true;
+          langLeftMenusObj = null;
+          langLeftMenusLoadStarted = false;
+       }
        if (langMenusBottomChanged) {
           hasChanges = true;
           langBottomMenusObj = null;
           langBottomMenusLoadStarted = false;
+       }
+       if (formTranslationChanged) {
+          hasChanges = true;
+          tranFormObj = null;
+          formTranslationLoadStarted = false;
        }
        if (!hasChanges) {
            // checking for changes in resolvedProperties from the server compared to the ones we sent
@@ -2376,7 +2611,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
                       break;
                     }                          
                   } else {
-                      if (appConfiguration[p]!==resolvedPropertiesObjFromServer[p]) {
+                      if (appConfiguration[p]!==resolvedPropertiesObjFromServer[p] && p!=='formname') {
                           hasChanges = true;
                           console.log('There were changes in resolved property '+p+' from the server that require re-configuration process, oldValue='+appConfiguration[p]+', newValue='+resolvedPropertiesObjFromServer[p]);
                           break;
@@ -2398,10 +2633,11 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
                    hasChanges = true;
                    console.log('There was a change in user time zone from the server that require re-configuration process, oldValue='
                        + TogFormViewer.getProperty("userTimeZone") + ', newValue=' + resolvedPropertiesObjFromServer["userTimeZone"]);
-               } else if (resolvedPropertiesObjFromServer.hasOwnProperty("userTimeZones") && JSON.stringify(TogFormViewer.getProperty("userTimeZones")) !== JSON.stringify(resolvedPropertiesObjFromServer["userTimeZones"])) {
+               } 
+               /*else if (resolvedPropertiesObjFromServer.hasOwnProperty("userTimeZones") && JSON.stringify(TogFormViewer.getProperty("userTimeZones")) !== JSON.stringify(resolvedPropertiesObjFromServer["userTimeZones"])) {
                    hasChanges = true;
                    console.log('There was a change in user time zone from the server that require re-configuration process');
-               }
+               }*/
            }
        } else {
            console.log('There were changes in configuration or definition objects on the server that require re-configuration process');
@@ -2418,9 +2654,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
    console.log('There were no changes on the server that require re-configuration process');
    // we'll come to this point either if appInfoObjFromServer is null or there were no changes on the server that require re-configuration
    appInfoObjFromServer = null;
-   console.log('fd='+formDestroyed);
    if (!formDestroyed) {
-      console.log('setting only submission');
       formioForm.submission = {"data":appFormDataObj};
       hideSpinner();
    } else {            
@@ -2450,10 +2684,8 @@ function updateFormDefinition(formPath,data)
 
     // here we  set appFormDataObj to the provided JSON data if exists...the form will be initially populated with that data 
     if (data) {
-        console.log('sd to '+data);
         appFormDataObj = data;
     } else {
-        console.log('reset data because, data='+data);
         resetFormData();
     }
     
@@ -2474,15 +2706,21 @@ function updateFormDefinition(formPath,data)
     timeZonesArr = null;
     menusObj = null;
     langTopMenusObj = null;
+    langLeftMenusObj = null;
     langBottomMenusObj = null;
+    tranFormObj = null;
     themeLoadStarted = false;
     languageLoadStarted = false;
     timeZonesLoadStarted = false;    
     customScriptLoadStarted = false;
+    customCssLoadStarted = false;
     customScriptLoadedFlag = false;
+    customCssLoadedFlag = false;
     menusLoadStarted = false;
     langTopMenusLoadStarted = false;
+    langLeftMenusLoadStarted = false;
     langBottomMenusLoadStarted = false;
+    formTranslationLoadStarted = false;
 
     beginConfigurationProcess();
 }
@@ -2492,7 +2730,6 @@ function updateFormDefinition(formPath,data)
  */
 function reloadFormDefinition()
 {
-    console.log('rfd called');
     showSpinner();
     window.formSubmissionData = formioForm.submission;
     
@@ -2507,29 +2744,32 @@ function reloadFormDefinition()
  */
 function setupAppForUpdatedForm() 
 {
-    console.log('setupAppForUpdatedForm');
     generateForm(showFormWithUnchagedData);
 }
 
 function hideSpinner() {
     $('.header-border').show();
     $('.content-wrapper').show();
-    $('#menuWrapper').show();
+    $('#menuWrapper, #primaryDiv, .back-div').show();
     $('.overlay').hide();
 }
 
 function showSpinner() {
     $('.header-border').hide();
     $('.content-wrapper').hide();
-    $('#menuWrapper').hide();
+    $('#menuWrapper, #primaryDiv, .back-div').hide();
     $('.overlay').show();
 }
 
 var TogFormViewer =
 {
     toggleMenuOpened: false,
+    menuPosition: "top",
     testFlag: false,
     debugFlag: false,
+    activeMenuKey: "",
+    openidConfiguration: null,
+    dirty: false,
     
     FormioPlugIn:
     {
@@ -2543,7 +2783,6 @@ var TogFormViewer =
             }
             else if (propName === "display" && propValue !== appConfiguration.display && (propValue === "form" || propValue === "wizard")) 
             {
-                console.log('setting display to '+propValue);
                 appConfiguration.display = propValue;
                 formObj["display"] = appConfiguration.display;
                 reloadFormDefinition();
@@ -2591,6 +2830,24 @@ var TogFormViewer =
                 appConfiguration.choicesOptions = propValue;
                 configureChoicesOptions(formioForm);
             }
+            else if (_checkPropertyValue(propName, propValue, "dirty", "boolean"))
+            {
+                TogFormViewer.dirty = propValue;
+                if (typeof formioForm !== "undefined" && formioForm)
+                {
+                    formioForm.checkConditions();
+                    formioForm.checkValidity();
+                    var myevent =
+                    {
+                        "type": "drity changed",
+                        "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
+                        "controlType": "form",
+                        "controlProperties": (formObj.properties ? formObj.properties : null),
+                        "value": null
+                    };
+                    execEventAction(null, myevent, 'action dirty changed', 'actionDirtyChanged', false);
+                }
+            }
         },
         
         getProperty: function(propName)
@@ -2605,6 +2862,10 @@ var TogFormViewer =
             else if (propName === "choicesOptions")
             {
                 return appConfiguration.choicesOptions;
+            }
+            else if (propName === "dirty")
+            {
+                return TogFormViewer.dirty;
             }
         }
     },
@@ -2665,11 +2926,13 @@ var TogFormViewer =
         {
             appConfiguration.test = propValue;
             showTest();
+            formioForm.checkConditions();
         }
         else if (_checkPropertyValue(propName, propValue, "debug", "boolean")) 
         {
             appConfiguration.debug = propValue;
             showDebug();
+            formioForm.checkConditions();
         }
         else if (_checkPropertyValue(propName, propValue, "phraseAppProjectId", "string")) 
         {
@@ -2707,6 +2970,14 @@ var TogFormViewer =
         {
             appConfiguration.mainlogopath = propValue;
             $("#mainLogo").find("img").attr("src", appConfiguration.mainlogopath);
+            if (!appConfiguration.mainlogopath)
+            {
+                $(".logo-background").css("width", "0");
+            }
+            else
+            {
+                $(".logo-background").css("width", "auto");
+            }
         }
         else if (_checkPropertyValue(propName, propValue, "sidelogopath", "string")) 
         {
@@ -2769,6 +3040,17 @@ var TogFormViewer =
         {
             appConfiguration.mapCenterPushpinDescription = propValue;
             MapPlugIn.updateMap();
+        }
+        else if (propName === "activeMenuKey" && propValue != this.activeMenuKey && typeof propValue === "string")
+        {
+            this.activeMenuKey = propValue;
+            configureMenu();
+        }
+        else if (propName === "menuPosition" && propValue != TogFormViewer.menuPosition && typeof propValue === "string")
+        {
+            this.menuPosition = propValue;
+            showSpinner();
+            showContentOnStyleApply(updateMenu);
         }
         else if (propName === "storedUserTheme")
         {
@@ -2894,9 +3176,24 @@ var TogFormViewer =
                 return "";
             }
         }
+        else if (propName === "activeMenuKey")
+        {
+            if (this.activeMenuKey)
+            {
+                return this.activeMenuKey;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else if (propName === "menuPosition")
+        {
+            return this.menuPosition;
+        }
     },
 
-    getAppInfo: function(event)
+    getAppInfo: function(event,sendForm)
     {
         var appInfo = {
             "plugin" : {
@@ -2915,23 +3212,32 @@ var TogFormViewer =
             "deviceInfo" : {
             },
             "currentUser" : currentUser,
+            "appUrl" : {
+                "protocol" : window.location.protocol.substring(0,window.location.protocol.length-1),
+                "host" : window.location.hostname,
+                "path" : window.location.pathname.substring(1),
+                "url" : window.location.protocol+"//"+window.location.hostname+window.location.pathname
+            },
             "currentUserSettings": {
                 "theme": this.getProperty("storedUserTheme"),
                 "language": this.getProperty("storedUserLanguage"),
                 "timeZone": this.getProperty("storedUserTimeZone"),
-                "supportedTimeZones": this.getProperty("supportedTimeZones")
+                //"supportedTimeZones": this.getProperty("supportedTimeZones")
             },
             "runtimeProperties" : {
                 "tenantId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.tenant),
                 "appRegAppId" : (typeof ADAL=== 'undefined' || ADAL==null ? "" : ADAL.config.clientId),
                 "jumpWidth" : this.FormioPlugIn.jumpWidth,
                 "toggleMenuOpened" : this.toggleMenuOpened,
+                "menuPosition": this.menuPosition,
                 "testFlag" : this.testFlag,
                 "debugFlag" : this.debugFlag,
+                "activeMenuKey" : this.activeMenuKey,
                 "browserInfo" : {
                     "width" : $(window).width(),
                     "height" : $(window).height()
-                }
+                },
+                "dirty": this.dirty
             },
             "IDToken" : _getJWTInfo(),
             "IDTokenEncoded" : (typeof ADAL=== 'undefined' || ADAL==null ? null : ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN)),
@@ -2942,12 +3248,11 @@ var TogFormViewer =
             "brandObj" : brandObj,
             "queries" : appURLQueryParameters,
             "userLangsObj" : typeof userLangsObj === 'undefined' ? '' : userLangsObj,
-            "timeZonesArr" : typeof timeZonesArr === 'undefined' ? '' : timeZonesArr,
-            "themesObj" : typeof themesObj === 'undefined' ? '' : themesObj,
+            //"timeZonesArr" : typeof timeZonesArr === 'undefined' ? '' : timeZonesArr,
+            //"themesObj" : typeof themesObj === 'undefined' ? '' : themesObj,
             "menusObj" : typeof menusObj === 'undefined' ? '' : menusObj,
             "langTopMenusObj" : typeof langTopMenusObj === 'undefined' ? '' : langTopMenusObj,
             "langBottomMenusObj" : typeof langBottomMenusObj === 'undefined' ? '' : langBottomMenusObj,
-            "formObj" : formObj,
             "dataObj" : typeof window.formioForm !== 'undefined' && window.formioForm!=null ? formioForm.submission.data : appFormDataObj,
             "resolvedProperties" : JSON.parse(JSON.stringify(appConfiguration)),
         };
@@ -2955,10 +3260,21 @@ var TogFormViewer =
         appInfo.resolvedProperties.userTheme = this.getProperty("userTheme");
         appInfo.resolvedProperties.userLanguage = this.getProperty("userLanguage");
         appInfo.resolvedProperties.userTimeZone = this.getProperty("userTimeZone");
-        appInfo.resolvedProperties.userTimeZones = this.getProperty("userTimeZones");
+        //appInfo.resolvedProperties.userTimeZones = this.getProperty("userTimeZones");
         
         if (event) {
             appInfo.event = event;
+        }
+        
+        if (arguments.length == 2)
+        {
+            if (sendForm) {
+                appInfo.formObj = formObj;
+            } 
+        } else {
+            if (appConfiguration.sendForm) {
+                appInfo.formObj = formObj;
+            }
         }
         return appInfo;
     },
@@ -3064,11 +3380,11 @@ var TogFormViewer =
 
     // This function should be called from custom button action. It will post appInfo object to the specified URL
     // If the response changes some of the appInfo data, the re-evaluation of the properties will start (like with Loading action)
-    executeCustomAction: function(url)
+    executeCustomAction: function(url,sendForm)
     {
         appFormDataObj = formioForm.submission.data;
         var myevent = {"type":"customAction","controlId":null,"controlType":"button","value":null};            
-        performEventOrCustomAction(url,myevent);
+        performEventOrCustomAction(url,myevent,sendForm);
     }
        
 }
@@ -3391,22 +3707,11 @@ function downloadURI(uri, name)
  */
 function performCalculation()
 {
-    if (appConfiguration.calcJsPath && appConfiguration.calcApiPath)
-    {
-        if (ADAL)
-        {
-            _performCalculationRemotely();
-        }
-        else
-        {
-            _performCalculationLocally();
-        }
-    }
-    else if (!appConfiguration.calcJsPath && appConfiguration.calcApiPath && ADAL)
+    if (ADAL && appConfiguration.home && appConfiguration.calcApiPath) 
     {
         _performCalculationRemotely();
-    }
-    else if (appConfiguration.calcJsPath && !appConfiguration.calcApiPath)
+    } 
+    else if (appConfiguration.calcJsPath) 
     {
         _performCalculationLocally();
     }
@@ -3435,7 +3740,7 @@ function _performCalculationRemotely()
         payload["Configuration_SettingName"] = appConfiguration.calcConfSetting;
     }
     
-    executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, appConfiguration.calcApiPath, payload, {},onsuccess_calc,onfailure_generic,onfailure_generic);
+    executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, appConfiguration.home+"/"+appConfiguration.calcApiPath, payload, {},onsuccess_calc,onfailure_generic,onfailure_generic);
 }
 
 function _performCalculationLocally()
@@ -3484,11 +3789,18 @@ function calcScriptOK(calcPath) {
 
 function applyCalculation()
 {
-    var initdata = calc.calculate(formioForm.submission.data);
+    var sd = JSON.parse(JSON.stringify(formioForm.submission.data));
+    var initdata = calc.calculate(sd);
     var jsond = JSON.parse(initdata);
+    for (var p in jsond) {
+        var pLowerCase = p.toLowerCase();
+        if ((pLowerCase.startsWith && pLowerCase.startsWith("xlew_"))
+            || (pLowerCase.indexOf && pLowerCase.indexOf("xlew_") === 0)) {
+            delete jsond[p];
+        }
+    }    
     var datamerged = $.extend(formioForm.submission.data,jsond);
     console.log('MERGED WITH CALCULATION DATA='+JSON.stringify(datamerged));
-    calculationResultSet = true;
     formioForm.submission={"data":datamerged};
 }
 
@@ -3521,7 +3833,6 @@ function onsuccess_calc(token,url,formdata,additionalConfiguration,data,textStat
    console.log("Successfully executed calculation");
    var datamerged = $.extend(formioForm.submission.data,data.calcResult);
    console.log('MERGED DATA for calculation='+JSON.stringify(datamerged));
-   calculationResultSet = true;
    formioForm.submission={"data":datamerged};
 }
 

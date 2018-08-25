@@ -531,7 +531,35 @@ var formObj={
 			
 		},
       "custom": "TogFormViewer.showData();"
-	}],
+	},
+    {
+        "input": true,
+        "label": "Multiply",
+        "tableView": false,
+        "key": "mul",
+        "size": "md",
+        "leftIcon": "",
+        "rightIcon": "",
+        "block": false,
+        "action": "event",
+        "disableOnInvalid": false,
+        "theme": "primary",
+        "type": "button",
+        "tags": [],
+        "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+        },
+        "properties": {
+            "action": "Form('{formname}-{dateTime}-{number}/{a}-{b}-{c}')/Multiplication"
+        },
+        "event": "Multiply",
+        "lockKey": true,
+        "customConditional": "show",
+        "hideLabel": false,
+        "autofocus": false
+    }    ],
 	"revisions": "",
 	"_vid": 0,
 	"_id": "5b18db3adaf43466a599244b",

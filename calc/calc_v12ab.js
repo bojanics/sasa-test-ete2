@@ -23,6 +23,13 @@ exports.calculate = function (data){
    }      
    data['c']=z; 
    data['message']=msg;
+   data['xlew_1']='xlew_1';
+   data['Xlew_2']='Xlew_2';
+   data['XLEW_3']='xLEW_3';
+   data['xLEw_4']='xLEw_4';
+   data['xlew_5']='xlew_5';
+   data['xlew_6']={'a':3,'b':'dd'};
+   data['xlew_7']=[{'a':3,'b':'dd'},{'a':33333,'b':'dddddd'}];
    return JSON.stringify(data);
 }
 })(typeof exports === 'undefined'? this['calc']={}: exports);

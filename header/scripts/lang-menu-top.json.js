@@ -1,69 +1,77 @@
 var langTopMenusObj = {
-    "BG-BG" : {
+    "bg-BG" : {
         'Menu_key1': 'Mеню 1',
         'Menu_key2': 'Mеню 2'
     },
-    "CS-CZ" : {
+    "cs-CZ" : {
         'Menu_key1': 'Jídelní lístek 1',
         'Menu_key2': 'Jídelní lístek 2'
     },
-    "DE-AT" : {
+    "de-AT" : {
         'Menu_key1': 'Speisekarte 1',
         'Menu_key2': 'Speisekarte 2'
     },
-    "ET-EE" : {
+    "et-EE" : {
         'Menu_key1': 'Menüü 1',
         'Menu_key2': 'Menüü 2'
     },
-    "EN-GB" : {
+    "en-GB" : {
         'Menu_key1': 'Menu 1',
-        'Menu_key2': 'Menu 2'
+        'Menu_key2': 'Menu 2',
+        "menus_key1-1": 'menu 1-1',
+        "menus_key1-2": 'menu 1-2',
+        "menus_key2-1": 'menu 2-1',
+        "menus_key2-2": 'menu 2-2'
     },
-    "HR-HR" : {
+    "hr-HR" : {
         'Menu_key1': 'Izbornik 1',
         'Menu_key2': 'Izbornik 2'
     },
-    "HU-HU" : {
+    "hu-HU" : {
         'Menu_key1': 'Menü 1',
         'Menu_key2': 'Menü 2'
     },
-    "KK-KZ" : {
+    "kk-KZ" : {
         'Menu_key1': 'Мәзір 1',
         'Menu_key2': 'Мәзір 2'
     },
-    "LT-LT" : {
+    "lt-LT" : {
         'Menu_key1': 'Meniu 1',
         'Menu_key2': 'Meniu 2'
     },
-    "PL-PL" : {
+    "pl-PL" : {
         'Menu_key1': 'Menu 1',
         'Menu_key2': 'Menu 2'
     },
-    "RO-RO" : {
+    "ro-RO" : {
         'Menu_key1': 'Meniul 1',
         'Menu_key2': 'Meniul 2'
     },
-    "SR-LATN-CS" : {
+    "sr-Latn-CS" : {
         'Menu_key1': 'Мени 1',
-        'Menu_key2': 'Мени 2'
+        'Menu_key2': 'Мени 2',
+        "menus_key1-1": 'мени 1-1',
+        "menus_key1-2": 'мени 1-2',
+        "menus_key2-1": 'мени 2-1',
+        "menus_key2-2": 'мени 2-2'
     },
-    "RU-RU" : {
+    "ru-RU" : {
         'Menu_key1': 'Меню 1',
         'Menu_key2': 'Меню 2'
     },
-    "SL-SI" : {
+    "sl-SI" : {
         'Menu_key1': 'Meni 1',
         'Menu_key2': 'Meni 2'
     },
-    "SK-SK" : {
+    "sk-SK" : {
         'Menu_key1': 'Ponuka 1',
         'Menu_key2': 'Ponuka 2'
     }, 
-    "TR-TR" : {
+    "tr-TR" : {
         'Menu_key1': 'Menü 1',
         'Menu_key2': 'Menü 2'
     },
-    "UK-UA" : {
+    "uk-UA" : {
         'Menu_key1': 'Меню 1',
         'Menu_key2': 'Меню 2'
     }

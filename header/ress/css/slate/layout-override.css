@@ -218,7 +218,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #272B30;
@@ -233,11 +233,16 @@
  }
 
 .tabbar {
-    background-color: #272B30;
+    background-color: #3e444c; 
+}
+
+.back-div {
+    background-color: #3e444c;
+    color: #fff;
 }
 
 .tabbar-button {
-    color: #fff;
+    color: #c8c8c8;
 }
 
 .tab-wrapper {
@@ -249,7 +254,100 @@
 }
 
 .active-tab-bottom {
-    color: #7a8288;
+    color: #fff;
+}
+
+.side-navigation-wrapper {
+    background-color: #49515a;
+    color: rgb(200, 200, 200);
+    border-color: #49515a #313539 #49515a #49515a;
+    border-right: 1px solid #313539;
+}
+
+.side-navigation-separator-line {
+    background-color: #313539;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: rgb(200, 200, 200);
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(112, 120, 125);
+    text-shadow: 0 0 4px rgba(112, 120, 125, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: rgb(200, 200, 200);
+}
+
+.nav-wrapper:hover {
+    background-color: #313539;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #313539;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #313539;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #020202;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #020202;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #313539;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(112, 120, 125);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #020202;
+}
+
+.navlinks {
+    color: rgb(200, 200, 200);
+}
+
+.navlinks:hover {
+    color: rgb(200, 200, 200);
+}
+
+.navlinks:focus {
+    color: rgb(200, 200, 200);
+}
+
+.navtitle {
+    color: rgb(200, 200, 200);
+}
+
+.primary-menu-region {
+    background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
+    background-repeat: no-repeat;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    color: #c8c8c8;
+}
+
+.commandbar-primary-menu-item:hover {
+    color: #ffffff;
+    background-color: #272b2e;
+}
+
+.nav-tooltip-list-wrapper {
+    color: #272b30;
+}
+
+.nav-tooltip-list-item-img {
+    color: #272b30;
 }
 
 /*

@@ -39,7 +39,62 @@ var formObj={
 		},
 		"lockKey": true
 	},
-	{
+{
+                              "autofocus": false,
+                              "input": true,
+                              "tableView": true,
+                              "label": "Versicherungssumme Strafrechtsschutz (EUR)",
+                              "key": "sum_insured_srs",
+                              "placeholder": "Bitte auswählen",
+                              "data": {
+                                "values": [
+                                  {
+                                    "value": "VS500000",
+                                    "label": "€ 500.000,-",
+                                    "$$hashKey": "object:6339"
+                                  },
+                                  {
+                                    "value": "VS1000000",
+                                    "label": "€ 1.000.000,-",
+                                    "$$hashKey": "object:6340"
+                                  }
+                                ],
+                                "json": "",
+                                "url": "",
+                                "resource": "",
+                                "custom": ""
+                              },
+                              "dataSrc": "values",
+                              "valueProperty": "",
+                              "defaultValue": "",
+                              "refreshOn": "",
+                              "filter": "",
+                              "authenticate": false,
+                              "template": "<span>{{ item.label }}</span>",
+                              "multiple": false,
+                              "protected": false,
+                              "unique": false,
+                              "persistent": true,
+                              "hidden": false,
+                              "clearOnHide": true,
+                              "validate": {
+                                "required": false
+                              },
+                              "type": "select",
+                              "labelPosition": "top",
+                              "tags": [],
+                              "conditional": {
+                                "show": "",
+                                "when": null,
+                                "eq": ""
+                              },
+                              "properties": {},
+                              "tooltip": "Bitte die Höhe der gewünschten Versicheurngssumme auswählen",
+                              "description": "z.B.: 1.000.000,-",
+                              "lockKey": true,
+                              "$$hashKey": "object:6299"
+                            }
+    ,	{
 		"autofocus": false,
 		"input": true,
 		"tableView": true,
@@ -116,7 +171,31 @@ var formObj={
 		"disabled": true,
 		"isNew": false
 	},
-	{
+    {
+		"autofocus": false,
+		"input": true,
+		"label": "Show data (JSON)",
+		"tableView": false,
+		"key": "showdata",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showData();"
+	},	{
 		"autofocus": false,
 		"input": true,
 		"label": "Load form uploadFile",

@@ -1,69 +1,69 @@
 var numberFormatObj = {
-    'BG-BG': {
+    'bg-BG': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'CS-CZ': {
+    'cs-CZ': {
         decimalSeparator: ',',
         delimiter: ' '
     },
-    'DE-AT': {
+    'de-AT': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'ET-EE': {
+    'et-EE': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'EN-GB': {
+    'en-GB': {
         decimalSeparator: '.',
         delimiter: ','
     },
-    'HR-HR': {
+    'hr-HR': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'HU-HU': {
+    'hu-HU': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'KK-KZ': {
+    'kk-KZ': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'LT-LT': {
+    'lt-LT': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'PL-PL': {
+    'pl-PL': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'RO-RO': {
+    'ro-RO': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'SR-LATN-CS': {
+    'sr-Latn-CS': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'RU-RU': {
+    'ru-RU': {
         decimalSeparator: ',',
         delimiter: ' '
     },
-    'SL-SI': {
+    'sl-SI': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'SK-SK': {
+    'sk-SK': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'TR-TR': {
+    'tr-TR': {
         decimalSeparator: ',',
         delimiter: '.'
     },
-    'UK-UA': {
+    'uk-UA': {
         decimalSeparator: ',',
         delimiter: '.'
     }

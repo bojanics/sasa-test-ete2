@@ -201,7 +201,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #222;
@@ -216,7 +216,12 @@
  }
 
 .tabbar {
-    background-color: #222;
+    background-color: #464545; 
+}
+
+.back-div {
+    background-color: #464545;
+    color: #00bc8c;
 }
 
 .tabbar-button {
@@ -233,6 +238,96 @@
 
 .active-tab-bottom {
     color: #00bc8c;
+}
+
+.side-navigation-wrapper {
+    background-color: #464545;
+    color: white;
+    border-color: #464545 #303030 #464545 #464545;
+    border-right: 1px solid #303030;
+}
+
+.side-navigation-separator-line {
+    background-color: #2c2c2c;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: white;
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: white;
+    text-shadow: 0 0 4px rgba(255, 255, 255, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: white;
+}
+
+.nav-wrapper:hover {
+    background-color: #303030;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #303030;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #303030;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #2c2c2c;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #2c2c2c;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #303030;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(55, 90, 127);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #2c2c2c;
+}
+
+.navlinks {
+    color: white;
+}
+
+.navlinks:hover {
+    color: white;
+}
+
+.navlinks:focus {
+    color: white;
+}
+
+.navtitle {
+    color: white;
+}
+
+.primary-menu-region {
+    background-color: #375a7f;
+    color: #fff;
+}
+
+.commandbar-primary-menu-item:hover {
+    background-color: #375a7f;
+    color: #00bc8c;
+}
+
+.nav-tooltip-list-wrapper {
+    color: #464545;
+}
+
+.nav-tooltip-list-item-img {
+    color: #464545;
 }
 
 /**

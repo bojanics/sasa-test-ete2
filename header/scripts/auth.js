@@ -1,6 +1,6 @@
 var mailboxSettingsAvailable = true;
 var userPropertyExtensionsAvailable = true;
-var userPropertyExtensionId = "frm-hdr-user-properies";
+var userPropertyExtensionId = "frm-hdr-user-properties";
 var userPropertyExtensionExists = false;
 var languagePropertyExtensionExists = false;
 var timeZonePropertyExtensionExists = false;
@@ -64,15 +64,6 @@ function _getJWTInfo() {
                     console.log("The id_token's payload could not be decoded",e);
                 }
                 IDToken.signature = decodedToken.JWSSig;
-                /*
-                try {
-                    var base64DecodedJWSSignature = ADAL._base64DecodeStringUrlSafe(decodedToken.JWSSig);
-                    if (base64DecodedJWSSignature) {
-                        IDToken.signature=JSON.parse(base64DecodedJWSSignature);
-                    }
-                } catch (e) {
-                    console.log("The id_token's signature could not be decoded",e);
-                }*/
             }
         } catch (err) {
             console.log("The id_token could not be decoded",err);

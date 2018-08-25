@@ -194,7 +194,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #fff;
@@ -209,7 +209,16 @@
  }
 
 .tabbar {
-    background-color: #fff;
+    background-color: #f5f5f5; 
+}
+
+.back-div {
+    background-color: #f5f5f5;
+    color: #772953;
+}
+
+.tabbar-button {
+    color: #333333;
 }
 
 .tab-wrapper {
@@ -222,6 +231,96 @@
 
 .active-tab-bottom {
     color: #772953;
+}
+
+.side-navigation-wrapper {
+    background-color: #f5f5f5;
+    color: rgb(51, 51, 51);
+    border-color: #f5f5f5 #eeeeee #f5f5f5 #f5f5f5;
+    border-right: 1px solid #eeeeee;
+}
+
+.side-navigation-separator-line {
+    background-color: #cccccc;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: rgb(51, 51, 51);
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(233, 84, 32);
+    text-shadow: 0 0 4px rgba(233, 84, 32, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: rgb(51, 51, 51);
+}
+
+.nav-wrapper:hover {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #cccccc;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #cccccc;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #eeeeee;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(233, 84, 32);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #cccccc;
+}
+
+.navlinks {
+    color: rgb(51, 51, 51);
+}
+
+.navlinks:hover {
+    color: rgb(51, 51, 51);
+}
+
+.navlinks:focus {
+    color: rgb(51, 51, 51);
+}
+
+.navtitle {
+    color: rgb(51, 51, 51);
+}
+
+.primary-menu-region {
+    background-color: #e95420;
+    color: #ffffff;
+}
+
+.commandbar-primary-menu-item:hover {
+    color: #ffffff;
+    background-color: #ac3911;
+}
+
+.nav-tooltip-list-wrapper {
+    color: rgb(51, 51, 51);
+}
+
+.nav-tooltip-list-item-img {
+    color: rgb(51, 51, 51);
 }
 
 /*

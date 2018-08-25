@@ -277,8 +277,7 @@ function setupStyle(overrideBrandTheme)
             return;
         }
         
-        $("#bodystyle").remove();
-        $("#themelayoutstyle").remove();
+        resetStyle();
     }
     
     var bootswatchStyleDE = document.createElement("link");
@@ -386,15 +385,27 @@ function selectTheme(theme)
  */
 function applyTheme()
 {
-    $('.content-wrapper').hide();
+    showSpinner();
     themeSelector.currentTheme = themeSelector.selectedTheme;
     TogFormViewer.setProperty("userTheme", themeSelector.currentTheme);
     setThemeValue();
-    document.getElementById('themelayoutstyle').href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
-    document.getElementById('bodystyle').href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
+    resetStyle();
+    var bootswatchStyleDE = document.createElement("link");
+    bootswatchStyleDE.id = "bodystyle";
+    bootswatchStyleDE.rel = "stylesheet";
+    
+    bootswatchStyleDE.href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
+    var layoutStyleNode = document.getElementById("layoutstyle");
+    layoutStyleNode.parentNode.insertBefore(bootswatchStyleDE, layoutStyleNode.nextSibling);
+    
+    var headerStyleDE = document.createElement("link");
+    headerStyleDE.id = "themelayoutstyle";
+    headerStyleDE.rel = "stylesheet";
+    headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
+    layoutStyleNode.parentNode.insertBefore(headerStyleDE, layoutStyleNode.nextSibling);
     
     // We should show the form after new styles has been loaded to prevent FOUC
-    document.getElementById('bodystyle').onload = showContentOnStyleApply();
+    document.getElementById('bodystyle').onload = showContentOnStyleApply(updateMenu);
     
     // Update user's property extensions
     if (appConfiguration.useUserPropertyExtensions && userPropertyExtensionsAvailable  && isSignedInUser()) {

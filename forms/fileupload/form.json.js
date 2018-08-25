@@ -11,7 +11,7 @@ var formObj={
 		"image": false,
 		"imageSize": "200",
 		"placeholder": "",
-		"multiple": true,
+		"multiple": false,
 		"defaultValue": "",
 		"protected": false,
 		"persistent": true,

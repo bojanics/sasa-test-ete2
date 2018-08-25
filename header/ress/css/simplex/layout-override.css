@@ -210,7 +210,7 @@
 }
 
 /**
- * Menu
+ * Navigation
  */
  .tab {
     background-color: #fff;
@@ -225,7 +225,16 @@
  }
 
 .tabbar {
-    background-color: #fff;
+    background-color: #fcfcfc; 
+}
+
+.back-div {
+    background-color: #fcfcfc;
+    color: #d9230f;
+}
+
+.tabbar-button {
+    color: #444444;
 }
 
 .tab-wrapper {
@@ -238,6 +247,97 @@
 
 .active-tab-bottom {
     color: #d9230f;
+}
+
+.side-navigation-wrapper {
+    background-color: #f5f5f5;
+    color: rgb(119, 119, 119);
+    border-color: #f5f5f5 #dddddd #f5f5f5 #f5f5f5;
+    border-right: 1px solid #dddddd;
+}
+
+.side-navigation-separator-line {
+    background-color: #808080;
+}
+
+.side-navigation-shrink-command-wrapper {
+    color: rgb(119, 119, 119);
+}
+
+.side-navigation-shrink-command-wrapper:hover {
+    color: rgb(217, 35, 15);
+    text-shadow: 0 0 4px rgba(217, 35, 15, .5);
+}
+
+.side-navigation-shrink-glyph-wrapper {
+    outline-color: rgb(119, 119, 119);
+}
+
+.nav-wrapper:hover {
+    background-color: #dddddd;
+}
+
+.nav-wrapper.displayed-primary-nav {
+    background-color: #dddddd;
+}
+
+.nav-wrapper.sub-nav {
+    background-color: #dddddd;
+}
+
+.nav-wrapper.sub-nav:hover {
+    background-color: #cccccc;
+}
+
+.nav-wrapper.sub-nav.active-tab {
+    background-color: #cccccc;
+}
+
+.nav-wrapper.active-tab {
+    background-color: #dddddd;
+}
+
+.nav-wrapper.active-tab::before {
+    border-left: 3px solid rgb(217, 35, 15);
+}
+
+.nav-wrapper.active-tab:hover {
+    background-color: #cccccc;
+}
+
+.navlinks {
+    color: rgb(119, 119, 119);
+}
+
+.navlinks:hover {
+    color: rgb(119, 119, 119);
+}
+
+.navlinks:focus {
+    color: rgb(119, 119, 119);
+}
+
+.navtitle {
+    color: rgb(119, 119, 119);
+}
+
+.primary-menu-region {
+    background-color: #ffffff;
+    color: #777777;
+}
+
+.commandbar-primary-menu-item:hover {
+    background-color: #ffffff;
+    border: 1px solid #eeeeee;
+    color: #d9230f;
+}
+
+.nav-tooltip-list-wrapper {
+    color: rgb(119, 119, 119);
+}
+
+.nav-tooltip-list-item-img {
+    color: rgb(119, 119, 119);
 }
 
 /*

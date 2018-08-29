@@ -26,6 +26,7 @@ var formObj = {
     },
     {
       "label": "Number a",
+      "autofocus": true,
       "mask": false,
       "type": "number",
       "input": true,
@@ -76,7 +77,7 @@ var formObj = {
         "aaction mouseover": "Form('{formname}/{formversion}')/MouseOver",
         "aaction select": "Form('{formname}/{formversion}')/Search",
         "aaction contextMenu": "Form('{formname}/{formversion}')/ContextMenu",
-        "aaction wheel": "Form('{formname}/{formversion}')/Wheel",
+        "action wheel": "Form('{formname}/{formversion}')/Wheel",
         "aaction cut": "Form('{formname}/{formversion}')/Wheel",
         "aaction copy": "Form('{formname}/{formversion}')/Wheel",
         "aaction paste": "Form('{formname}/{formversion}')/Wheel",
@@ -423,7 +424,8 @@ var formObj = {
         "show": ""
       },
       "properties": {
-        "action": "Form('{formname}/{formversion}')/Multiplication"
+        "action": "Form('{formname}/{formversion}')/Multiplication",
+        "actionMethod":"PATCH"
       },
       "event": "Multiply",
       "lockKey": true,
@@ -553,7 +555,7 @@ var formObj = {
     "Aaction resize local script": "testResize2(togFormViewerEvent);",
     "Aaction select local script": "testSelect1(togFormViewerEvent);",
     "Aaction contextMenu local script": "testContextmenu1(togFormViewerEvent);",
-    "Aaction wheel local script": "testWheel1(togFormViewerEvent);",
+    "action wheel local script": "testWheel1(togFormViewerEvent);",
     "Aaction cut local script": "testCut1(togFormViewerEvent);",
     "Aaction copy local script": "testCopy1(togFormViewerEvent);",
     "Aaction paste local script": "testPaste1(togFormViewerEvent);",

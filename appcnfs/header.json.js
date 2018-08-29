@@ -119,6 +119,6 @@ var headerObj = {
     "test": false,
     "debug": false,
     "choicesOptions": "{\"searchResultLimit\": 10}",
-    "sendForm": false,
+    "sendForm": true,
     "formtranslation": ""
 };

@@ -42,15 +42,11 @@ function _setupAppInternal()
     setupPredefinedTheme();
     setInitialTimeZone();
 
-    // Reset dirty flag
-    TogFormViewer.dirty = false;
-    
     generateForm(function()
     {
         formDestroyed = false;
         setupPredefinedLanguage();
         configureMenu();
-        checkForLoadedAction();
     });
 }
 
@@ -64,9 +60,20 @@ function formRenderedCallback()
         checkAutofocus(formioForm);
         configureChoicesOptions(formioForm);
     });
+    // Reset dirty flag
+    TogFormViewer.dirty = false;
+    
+    checkForLoadedAction();    
     console.log("form data after rendered callback="+JSON.stringify(formioForm.submission.data));
 console.log("ISDIRTY="+TogFormViewer.dirty);    
-setTimeout(function(){console.log("form data after DELAY="+JSON.stringify(formioForm.submission.data));}, 0);
+//setTimeout(function(){console.log("form data after DELAY="+JSON.stringify(formioForm.submission.data));console.log("ISDIRTY="+TogFormViewer.dirty);formioForm.setSubmission({"data":appFormDataObj});}, 0);
+setTimeout(function(){/*console.log("form data after DELAY 100="+JSON.stringify(formioForm.submission.data))*/;console.log("ISDIRTY 100="+TogFormViewer.dirty);}, 100);
+setTimeout(function(){console.log("ISDIRTY 150="+TogFormViewer.dirty);}, 150);
+setTimeout(function(){console.log("ISDIRTY 200="+TogFormViewer.dirty);}, 200);
+setTimeout(function(){console.log("ISDIRTY 250="+TogFormViewer.dirty);}, 250);
+setTimeout(function(){console.log("ISDIRTY 275="+TogFormViewer.dirty);}, 275);
+setTimeout(function(){console.log("ISDIRTY 300="+TogFormViewer.dirty);}, 300);
+setTimeout(function(){console.log("ISDIRTY 500="+TogFormViewer.dirty);}, 500);
 }
 
 function checkAutofocus(comp)
@@ -136,9 +143,14 @@ function checkForLoadedAction()
  */
 function performLoadedAction(url)
 {
+    var now = new Date();
     var event =
     {
         "type": "Loaded",
+        "when" : {
+            "time": now.toISOString(),
+            "timezoneOffset": now.getTimezoneOffset()
+        },
         "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
         "controlType": "form",
         "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -221,8 +233,9 @@ function generateForm(formReadyCallback)
             // TODO This is a temporary patch for an issue with change event handling.
             // Starting from form.io v3.0.0-rc.26 change event listener is removed after
             // form gets translated. Remove this once the issue gets fixed by form.io
-            form.on('change', function(event)
+            form.on('change', function(event)            
             {   
+            console.log("CHG event executed, event.changed="+event.changed+", ecc="+(event.changed!=null?event.changed.component:"null")+",ecck="+(event.changed!=null&&event.changed.component!=null?event.changed.component.key:"null"));
                 // If there is a noValidate flag and it is set to true it is a changed event fired when form gets loaded
                 // It is fired if there are checkboxes or datetime components in the form
                 if (event.changed && (!event.changed.flags || !event.changed.flags.noValidate))
@@ -236,15 +249,20 @@ function generateForm(formReadyCallback)
                     }
                     
                     TogFormViewer.FormioPlugIn.setProperty("dirty", true);
+                    var now = new Date();
                     var myevent =
                     {
-                        "type": "change",
+                       "type": "change",
+                       "when" : {
+                            "time": now.toISOString(),
+                            "timezoneOffset": now.getTimezoneOffset()
+                        },
                         "controlId": (event.changed.component ? event.changed.component.key : null),
                         "controlType": (event.changed.component ? event.changed.component.type : null),
                         "controlProperties": (event.changed.component && event.changed.component.properties ? event.changed.component.properties : null),
                         "value": event.changed.value
                     };
-                    execEventAction(event.changed.component, myevent, 'action change', 'actionChange');
+                    execEventAction(event.changed.component, myevent, 'action change', 'actionChange',true);
                 }
             });
         };
@@ -288,9 +306,14 @@ function generateForm(formReadyCallback)
                 formioForm.checkConditions();
             }
             
+            var now = new Date();
             var myevent =
             {
                 "type": "resize",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
                 "controlType": "form",
                 "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -301,9 +324,14 @@ function generateForm(formReadyCallback)
         
         window.onbeforeprint=function(event)
         {
+            var now = new Date();
             var myevent =
             {
                 "type": "beforeprint",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
                 "controlType": "form",
                 "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -313,9 +341,14 @@ function generateForm(formReadyCallback)
         };
         window.onafterprint=function(event)
         {
+            var now = new Date();
             var myevent =
             {
                 "type": "afterprint",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
                 "controlType": "form",
                 "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -326,6 +359,8 @@ function generateForm(formReadyCallback)
         
         form.ready.then(function()
         {
+            console.log("form data READY="+JSON.stringify(form.submission.data));
+
            // Executing loaded script when the form is ready
            // E.g. the script could be something like: TogFormViewer.loadData('../data/mydata.json.js',true);TogFormViewer.calculate('../calc/mycalc.js');
            executeLoadingOrLoadedScript(false);
@@ -352,9 +387,14 @@ function generateForm(formReadyCallback)
         
         form.on('customEvent', function(event)
         {
+            var now = new Date();
             var myevent =
             {
                 "type": "customEvent",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (event.component ? event.component.key : null),
                 "controlType": "button",
                 "controlProperties": (event.component && event.component.properties ? event.component.properties : null),
@@ -365,9 +405,14 @@ function generateForm(formReadyCallback)
 
         form.on('componentError', function(event)
         {
+            var now = new Date();
             var myevent =
             {
                 "type": "componentError",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (event.component ? event.component.key : null),
                 "controlType": (event.component ? event.component.type : null),
                 "controlProperties": (event.component && event.component.properties ? event.component.properties : null),
@@ -380,9 +425,14 @@ function generateForm(formReadyCallback)
         {
             // event.page is the number of the previous page
             var component = form.getPage(event.page+1);
+            var now = new Date();
             var myevent =
             {
                 "type": "prevPage",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (component ? component.key : null),
                 "controlType": "panel",
                 "controlProperties": (component && component.properties ? component.properties : null),
@@ -394,9 +444,14 @@ function generateForm(formReadyCallback)
         {
             // event.page is the number of the next page
             var component = form.getPage(event.page-1);
+            var now = new Date();
             var myevent =
             {
                 "type": "nextPage",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (component ? component.key : null),
                 "controlType": "panel",
                 "controlProperties": (component && component.properties ? component.properties : null),
@@ -404,6 +459,8 @@ function generateForm(formReadyCallback)
             };                        
             execEventAction(component, myevent, 'action nextPage', 'actionNextPage', true);
         });
+        console.log("form data after the end="+JSON.stringify(form.submission.data));
+
         
     });
 }
@@ -411,7 +468,12 @@ function generateForm(formReadyCallback)
 function execEventAction(component,myevent,propName,configName,log2console) {
     if (log2console) console.log(configName+' default = '+appConfiguration[configName]);
     var actionPerformed = false;
+    
     if (appConfiguration.home) {
+        var actionHttpMethod = null;
+        if (propName==='action' && component && component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName+'Method')) {
+            actionHttpMethod = component.properties[propName+'Method'];
+        }
         var action = appConfiguration[configName];
         var sendForm = appConfiguration.sendForm;
         if (component && component.hasOwnProperty("properties") && component.properties !== null) {
@@ -431,7 +493,7 @@ function execEventAction(component,myevent,propName,configName,log2console) {
             var url = appConfiguration.home + "/" + action;
             if (log2console) console.log(configName+' '+action+' will be executed for '+myevent.controlId);
             appFormDataObj = formioForm.submission.data;
-            performEventOrCustomAction(url,myevent,sendForm);
+            performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod);
             actionPerformed = true;
         }
     }
@@ -452,21 +514,25 @@ function execEventAction(component,myevent,propName,configName,log2console) {
 /**
  * Calls event action
  */
-function performEventOrCustomAction(url,myevent,sendForm)
+function performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod)
 {
     if (!appConfiguration.disableActionSpinner) {
         showSpinner();
     }
     url = handlePlaceholders(url,myevent);
 
-    var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent,sendForm)};    
+    var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent,sendForm)};
+    var additionalConfig = {"event":myevent};
+    if (actionHttpMethod) {
+        additionalConfig['actionHttpMethod']= actionHttpMethod;
+    }
     console.log("executing event "+JSON.stringify(myevent)+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
-        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, {"event":myevent},onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, additionalConfig,onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
     } else {
         //alert("It is not possible to perform event "+JSON.stringify(myevent)+" action for url '"+url+"' because user is not logged-in!");
         //hideSpinner();
-        executeAjaxRequest(null, url, payload, {"event":myevent},onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
+        executeAjaxRequest(null, url, payload, additionalConfig,onsuccess_eventorcustomaction,onfailure_eventorcustomaction,onfailure_eventorcustomaction);
     }
 }
 
@@ -517,7 +583,7 @@ function createHooksObj()
             this.addEventListener(input, 'click', formClickListener(this));
             this.addEventListener(input, 'dblclick', formDblClickListener(this));
             this.addEventListener(input, 'contextmenu', formContextMenuListener(this));
-            this.addEventListener(input, 'wheel', formWheelListener(this));
+//            this.addEventListener(input, 'wheel', formWheelListener(this));
             
             this.addEventListener(input, 'mouseover', formMouseOverListener(this));
             this.addEventListener(input, 'mousedown', formMouseDownListener(this));
@@ -552,9 +618,14 @@ function formCutListener(comp)
         } catch (e) {
         }
         if (sel!=="") {
+            var now = new Date();
             var myevent =
             {
                 "type": "cut",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (comp && comp.component ? comp.component.key : null),
                 "controlType": (comp ? comp.type : null),
                 "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -574,9 +645,14 @@ function formCopyListener(comp)
         } catch (e) {
         }
         if (sel!=="") {
+            var now = new Date();
             var myevent =
             {
                 "type": "copy",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (comp && comp.component ? comp.component.key : null),
                 "controlType": (comp ? comp.type : null),
                 "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -597,9 +673,14 @@ function formPasteListener(comp)
         } catch (e) {
         }
         if (sel!=="") {
+            var now = new Date();
             var myevent =
             {
                 "type": "paste",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (comp && comp.component ? comp.component.key : null),
                 "controlType": (comp ? comp.type : null),
                 "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -613,9 +694,14 @@ function formPasteListener(comp)
 function formScrollListener(comp)
 {
     return function(event) {
+        var now = new Date();
         var myevent =
         {
             "type": "scroll",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -634,9 +720,14 @@ function formSelectListener(comp)
         } catch (e) {
         }
         if (sel!=="") {
+            var now = new Date();
             var myevent =
             {
                 "type": "select",
+                "when" : {
+                    "time": now.toISOString(),
+                    "timezoneOffset": now.getTimezoneOffset()
+                },
                 "controlId": (comp && comp.component ? comp.component.key : null),
                 "controlType": (comp ? comp.type : null),
                 "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -649,9 +740,14 @@ function formSelectListener(comp)
 function formMouseOutListener(comp)
 {
     return function(event) {
+        var now = new Date();
         var myevent =
         {
             "type": "mouseout",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -662,9 +758,14 @@ function formMouseOutListener(comp)
 function formMouseUpListener(comp)
 {
     return function(event) {
+        var now = new Date();
         var myevent =
         {
             "type": "mouseup",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -676,9 +777,14 @@ function formMouseUpListener(comp)
 function formMouseMoveListener(comp)
 {
     return function(event) {
+        var now = new Date();
         var myevent =
         {
             "type": "mousemove",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -692,9 +798,14 @@ function formMouseOverListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "mouseover",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -707,9 +818,14 @@ function formMouseDownListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "mousedown",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -724,9 +840,14 @@ function formClickListener(comp)
     return function(event)
     {
         //console.log('c='+JSON.stringify(comp.component));
+        var now = new Date();
         var myevent =
         {
             "type": "click",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -740,9 +861,14 @@ function formDblClickListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "dblclick",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -755,9 +881,14 @@ function formContextMenuListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "contextmenu",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -770,9 +901,14 @@ function formWheelListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "wheel",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -786,9 +922,14 @@ function formMouseEnterListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "mouseenter",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -802,9 +943,14 @@ function formMouseLeaveListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "mouseleave",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -823,9 +969,14 @@ function formKeyPressListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "keypress",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType":(comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -838,9 +989,14 @@ function formKeyDownListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "keydown",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -853,9 +1009,14 @@ function formKeyUpListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "keyup",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -868,9 +1029,14 @@ function formInputListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "input",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -890,9 +1056,14 @@ function formShowDropdownListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "showDropdown",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -907,9 +1078,14 @@ function formSearchListener(comp)
 {
     return function(event)
     {
+        var now = new Date();
         var myevent =
         {
             "type": "search",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : null),
             "controlType": (comp ? comp.type : null),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -980,9 +1156,14 @@ function formFocusListener(comp)
             $('#elearninglabel').attr("lang-tran", appConfiguration.elearningtext).attr("lang-form", "true").translate();
         }
         
+        var now = new Date();
         var myevent =
         {
             "type": "focus",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : ""),
             "controlType": (comp ? comp.type : ""),
             "controlProperties": (comp && comp.component ? comp.component.properties : null),
@@ -1009,9 +1190,14 @@ function formBlurListener(comp)
             TogFormViewer.calculate();
         }
         
+        var now = new Date();
         var myevent =
         {
             "type": "blur",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (comp && comp.component ? comp.component.key : ""),
             "controlType": (comp ? comp.type : ""),
             "controlProperties": (comp.component ? comp.component.properties : null),
@@ -1149,9 +1335,14 @@ function setupLayout()
             screenshot = $('#img_val').val(); 
         }
         
+        var now = new Date();
         var myevent =
         {
             "type": "feedback",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
             "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
             "controlType": "form",
             "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -2588,5 +2779,27 @@ function recalculateMenuPosition()
         {
             TogFormViewer.setProperty("menuPosition", "top");
         }
+    }
+}
+
+function printJSON(json,title) {
+console.log("JSON name="+title);
+for (var p in json) {    
+  if (typeof json[p]=='object' && !title) {
+    //printJSON(json[p],p);
+    console.log(p+'='+json[p]+', t='+(typeof json[p]));
+  } else {
+    console.log(p+'='+json[p]+', t='+(typeof json[p]));
+  }
+}
+}
+
+function printEvent(component,event,title) {
+    if (!component && event && event.changed && event.changed.component) {
+        component = event.changed.component;
+    }
+    console.log(title+' for '+(component ? component.key : 'no component')+': ' +(event ? ('type='+event.type+', details='+JSON.stringify(event.details)+', changed='+event.changed) : "No event"));
+    if (event && !event.details && !event.changed) {
+        //printJSON(event,'printingevent');
     }
 }

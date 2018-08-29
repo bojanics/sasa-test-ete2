@@ -105,6 +105,31 @@ var formObj={
 			
 		},
       "custom": "window.open(formioForm.submission.data['uploadBase64'][0].url);"
+	}, 
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Load form calcfbd",
+		"tableView": false,
+		"key": "loadformcalcfbd",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.loadForm('calcfbd',{'a':13,'b':15,'c':3,'msg':'sss','checkbox':false,'radio':'r3','radio2':'v4'});"
 	},    
 	{
 		"autofocus": false,

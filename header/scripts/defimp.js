@@ -203,6 +203,8 @@ function initAfterADALSetup()
     // set query strings into appFormDataObj
     appFormDataObj = parse_query_string(window.location.search.substring(1));
     
+    TogFormViewer.correlationId = TogFormViewer.uuidv4();
+    
     if (ADAL!=null) {
         var signeduser = ADAL!=null ? ADAL.getCachedUser() : null;
         if (signeduser) {
@@ -1903,8 +1905,7 @@ function checkForAppSetup()
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenustop"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenustop)))
         && (typeof langBottomMenusObj !== 'undefined' && langBottomMenusObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["langmenusbottom"])
             && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["langmenusbottom"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.langmenusbottom)))
-        && (typeof tranFormObj !== 'undefined' && tranFormObj != null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["formtranslation"])
-            && typeof formObj !== 'undefined' && formObj != null && (!formObj.hasOwnProperty("properties") || !(formObj.properties["formtranslation"])) && (appInfoObjFromServer == null || !appInfoObjFromServer.formTranslation))))
+        && (typeof tranFormObj !== 'undefined' && tranFormObj != null))
     {        
         if (document.readyState === 'complete')
         {
@@ -2241,6 +2242,7 @@ function executeScript(scriptName,script,togFormViewerEvent,log2console)
  */
 function checkForLoadingCallback()
 {
+    console.trace();
     // Executing loading script before we perform "Loading" action
     // E.g. the script could be something like: 
     // TogFormViewer.setProperty('appLauncher',false);TogFormViewer.setProperty('environment',false);TogFormViewer.FormioPlugIn.setProperty('formhelp','This is new form help');",    
@@ -2329,10 +2331,15 @@ function handlePlaceholders(placeholderStr,event) {
  * Calls loading callback and set up the APP
  */
 function performLoadingCallback(url,cnt)
-{
+{    
+    var now = new Date();
     var event =
     {
         "type": "Loading",
+        "when" : {
+            "time": now.toISOString(),
+            "timezoneOffset": now.getTimezoneOffset()
+        },
         "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : null),
         "controlType": "form",
         "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -2390,6 +2397,14 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
           }
        }
        
+       // keeping sub-object of appInfo object from the server that do not exist in the appInfo specification...to be in appInfo object every-time we call TogFormViewer.getAppInfo()
+       for (var p in appInfoObjFromServer) {
+           if (p!='plugin' && p!='browserInfo' && p!='deviceInfo' && p!='currentUser' && p!='appUrl' && p!='currentUserSettings' && p!='runtimeProperties' && p!='auth' && p!='config' && p!='queries' && p!='dataObj' && p!='resolvedProperties' && p!='event' && p!='eventResponse') {
+              TogFormViewer.additionalAppInfoData[p] = appInfoObjFromServer[p];
+           }
+       }
+       
+       
        // if server decided that the user should go offline, set ADAL to null
        if (resolvedPropertiesObjFromServer.onlinemode!=null && !resolvedPropertiesObjFromServer.onlinemode) {
           ADAL = null;
@@ -2407,7 +2422,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        
        //console.log('DATA received ='+JSON.stringify(data));
        var appDefChanged = resolvedPropertiesObjFromServer.appDefPath!=null && appConfiguration.appDefPath!=resolvedPropertiesObjFromServer.appDefPath;
-       var formChanged = appInfoObjFromServer.formObj!=null && JSON.stringify(formObj)!==JSON.stringify(appInfoObjFromServer.formObj);
+       var formChanged = appInfoObjFromServer.config!=null && appInfoObjFromServer.config.formObj!=null && JSON.stringify(formObj)!==JSON.stringify(appInfoObjFromServer.config.formObj);
        var formPathChanged = resolvedPropertiesObjFromServer.formDefPath!=null && appConfiguration.formDefPath!=resolvedPropertiesObjFromServer.formDefPath;
        formChanged = formChanged || formPathChanged;
        var brandChanged = resolvedPropertiesObjFromServer.brandDefPath!=null && appConfiguration.brandDefPath!=resolvedPropertiesObjFromServer.brandDefPath;
@@ -2416,7 +2431,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        //var themesChanged = appInfoObjFromServer.themesObj!=null && JSON.stringify(themesObj)!==JSON.stringify(appInfoObjFromServer.themesObj);
        var themesPathChanged = resolvedPropertiesObjFromServer.themes!=null && appConfiguration.themes!=resolvedPropertiesObjFromServer.themes;
        var themesChanged = /*themesChanged ||*/ themesPathChanged;
-       var userLangsChanged = appInfoObjFromServer.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.userLangsObj);
+       var userLangsChanged = appInfoObjFromServer.config!=null && appInfoObjFromServer.config.userLangsObj!=null && JSON.stringify(userLangsObj)!==JSON.stringify(appInfoObjFromServer.config.userLangsObj);
        var userLangsPathChanged = resolvedPropertiesObjFromServer.userlangs!=null && appConfiguration.userlangs!=resolvedPropertiesObjFromServer.userlangs;
        userLangsChanged = userLangsChanged || userLangsPathChanged;
        //var timeZonesChanged = appInfoObjFromServer.timeZonesArr!=null && JSON.stringify(timeZonesArr)!==JSON.stringify(appInfoObjFromServer.timeZonesArr);
@@ -2424,16 +2439,16 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        var timeZonesChanged = /*timeZonesChanged ||*/ timeZonesPathChanged;
        var customScriptChanged = resolvedPropertiesObjFromServer.customScript!=null && appConfiguration.customScript!=resolvedPropertiesObjFromServer.customScript;
        var customCssChanged = resolvedPropertiesObjFromServer.customCss!=null && appConfiguration.customCss!=resolvedPropertiesObjFromServer.customCss;
-       var menusChanged = appInfoObjFromServer.menusObj!=null && JSON.stringify(menusObj)!==JSON.stringify(appInfoObjFromServer.menusObj);
+       var menusChanged = appInfoObjFromServer.config!=null && appInfoObjFromServer.config.menusObj!=null && JSON.stringify(menusObj)!==JSON.stringify(appInfoObjFromServer.config.menusObj);
        var menusPathChanged = resolvedPropertiesObjFromServer.menusPath!=null && appConfiguration.menusPath!=resolvedPropertiesObjFromServer.menusPath;
        menusChanged = menusChanged || menusPathChanged;
-       var langMenusTopChanged = appInfoObjFromServer.langTopMenusObj!=null && JSON.stringify(langTopMenusObj)!==JSON.stringify(appInfoObjFromServer.langTopMenusObj);
+       var langMenusTopChanged = appInfoObjFromServer.config!=null && appInfoObjFromServer.config.langTopMenusObj!=null && JSON.stringify(langTopMenusObj)!==JSON.stringify(appInfoObjFromServer.config.langTopMenusObj);
        var langMenusTopPathChanged = resolvedPropertiesObjFromServer.langMenusTopPath!=null && appConfiguration.langMenusTopPath!=resolvedPropertiesObjFromServer.langMenusTopPath;
        langMenusTopChanged = langMenusTopChanged || langMenusTopPathChanged;
-       var langMenusLeftChanged = appInfoObjFromServer.langLeftMenusObj!=null && JSON.stringify(langLeftMenusObj)!==JSON.stringify(appInfoObjFromServer.langLeftMenusObj);
+       var langMenusLeftChanged = appInfoObjFromServer.config!=null && appInfoObjFromServer.config.langLeftMenusObj!=null && JSON.stringify(langLeftMenusObj)!==JSON.stringify(appInfoObjFromServer.config.langLeftMenusObj);
        var langMenusLeftPathChanged = resolvedPropertiesObjFromServer.langMenusLeftPath!=null && appConfiguration.langMenusLeftPath!=resolvedPropertiesObjFromServer.langMenusLeftPath;
        langMenusLeftChanged = langMenusLeftChanged || langMenusLeftPathChanged;
-       var langMenusBottomChanged = appInfoObjFromServer.langBottomMenusObj!=null && JSON.stringify(langBottomMenusObj)!==JSON.stringify(appInfoObjFromServer.langBottomMenusObj);
+       var langMenusBottomChanged = appInfoObjFromServer.config!=null && appInfoObjFromServer.config.langBottomMenusObj!=null && JSON.stringify(langBottomMenusObj)!==JSON.stringify(appInfoObjFromServer.config.langBottomMenusObj);
        var langMenusBottomPathChanged = resolvedPropertiesObjFromServer.langMenusBottomPath!=null && appConfiguration.langMenusBottomPath!=resolvedPropertiesObjFromServer.langMenusBottomPath;
        langMenusBottomChanged = langMenusBottomChanged || langMenusBottomPathChanged;
        var formTranslationChanged = resolvedPropertiesObjFromServer.formTranslation!=null && appConfiguration.formTranslation!=resolvedPropertiesObjFromServer.formTranslation;
@@ -2770,6 +2785,8 @@ var TogFormViewer =
     activeMenuKey: "",
     openidConfiguration: null,
     dirty: false,
+    additionalAppInfoData: {},
+    correlationId: null,
     
     FormioPlugIn:
     {
@@ -2837,9 +2854,14 @@ var TogFormViewer =
                 {
                     formioForm.checkConditions();
                     formioForm.checkValidity();
+                    var now = new Date();
                     var myevent =
                     {
                         "type": "drity changed",
+                        "when" : {
+                            "time": now.toISOString(),
+                            "timezoneOffset": now.getTimezoneOffset()
+                        },
                         "controlId": (formObj.hasOwnProperty("_id") ? formObj._id : ""),
                         "controlType": "form",
                         "controlProperties": (formObj.properties ? formObj.properties : null),
@@ -3239,20 +3261,24 @@ var TogFormViewer =
                 },
                 "dirty": this.dirty
             },
-            "IDToken" : _getJWTInfo(),
-            "IDTokenEncoded" : (typeof ADAL=== 'undefined' || ADAL==null ? null : ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN)),
-            "openid-configuration": TogFormViewer.openidConfiguration,
-            "appObj" : appObj,
-            "headerObj" : headerObj,
-            "customizationObj" : customizationObj,
-            "brandObj" : brandObj,
+            "auth" : {
+                "IDToken" : _getJWTInfo(),
+                "IDTokenEncoded" : (typeof ADAL=== 'undefined' || ADAL==null ? null : ADAL._getItem(ADAL.CONSTANTS.STORAGE.IDTOKEN)),
+                "openid-configuration": TogFormViewer.openidConfiguration
+            },
+            "config" : {
+                "appObj" : appObj,
+                "headerObj" : headerObj,
+                "customizationObj" : customizationObj,
+                "brandObj" : brandObj,
+                "userLangsObj" : typeof userLangsObj === 'undefined' ? '' : userLangsObj,
+                //"timeZonesArr" : typeof timeZonesArr === 'undefined' ? '' : timeZonesArr,
+                //"themesObj" : typeof themesObj === 'undefined' ? '' : themesObj,
+                "menusObj" : typeof menusObj === 'undefined' ? '' : menusObj,
+                "langTopMenusObj" : typeof langTopMenusObj === 'undefined' ? '' : langTopMenusObj,
+                "langBottomMenusObj" : typeof langBottomMenusObj === 'undefined' ? '' : langBottomMenusObj
+            },
             "queries" : appURLQueryParameters,
-            "userLangsObj" : typeof userLangsObj === 'undefined' ? '' : userLangsObj,
-            //"timeZonesArr" : typeof timeZonesArr === 'undefined' ? '' : timeZonesArr,
-            //"themesObj" : typeof themesObj === 'undefined' ? '' : themesObj,
-            "menusObj" : typeof menusObj === 'undefined' ? '' : menusObj,
-            "langTopMenusObj" : typeof langTopMenusObj === 'undefined' ? '' : langTopMenusObj,
-            "langBottomMenusObj" : typeof langBottomMenusObj === 'undefined' ? '' : langBottomMenusObj,
             "dataObj" : typeof window.formioForm !== 'undefined' && window.formioForm!=null ? formioForm.submission.data : appFormDataObj,
             "resolvedProperties" : JSON.parse(JSON.stringify(appConfiguration)),
         };
@@ -3269,13 +3295,25 @@ var TogFormViewer =
         if (arguments.length == 2)
         {
             if (sendForm) {
-                appInfo.formObj = formObj;
+                appInfo.config.formObj = formObj;
             } 
         } else {
             if (appConfiguration.sendForm) {
-                appInfo.formObj = formObj;
+                appInfo.config.formObj = formObj;
             }
         }
+        
+        for (var p in TogFormViewer.additionalAppInfoData) {
+           console.log("handling property for appINfo:"+p);
+           appInfo[p]=TogFormViewer.additionalAppInfoData[p];
+           /*
+           if (resolvedPropertiesObjFromServer.hasOwnProperty(p)) {                  
+              if (typeof appConfiguration[p] == "object") {
+                if (JSON.stringify(appConfiguration[p])!==JSON.stringify(resolvedPropertiesObjFromServer[p])) {
+                  hasChanges = true;
+                  */
+        }
+        
         return appInfo;
     },
     
@@ -3380,11 +3418,42 @@ var TogFormViewer =
 
     // This function should be called from custom button action. It will post appInfo object to the specified URL
     // If the response changes some of the appInfo data, the re-evaluation of the properties will start (like with Loading action)
-    executeCustomAction: function(url,sendForm)
+    executeCustomAction: function(url,sendForm,actionHttpMethod)
     {
         appFormDataObj = formioForm.submission.data;
-        var myevent = {"type":"customAction","controlId":null,"controlType":"button","value":null};            
-        performEventOrCustomAction(url,myevent,sendForm);
+        
+        var now = new Date();
+        var myevent = {
+            "type": "customAction",
+            "when" : {
+                "time": now.toISOString(),
+                "timezoneOffset": now.getTimezoneOffset()
+            },
+            "controlId": null,
+            "controlType": "button",
+            "value": null
+        };
+        performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod);
+    },
+    
+    uuidv4: function () {  
+        var uuid = null;
+        var msg = null;
+        if (typeof (crypto)!= 'undefined') {
+            msg = "Generated UUIDV4 with crypto is ";
+            uuid = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c){ return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);});
+        } else if (typeof (msCrypto)!= 'undefined') {            
+            msg = "Generated UUIDV4 with msCrypto is ";
+            uuid = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c){ return (c ^ msCrypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);});
+        } else {
+            msg = "Generated UUIDV4 without crypto/msCrypto is ";
+            uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        console.log(msg+"'"+uuid+"'");
+        return uuid;
     }
        
 }
@@ -3858,14 +3927,25 @@ function onfailure_generic(token,url,formdata,additionalConfiguration,err,textSt
 }
 
 function executeAjaxRequest(token,url,formdata,additionalConfiguration,onsuccess,onfailure) {
+   var httpMethod = additionalConfiguration.actionHttpMethod;
+   if (httpMethod) {
+       httpMethod = httpMethod.toUpperCase();
+       if (httpMethod!=='POST' && httpMethod!=='PUT' && httpMethod!=='PATCH' && httpMethod!=='DELETE') {
+           httpMethod = "POST";
+       }
+   } else {
+       httpMethod = "POST";
+   }
+
    var settings = {
      "crossDomain": true,     
      "url": url,
      "timeout":30000,
-     "method": "POST",
+     "method": httpMethod,
      "headers": {
        "content-type": "application/json",
-       "cache-control": "no-cache"
+       "cache-control": "no-cache",
+       "x-ms-client-tracking-id": TogFormViewer.correlationId
      },
      "data": JSON.stringify(formdata),
      "dataType": 'json',

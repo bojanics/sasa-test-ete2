@@ -2889,6 +2889,57 @@ var TogFormViewer =
             {
                 return TogFormViewer.dirty;
             }
+        },
+        
+        /**
+         * Sets new value to a submission property with a given key
+         * @note This function sets component value regardles of if the component is in submission root or subobject at any level
+         * @param componentKey API key of the component which value should be set
+         * @param value New value of the component
+         */
+        setComponentValue: function(componentKey, value)
+        {
+            var submissionData = JSON.parse(JSON.stringify(formioForm.submission.data));
+            TogFormViewer.Utils.setValueToProperty(componentKey, value, submissionData);
+            formioForm.submission = {"data": submissionData};
+        }
+    },
+    
+    Utils:
+    {
+        /**
+         * Sets a value to a given property of a given object
+         * @note Property can be in the object root or at any subobject level
+         * @param propertyName Name of the property which should be changed
+         * @param propertyValue New value of the property
+         * @param obj Object whose property should be changed
+         */
+        setValueToProperty: function(propertyName, propertyValue, obj)
+        {
+            if (typeof obj === 'undefined' && !obj)
+            {
+                return;
+            }
+            
+            var subObjs = [];
+            for (var key in obj)
+            {
+                if (key === propertyName)
+                {
+                    obj[key] = propertyValue;
+                    
+                    return;
+                }
+                else if (typeof obj[key] === 'object')
+                {
+                    subObjs.push(obj[key]);
+                }
+            }
+            
+            for (var subObjIndex = 0; subObjIndex < subObjs.length; subObjIndex++)
+            {
+                setValueToProperty(propertyName, propertyValue, subObjs[subObjIndex]);
+            }
         }
     },
     
@@ -3259,7 +3310,8 @@ var TogFormViewer =
                     "width" : $(window).width(),
                     "height" : $(window).height()
                 },
-                "dirty": this.dirty
+                "dirty": this.dirty,
+                "correlationId": TogFormViewer.correlationId
             },
             "auth" : {
                 "IDToken" : _getJWTInfo(),

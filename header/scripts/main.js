@@ -240,6 +240,21 @@ function generateForm(formReadyCallback)
                 // It is fired if there are checkboxes or datetime components in the form
                 if (event.changed && (!event.changed.flags || !event.changed.flags.noValidate))
                 {
+                    if (event.changed.component && event.changed.component.enableTime === false && event.changed.component.type === "datetime" && event.changed.component.properties
+                            && event.changed.component.properties.hasOwnProperty("shift time to utc") && event.changed.component.properties["shift time to utc"] === "true"
+                        && event.changed.value && new Date().getTimezoneOffset() < 0)
+                    {
+                        if (event.changed.value.indexOf("T00:00:00.000Z") !== 10)
+                        {
+                            TogFormViewer.FormioPlugIn.setComponentValue(event.changed.component.key, moment(event.changed.value).subtract(new Date().getTimezoneOffset(), 'm').toISOString());
+                        }
+                        else
+                        {
+                            // If change is already made and here we are catching its change event just return
+                            return;
+                        }
+                    }
+                    
                     if ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
                             && event.changed.component.properties["autocalc"] === "fieldchange")
                         || (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc"))

@@ -1,6 +1,6 @@
 var headerObj = {
     "use outlook settings": true,
-    "use user property extensions": true,
+    "ause user property extensions": true,
     "app launcher": true,
     "environment": true,
     "notifications": true,
@@ -20,8 +20,8 @@ var headerObj = {
     "form width percent": "",
     "processtext": "Overridden text",
     "elearningtext": "",
-    "autocalc": "fieldchange",
-    "calc_js_path": "../calc/calc_v12ab.js",
+    "aautocalc": "fieldchange",
+    "acalc_js_path": "../calc/calc_v12ab.js",
     "acalc_js_path": "../calc/calcnonexisting.js",
     "calc_js_setting": "",
     "calc_conf_path": "",
@@ -120,5 +120,7 @@ var headerObj = {
     "debug": false,
     "choicesOptions": "{\"searchResultLimit\": 10}",
     "sendForm": true,
-    "formtranslation": ""
+    "formtranslation": "",
+    "additional api function resource": "https://graph.microsoft.com",
+    "additional api function url": "https://graph.microsoft.com/v1.0/me"    
 };

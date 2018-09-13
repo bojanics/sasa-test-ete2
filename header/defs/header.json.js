@@ -21,6 +21,7 @@ var headerObj = {
     "processtext": "Overridden text",
     "elearningtext": "",
     "autocalc": "",
+    "calc_js_path_local": "",
     "calc_js_path": "",
     "calc_js_setting": "",
     "calc_conf_path": "",
@@ -123,5 +124,9 @@ var headerObj = {
     "debug": false,
     "choicesOptions": "",
     "sendForm": false,
-    "formtranslation": ""
+    "formtranslation": "",
+    "additional api function resource": "",
+    "additional api function url": "",
+    "additional api function method": "",
+    "additional api function payload": ""
 };

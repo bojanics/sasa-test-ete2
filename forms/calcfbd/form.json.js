@@ -32,7 +32,7 @@ var formObj = {
       "input": true,
       "inputType": "number",
       "key": "a",
-      "defaultValue": 11,
+      "adefaultValue": 11,
       "validate": {
         "multiple": "",
         "custom": "valid = (input>=1 && input<=100) ? true : 'Must be between 1 and 100'"
@@ -42,6 +42,7 @@ var formObj = {
         "show": ""
       },
       "properties": {
+        "autocalc": "fieldchange",
         "aaction focus local script": "testFocus2(togFormViewerEvent);",
         "aaction blur local script": "testBlur2(togFormViewerEvent);",
         "action change": "",
@@ -101,6 +102,7 @@ var formObj = {
         "show": ""
       },
       "properties": {
+        "autocalc": "fieldchange",
         "action change local script": "testChange2(togFormViewerEvent);"
       },
       "lockKey": true,
@@ -125,7 +127,7 @@ var formObj = {
       "properties": {},
       "lockKey": true,
       "isNew": false,
-      "calculateValue": "value = data.a*data.b;"
+      "acalculateValue": "value = data.a*data.b;"
     },
     {
       "input": true,
@@ -573,7 +575,11 @@ var formObj = {
     "aaction paste": "Form('{formname}/{formversion}')/Paste",
     "aaction scroll": "Form('{formname}/{formversion}')/Scroll",
     "formtitle": "Calculate 2 numbers",
-    "acalc_api_path": "Calculation('{calcname}/{calcversion}')/Calculate",
+    "calc_api_path": "Calculation('{calcname}/{calcversion}')/Calculate",
+    "acalc_api_path": "api/Calculation-Calculate",
+    "calc_conf_path":"./defaults/default.json",
+    "calc_js_path": "./defaults/calc_v12ab.js",
+    "calc_js_path_local": "../calc/calc_v12ab.js",
     "formhelp": "<p>Ovdje se nalazi usporedna analiza ponuda za kasko osiguranje prema parametrima kao što su iznos financiranja, valuta i vrsta leasinga.<br /><br />Uspoređena su osiguravajuća društva Uniqa osiguranje i Wiener osiguranje VIG i iskazane su premije osiguranja.<br /><br />Ukoliko želite tiskani primjerak ponude, možete ga dobiti pritiskom na.</p>",
     "elearninglink": "https://en.wikipedia.org/wiki/Operation_(mathematics)",
     "elearningimagelink": "../logos/elearn.png",

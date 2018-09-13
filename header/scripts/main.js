@@ -236,6 +236,8 @@ function generateForm(formReadyCallback)
             form.on('change', function(event)            
             {   
             console.log("CHG event executed, event.changed="+event.changed+", ecc="+(event.changed!=null?event.changed.component:"null")+",ecck="+(event.changed!=null&&event.changed.component!=null?event.changed.component.key:"null"));
+                var skipCalculate = false;
+                
                 // If there is a noValidate flag and it is set to true it is a changed event fired when form gets loaded
                 // It is fired if there are checkboxes or datetime components in the form
                 if (event.changed && (!event.changed.flags || !event.changed.flags.noValidate))
@@ -246,19 +248,31 @@ function generateForm(formReadyCallback)
                     {
                         if (event.changed.value.indexOf("T00:00:00.000Z") !== 10)
                         {
-                            TogFormViewer.FormioPlugIn.setComponentValue(event.changed.component.key, moment(event.changed.value).subtract(new Date().getTimezoneOffset(), 'm').toISOString());
+                            TogFormViewer.FormioPlugIn.setComponentValue(event.changed.component.key, moment(event.changed.value).subtract(new Date().getTimezoneOffset(), 'm').toISOString()).then((function(event)
+                            {
+                                return function()
+                                {
+                                    if ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
+                                            && event.changed.component.properties["autocalc"] === "fieldchange")
+                                        || (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc"))
+                                            && appConfiguration && appConfiguration.autocalc === "fieldchange"))
+                                    {
+                                        TogFormViewer.calculate();
+                                    }
+                                }
+                            })(event));
+                            skipCalculate = true;
                         }
                         else
                         {
-                            // If change is already made and here we are catching its change event just return
                             return;
                         }
                     }
                     
-                    if ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
+                    if (!skipCalculate && ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
                             && event.changed.component.properties["autocalc"] === "fieldchange")
                         || (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc"))
-                            && appConfiguration && appConfiguration.autocalc === "fieldchange"))
+                            && appConfiguration && appConfiguration.autocalc === "fieldchange")))
                     {
                         TogFormViewer.calculate();
                     }
@@ -483,7 +497,6 @@ function generateForm(formReadyCallback)
 function execEventAction(component,myevent,propName,configName,log2console) {
     if (log2console) console.log(configName+' default = '+appConfiguration[configName]);
     var actionPerformed = false;
-    
     if (appConfiguration.home) {
         var actionHttpMethod = null;
         if (propName==='action' && component && component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName+'Method')) {

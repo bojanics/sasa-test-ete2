@@ -284,14 +284,14 @@ function setupStyle(overrideBrandTheme)
     bootswatchStyleDE.id = "bodystyle";
     bootswatchStyleDE.rel = "stylesheet";
     
-    bootswatchStyleDE.href = bootstrapThemeStylePath;
+    bootswatchStyleDE.href = bootstrapThemeStylePath + "?vid=" + versionId;
     var layoutStyleNode = document.getElementById("layoutstyle");
     layoutStyleNode.parentNode.insertBefore(bootswatchStyleDE, layoutStyleNode.nextSibling);
     
     var headerStyleDE = document.createElement("link");
     headerStyleDE.id = "themelayoutstyle";
     headerStyleDE.rel = "stylesheet";
-    headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
+    headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css?vid=" + versionId;
     layoutStyleNode.parentNode.insertBefore(headerStyleDE, layoutStyleNode.nextSibling);
 }
 
@@ -394,14 +394,14 @@ function applyTheme()
     bootswatchStyleDE.id = "bodystyle";
     bootswatchStyleDE.rel = "stylesheet";
     
-    bootswatchStyleDE.href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css";
+    bootswatchStyleDE.href = themesMap[themeSelector.currentTheme].path + "/bootstrap.min.css?vid=" + versionId;
     var layoutStyleNode = document.getElementById("layoutstyle");
     layoutStyleNode.parentNode.insertBefore(bootswatchStyleDE, layoutStyleNode.nextSibling);
     
     var headerStyleDE = document.createElement("link");
     headerStyleDE.id = "themelayoutstyle";
     headerStyleDE.rel = "stylesheet";
-    headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css";
+    headerStyleDE.href = themesMap[themeSelector.currentTheme].path + "/layout-override.css?vid=" + versionId;
     layoutStyleNode.parentNode.insertBefore(headerStyleDE, layoutStyleNode.nextSibling);
     
     // We should show the form after new styles has been loaded to prevent FOUC

@@ -311,6 +311,31 @@ var formObj = {
 		},
       "custom": "TogFormViewer.showData();"
 	},    
+	{
+		"autofocus": false,
+		"input": true,
+		"label": "Show data (XML)",
+		"tableView": false,
+		"key": "showdata",
+		"size": "md",
+		"leftIcon": "",
+		"rightIcon": "",
+		"block": false,
+		"action": "custom",
+		"disableOnInvalid": false,
+		"theme": "primary",
+		"type": "button",
+		"tags": [],
+		"conditional": {
+			"show": "",
+			"when": null,
+			"eq": ""
+		},
+		"properties": {
+			
+		},
+      "custom": "TogFormViewer.showDataXML('../xslt/defaultPre.xsl.js');"
+	},    
     {
 		"autofocus": false,
 		"input": true,
@@ -462,6 +487,7 @@ var formObj = {
         "event": "Multiply",
         "lockKey": true,
         "customConditional": "show",
+        "disableOnInvalid": true,
         "hideLabel": false,
         "autofocus": false
     },

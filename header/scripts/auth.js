@@ -221,6 +221,52 @@ function getFunctionName(funct) {
 }
 
 /**
+ * Performs a generic API call on ADAL
+ * @param {string} resource Resource identifier of the API. For example it is "https://graph.microsoft.com" for Microsoft Graph API
+ * @param {string} url URL of the API
+ * @param {string} method HTTP request method. If an empty string is passed GET is used
+ * @param {object} payload JSON object which is passed to the API function in payload
+ * @param {function} onsuccesscallback Success callback function which receives a response payload as a parameter
+ * @param {function} onfailurecallback Optional failure callback
+ */
+function performApiFunctionCall(resource, url, method, payload, onsuccesscallback, onfailurecallback) {
+    executeAjaxRequestWithAdalLogic(resource, callApiFunction, url, payload, {"method": method ? method : "GET"}, onsuccesscallback, onfailurecallback, onfailurecallback);
+}
+
+function callApiFunction(token, url, payload, conf, onsuccesscallback, onfailurecallback) {
+    var settings = {
+        "crossDomain": true,
+        "url": url,
+        "timeout":30000,
+        "method": conf.method,        
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    
+    if (payload) {
+        settings.data = JSON.stringify(payload);
+    }
+    
+    $.ajax(settings).done(function (data,textStatus,request) {
+        console.log('callApiFunction successfully executed');
+        if (data) {
+            onsuccesscallback(data);
+        } else if (onfailurecallback) {
+            onfailurecallback();
+        }
+        
+        console.log('Data successfully retrieved! payload: ' + (data!=null ? JSON.stringify(data) : null));
+    }).fail(function (err, textStatus, errorThrown) {
+        console.log('callApiFunction failed');
+        console.log("AJAX REQUEST FAILED:"+err.toString()+',textStatus='+textStatus+', errorThrown='+errorThrown);
+        if (onfailurecallback) {
+            onfailurecallback();
+        }
+    });
+}
+
+/**
  * Queries for mailbox settings (language and time zone)
  * @param {string} url Microsoft API function URL for getting user mailbox settings.
  *        If we use Microsoft Graph API Beta it is https://graph.microsoft.com/beta/me/mailboxSettings

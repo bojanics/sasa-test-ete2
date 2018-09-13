@@ -1,3 +1,6 @@
+// Version id is generated during build process. This should be at the second line of this file.
+var versionId = 'default';
+
 /**
  * Application configuration parameters. This object contains runtime values, no matter where
  * the info come from (parameter / config entry / custom property / hardcoded default / etc.)
@@ -28,6 +31,16 @@ var formDestroyed = true;
  * The response from the server when doing Loading or Event actions. It has the same structure as TogFormViewer.getAppInfo() object.
  */
 var appInfoObjFromServer = null;
+
+/**
+ * Flag which indicates if user settings (for example language, time zone, theme) have been retreived (for example from Microsoft Graph API)
+ */
+var userSettingsLoaded = false;
+
+/**
+ * Parameter which indicates if response from additional API function has been received
+ */
+var additionalApiResponseReceived = false;
 
 function resetFormData()
 {
@@ -86,6 +99,7 @@ function resetAppConfiguration()
         useOutlookSettings: false,
         useUserPropertyExtensions: false,
         autocalc: "",
+        calcJsPathLocal: "",
         calcJsPath: "",
         calcJsSetting: "",
         calcConfPath: "",
@@ -187,9 +201,16 @@ function resetAppConfiguration()
         debug: "false",
         choicesOptions: "",
         sendForm: false,
-        formTranslation: ""
+        formTranslation: "",
+        additionalApiFunctionResource: "",
+        additionalApiFunctionUrl: "",
+        additionalApiFunctionMethod: "",
+        additionalApiFunctionPayload: ""
     };
     appConfiguration.onlinemode = typeof ADAL!== 'undefined' && ADAL!=null;
+    userSettingsLoaded = false;
+    additionalApiResponseReceived = false;
+    additionalApiCallPerformed = false;
 }
 
 function initAfterADALSetup()
@@ -306,7 +327,7 @@ function loadScript(url, callback, errorHandler)
 {
     var scriptElement = document.createElement("script");
     scriptElement.type = "text/javascript";
-    scriptElement.src = url;
+    scriptElement.src = url + "?vid=" + versionId;
     
     // Bind the event to the callback function.
     // There are several events for cross browser compatibility.
@@ -940,6 +961,9 @@ function setupHeaderConfiguration()
     // Possible values are an empty string (default), "fieldchange" and "focuschange"
     resolveStringOrBooleanParameter(false,"autocalc","autocalc",formObj,headerObj,null,true,appConfiguration.autocalc); 
     
+    // Set up path or URL to local calculation file
+    resolveStringOrBooleanParameter(false,"calc_js_path_local","calcJsPathLocal",formObj,headerObj,null,true,appConfiguration.calcJsPathLocal); 
+
     // Set up path or URL to calculation file
     resolveStringOrBooleanParameter(false,"calc_js_path","calcJsPath",formObj,headerObj,null,true,appConfiguration.calcJsPath); 
     
@@ -1333,6 +1357,18 @@ function setupHeaderConfiguration()
     // Check if form translation path has been specified
     resolveStringOrBooleanParameter(false,"formtranslation","formTranslation",formObj,headerObj,null,true,appConfiguration.formTranslation);
     
+    // Check if additional api function should be called and find out resource of the function
+    resolveStringOrBooleanParameter(false, "additional api function resource","additionalApiFunctionResource",formObj,headerObj,null,true,appConfiguration.additionalApiFunctionResource);
+    
+    // Check if additional api function should be called and find out function URL
+    resolveStringOrBooleanParameter(false, "additional api function url","additionalApiFunctionUrl",formObj,headerObj,null,true,appConfiguration.additionalApiFunctionUrl);
+    
+    // Check if additional api function should be called and find out HTTP method
+    resolveStringOrBooleanParameter(false, "additional api function method","additionalApiFunctionMethod",formObj,headerObj,null,true,appConfiguration.additionalApiFunctionMethod);
+    
+    // Check if additional api function should be called and find out stringified payload to send
+    resolveStringOrBooleanParameter(false, "additional api function payload","additionalApiFunctionPayload",formObj,headerObj,null,true,appConfiguration.additionalApiFunctionPayload);
+    
 }
 
 /**
@@ -1702,6 +1738,11 @@ var langBottomMenusLoadStarted = false;
 var formTranslationLoadStarted = false;
 
 /**
+ * Flag which indicates if the additional API function has been called
+ */
+var additionalApiCallPerformed = false;
+
+/**
  * Checks if all definition files has been loaded.
  * If so adds the app setup function as listener for the window load event
  * or runs the app setup if the window load event is already fired.
@@ -1788,7 +1829,7 @@ function checkForAppSetup()
         {
             var customCssElem = document.createElement("link");
             customCssElem.rel = "stylesheet";
-            customCssElem.href = appConfiguration.customCss;
+            customCssElem.href = appConfiguration.customCss + "?vid=" + versionId;
             customCssElem.onreadystatechange = customCssLoaded;
             customCssElem.onload = customCssLoaded;
             customCssElem.onerror = customCssLoaded;
@@ -1887,6 +1928,31 @@ function checkForAppSetup()
             loadDefaultFormTranslations();
         }
     }
+    
+    if (!additionalApiCallPerformed && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    {
+        additionalApiCallPerformed = true;
+        if (appConfiguration.additionalApiFunctionResource && appConfiguration.additionalApiFunctionUrl)
+        {
+            performApiFunctionCall(appConfiguration.additionalApiFunctionResource, appConfiguration.additionalApiFunctionUrl, appConfiguration.additionalApiFunctionMethod,
+                appConfiguration.additionalApiFunctionMethod, function(data)
+                {
+                    additionalApiResponseReceived = true;
+                    TogFormViewer.additionalApiFunctionResponse = data;
+                    checkAdditionalApiCallPerformed();
+                }, function()
+                {
+                    additionalApiResponseReceived = true;
+                    TogFormViewer.additionalApiFunctionResponse = {};
+                    checkAdditionalApiCallPerformed();
+                });
+        }
+        else
+        {
+            additionalApiResponseReceived = true;
+            TogFormViewer.additionalApiFunctionResponse = {};
+        }
+    }
         
     if (typeof headerObj !== 'undefined' && headerObj!=null && typeof customizationObj !== 'undefined' && customizationObj!=null && typeof brandObj !== 'undefined' && brandObj!=null && typeof formObj !== 'undefined' && formObj!=null 
         && (typeof themesObj !== 'undefined' && themesObj!=null || (typeof headerObj !== 'undefined' && headerObj != null && !(headerObj["themes"])
@@ -1931,7 +1997,11 @@ function checkForAppSetup()
  */
 function checkUserSettingsAndPerformLoadingCallback()
 {
-    setUserSettings(checkForLoadingCallback);
+    setUserSettings(function()
+    {
+        userSettingsLoaded = true;
+        checkAdditionalApiCallPerformed();
+    });
 }
 
 /**
@@ -1961,14 +2031,17 @@ function setUserSettings(userSettingsSetCallback)
             
             setSupportedTimeZones(TogFormViewer.getProperty("userTimeZones"));
             
+            console.log("GSTZ SUCCESS");
             // Find out user's mailbox settings
             getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
             function(language, timeZone)
             {
+                console.log("OSSUCCESS1");
                 outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
             },
             function()
             {
+                console.log("OSECB1");
                 outlookSettingsErrorCallback(userSettingsSetCallback);
             });
         }, function()
@@ -1984,16 +2057,18 @@ function setUserSettings(userSettingsSetCallback)
             {
                 setDefaultTimeZonesChoices();
             }
-            
+            console.log("GSTZ ERROR");
             // Find out user's mailbox settings
             //getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', outlookSettingsSuccessCallback, outlookSettingsErrorCallback);
             getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
             function(language, timeZone)
             {
+                console.log("OSSUCCESS2");
                 outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
             },
             function()
             {
+                console.log("OSECB2");
                 outlookSettingsErrorCallback(userSettingsSetCallback);
             });            
         });
@@ -2198,6 +2273,14 @@ function outlookSettingsErrorCallback(userSettingsSetCallback)
     checkUserSettingsLoaded(userSettingsSetCallback);
 }
 
+function checkAdditionalApiCallPerformed()
+{
+    if (userSettingsLoaded && additionalApiResponseReceived)
+    {
+        checkForLoadingCallback();
+    }
+}
+
 /**
  * Executes script defined by form's custom property "loadingScript" or "loadedScript".
  * If the parameter isLoadingScript is true, the "loadingScript" will be used, otherwise "loadedScript" will be used.
@@ -2373,14 +2456,17 @@ function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textS
 }
 
 function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
-   appInfoObjFromServer = data.appInfo;
-   
-   // Extended data sent from server which are not part of the submission data
-   // Can be used within forms and custom scripts as project specific data model
-   // The extended data will not be sent back to the server with next API call
-   if (data.extendedData)
-   {
-       TogFormViewer.extendedServerData = data.extendedData;
+   appInfoObjFromServer = null;
+   if (data) {
+       appInfoObjFromServer = data.appInfo;
+       
+       // Extended data sent from server which are not part of the submission data
+       // Can be used within forms and custom scripts as project specific data model
+       // The extended data will not be sent back to the server with next API call
+       if (data.extendedData)
+       {
+           TogFormViewer.extendedServerData = data.extendedData;
+       }
    }
    
    if (appInfoObjFromServer!=null) {
@@ -2787,6 +2873,8 @@ var TogFormViewer =
     dirty: false,
     additionalAppInfoData: {},
     correlationId: null,
+    lastCalculationTimestamp: null,
+    additionalApiFunctionResponse: {},
     
     FormioPlugIn:
     {
@@ -2901,7 +2989,7 @@ var TogFormViewer =
         {
             var submissionData = JSON.parse(JSON.stringify(formioForm.submission.data));
             TogFormViewer.Utils.setValueToProperty(componentKey, value, submissionData);
-            formioForm.submission = {"data": submissionData};
+            return formioForm.setSubmission({"data": submissionData});
         }
     },
     
@@ -3356,14 +3444,12 @@ var TogFormViewer =
         }
         
         for (var p in TogFormViewer.additionalAppInfoData) {
-           console.log("handling property for appINfo:"+p);
+           console.log("handling additional property for appInfo:"+p);
            appInfo[p]=TogFormViewer.additionalAppInfoData[p];
-           /*
-           if (resolvedPropertiesObjFromServer.hasOwnProperty(p)) {                  
-              if (typeof appConfiguration[p] == "object") {
-                if (JSON.stringify(appConfiguration[p])!==JSON.stringify(resolvedPropertiesObjFromServer[p])) {
-                  hasChanges = true;
-                  */
+        }
+        
+        if (appConfiguration.additionalApiFunctionResource && appConfiguration.additionalApiFunctionUrl) {
+            appInfo["additionalApiCallResult"] = typeof this.additionalApiFunctionResponse === 'undefined' ? '' : this.additionalApiFunctionResponse; 
         }
         
         return appInfo;
@@ -3372,24 +3458,6 @@ var TogFormViewer =
     loadForm: function(formPath, data)
     {
         updateFormDefinition(formPath,data);
-    },
-    
-    sendReceiveFormData: function(operation)
-    {
-       if (!operation)
-       {
-            operation = "Submit";
-        }
-        _sendReceiveOrHandOver(operation,true);
-    },
-
-    handOverFormData: function(operation)
-    {
-        if (!operation)
-        {
-            operation = "Submit";
-        }
-        _sendReceiveOrHandOver(operation,false);
     },
     
     calculate: function(calcPath)
@@ -3828,11 +3896,11 @@ function downloadURI(uri, name)
  */
 function performCalculation()
 {
-    if (ADAL && appConfiguration.home && appConfiguration.calcApiPath) 
+    if (appConfiguration.home && appConfiguration.calcApiPath && (appConfiguration.calcJsPath || appConfiguration.calcJsSetting || appConfiguration.calcConfPath || appConfiguration.calcConfSetting)) 
     {
         _performCalculationRemotely();
     } 
-    else if (appConfiguration.calcJsPath) 
+    else if (appConfiguration.calcJsPathLocal) 
     {
         _performCalculationLocally();
     }
@@ -3861,18 +3929,26 @@ function _performCalculationRemotely()
         payload["Configuration_SettingName"] = appConfiguration.calcConfSetting;
     }
     
-    executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, appConfiguration.home+"/"+appConfiguration.calcApiPath, payload, {},onsuccess_calc,onfailure_generic,onfailure_generic);
+    var url = appConfiguration.home+"/"+appConfiguration.calcApiPath;
+    TogFormViewer.lastCalculationTimestamp = new Date().toISOString();
+    var additionalConfig = {"lastCalculationTimestamp":TogFormViewer.lastCalculationTimestamp};
+    if (typeof ADAL!== 'undefined' && ADAL) {
+        executeAjaxRequestWithAdalLogic(ADAL.config.clientId, executeAjaxRequest, url, payload, additionalConfig,onsuccess_calc,onfailure_generic,onfailure_generic);
+    } else {
+        executeAjaxRequest(null, url, payload, additionalConfig,onsuccess_calc,onfailure_generic,onfailure_generic);
+    }
+    
 }
 
 function _performCalculationLocally()
 {
-    if (getScript(appConfiguration.calcJsPath))
+    if (getScript(appConfiguration.calcJsPathLocal))
     {
         applyCalculation();
     }
     else
     {
-        _calculate(appConfiguration.calcJsPath);
+        _calculate(appConfiguration.calcJsPathLocal);
     }
 }
 
@@ -3934,36 +4010,15 @@ function calcScriptFailed(calcPath) {
 function handleADALError() {
 }
 
-function _sendReceiveOrHandOver(operation,isSendReceive) {
-   var additionalCfg = {"isSendReceive" : isSendReceive,"operation":operation};
-   var url = appConfiguration.home+'/'+operation;
-   var data = {"data":formioForm.submission.data};
-   if (appConfiguration.home && appConfiguration.home!='') {
-      if (typeof ADAL!== 'undefined' && ADAL) {
-         executeAjaxRequestWithAdalLogic(ADAL.config.clientId,executeAjaxRequest,url,data,additionalCfg,onsuccess_sendReceiveOrHandover,onfailure_generic,handleADALError);
-      } else {
-         executeAjaxRequest(null,url,data,additionalCfg,onsuccess_sendReceiveOrHandover,onfailure_generic,handleADALError);
-      } 
-   } else {
-      alert("It is not possible to perform operation '"+operation+"' since base URL for the API call is not specified!");
-   }
-   
-}
-
 function onsuccess_calc(token,url,formdata,additionalConfiguration,data,textStatus,request) {
    console.log("Successfully executed calculation");
-   var datamerged = $.extend(formioForm.submission.data,data.calcResult);
-   console.log('MERGED DATA for calculation='+JSON.stringify(datamerged));
-   formioForm.submission={"data":datamerged};
-}
-
-function onsuccess_sendReceiveOrHandover(token,url,formdata,additionalConfiguration,data,textStatus,request) {
-   var msgPart = ((additionalConfiguration && additionalConfiguration.isSendReceive) ? "sendReceiveFormData" : "handOverFormData")+" operation '"+additionalConfiguration.operation+"' against base API '"+appConfiguration.home+"'";
-   console.log("Successfully executed "+msgPart+".");
-   if (additionalConfiguration && additionalConfiguration.isSendReceive) {
-      var datamerged = $.extend(formioForm.submission.data,data.data);
-      console.log('MERGED DATA for sendreceive='+JSON.stringify(datamerged));   
-      formioForm.submission={"data":datamerged};
+   var lcts = additionalConfiguration.lastCalculationTimestamp;
+   if (lcts===TogFormViewer.lastCalculationTimestamp) {
+       var datamerged = $.extend(formioForm.submission.data,data.calcResult);
+       console.log('MERGED DATA for calculation='+JSON.stringify(datamerged));
+       formioForm.submission={"data":datamerged};
+   } else {
+       console.log("...calculation result will be ignored because the calculation timestamp "+lcts+" does not match the last calculation request timestamp "+TogFormViewer.lastCalculationTimestamp);
    }
 }
 

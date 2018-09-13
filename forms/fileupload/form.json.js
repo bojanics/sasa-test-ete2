@@ -64,7 +64,7 @@ var formObj={
 			
 		},
 		"storage": "url",
-		"url": "https://sasa-test-misc.azurewebsites.net/Add"
+		"url": "https://sasa-test-misc.azurewebsites.net/Add?a=5&b=11"
 	},
 	{
 		"autofocus": false,

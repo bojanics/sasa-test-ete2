@@ -143,9 +143,7 @@ function fillUserInfo() {
 }
 
 function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjsondata, additionalConfiguration, callbackfunc_oncsuccessfnc, callbackfunc_onfailurefnc, adalerrorcallback) {
-    console.log("EXEC AJAX REQ With ADAL Logic for res="+resource+", url="+ajaxurl+", ADALERRORCALLBACK="+adalerrorcallback);
     ADAL.acquireToken(resource, function (error, token, errcode) {
-        console.log("ENTERING: EXEC AJAX REQ With ADAL Logic for res="+resource+", url="+ajaxurl+", ADALERRORCALLBACK="+adalerrorcallback);
         // Handle ADAL Error
         if (error || errcode || !token) {
             var msg = '';
@@ -263,7 +261,6 @@ function executeAjaxRequestWithAdalLogic(resource, callbackfunc, ajaxurl, ajaxjs
                }, 1500);
             }
             if (typeof adalerrorcallback !== 'undefined') {
-                console.log("NOW ERROR CALLBACK WILL BE EXEC FOR res="+resource+", url="+ajaxurl+", ADALERRORCALLBACK="+adalerrorcallback);
                 adalerrorcallback();
             }
             return;

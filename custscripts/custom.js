@@ -319,3 +319,45 @@ function testScroll2(togFormViewerEvent)
 console.log('this is a testScroll2 funct, myevent='+JSON.stringify(togFormViewerEvent));
 }
 
+function testBefore1(togFormViewerEvent) {
+console.log('this is a testBefore1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testBefore2(togFormViewerEvent) {
+console.log('this is a testBefore2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testBefore3(togFormViewerEvent) {
+console.log('this is a testBefore3 funct, myevent='+JSON.stringify(togFormViewerEvent));
+formioForm.submission.data['a']=33;
+formioForm.submission=formioForm.submission;
+}
+
+function testSuccess1(togFormViewerEvent) {
+console.log('this is a testSuccess1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testSuccess2(togFormViewerEvent) {
+console.log('this is a testSuccess2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testSuccess3(togFormViewerEvent) {
+console.log('this is a testSuccess3 funct, myevent='+JSON.stringify(togFormViewerEvent));
+formioForm.submission.data['c']=111;
+formioForm.submission=formioForm.submission;
+}
+
+function testFailure1(togFormViewerEvent) {
+console.log('this is a testFailure1 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testFailure2(togFormViewerEvent) {
+console.log('this is a testFailure2 funct, myevent='+JSON.stringify(togFormViewerEvent));
+}
+
+function testFailure3(togFormViewerEvent) {
+console.log('this is a testFailure3 funct, myevent='+JSON.stringify(togFormViewerEvent));
+formioForm.submission.data['c']=-11;
+formioForm.submission=formioForm.submission;
+
+}

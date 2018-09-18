@@ -426,8 +426,12 @@ var formObj = {
         "show": ""
       },
       "properties": {
-        "action": "Form('{formname}/{formversion}')/Multiplication",
-        "actionMethod":"PATCH"
+        "aaction": "Form('{formname}/{formversion}/{formproperties.disableActionSpinner}/{formproperties.formtitle}/{formproperties.action change local script}')/Multiplication",
+        "action": "Form('{formname}/{a}')/Multiplication",
+        "aactionMethod":"PATCH",
+        "action before script" : "testBefore3(togFormViewerEvent);",
+        "action success script" : "testSuccess3(togFormViewerEvent);",
+        "action failure script" : "testFailure3(togFormViewerEvent);"
       },
       "event": "Multiply",
       "lockKey": true,
@@ -530,6 +534,9 @@ var formObj = {
   "action": "Form('{formname}/{formversion}')/Subtraction",
   "properties": {
     "customScript": "../custscripts/custom.js",
+    "action before script" : "testBefore2(togFormViewerEvent);",
+    "action success script" : "testSuccess2(togFormViewerEvent);",
+    "action failure script" : "testFailure2(togFormViewerEvent);",
     "aaction local script": "test3(togFormViewerEvent);",
     "action change local script": "testChange1(togFormViewerEvent);",
     "aaction focus local script": "testFocus1(togFormViewerEvent);",

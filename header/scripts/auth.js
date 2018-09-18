@@ -707,7 +707,7 @@ function updateLanguageTimeZonePropertyExtensionsCallback(language, timeZone) {
         };
         
         if (themePropertyExtensionExists) {
-            payload.theme = themeSelector.currentTheme;
+            payload.theme = themePropertyExtension;
         }
         executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", patchUserPropertyExtensionOnAdal, "https://graph.microsoft.com/beta/me/extensions/" + userPropertyExtensionId, payload);
     } else if (language !== null) {
@@ -716,11 +716,11 @@ function updateLanguageTimeZonePropertyExtensionsCallback(language, timeZone) {
         };
         
         if (timeZonePropertyExtensionExists) {
-            payload.timeZone = themeSelector.currentTimeZone;
+            payload.timeZone = timeZonePropertyExtension;
         }
         
         if (themePropertyExtensionExists) {
-            payload.theme = themeSelector.currentTheme;
+            payload.theme = themePropertyExtension;
         }
         
         executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", patchUserPropertyExtensionOnAdal, "https://graph.microsoft.com/beta/me/extensions/" + userPropertyExtensionId, payload);
@@ -730,11 +730,11 @@ function updateLanguageTimeZonePropertyExtensionsCallback(language, timeZone) {
         };
         
         if (languagePropertyExtensionExists) {
-            payload.language = languageSelector.currentLanguage;
+            payload.language = languagePropertyExtension;
         }
         
         if (themePropertyExtensionExists) {
-            payload.theme = themeSelector.currentTheme;
+            payload.theme = themePropertyExtension;
         }
         
         executeAjaxRequestWithAdalLogic("https://graph.microsoft.com", patchUserPropertyExtensionOnAdal, "https://graph.microsoft.com/beta/me/extensions/" + userPropertyExtensionId, payload);

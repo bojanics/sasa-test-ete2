@@ -578,6 +578,11 @@ function setInitialTimeZone()
         $('#timeZoneName').html(supportedTimeZonesMap[timeZoneSelector.selectedTimeZone]);
         $('#tzarr').find('.ltz-itm-selector-check').css('visibility', 'hidden');
         document.getElementById('tzCheck' + timeZoneSelector.selectedTimeZone).style.visibility = "visible";
+        if (!appConfiguration.languageSettings)
+        {
+            $('#languageName1').html(timeZoneSelector.currentTimeZone);
+            $('#languageName2').html(timeZoneSelector.currentTimeZone);
+        }
     }
     else
     {
@@ -627,9 +632,6 @@ function setSupportedTimeZones(values)
         }
         
         timeZoneSelector.supportedTimeZonesSet = true;
-        $('#timeZoneWrapper').show();
-        $('#Language').show();
-        $('#languageAndTimeZone').attr('lang-tran', 'Language and time zone').html('Language and time zone');
         
         // If user's time zone is already retrieved we need to update GUI now,
         // because we couldn't do that when we didn't have time zone choices
@@ -744,6 +746,11 @@ function setChosenTimeZone()
     var timeZoneChanged = (timeZoneSelector.currentTimeZone !== timeZoneSelector.selectedTimeZone);
     timeZoneSelector.currentTimeZone = timeZoneSelector.selectedTimeZone;
     TogFormViewer.setProperty("userTimeZone", timeZoneSelector.currentTimeZone);
+    if (!appConfiguration.languageSettings)
+    {
+        $('#languageName1').html(timeZoneSelector.currentTimeZone);
+        $('#languageName2').html(timeZoneSelector.currentTimeZone);
+    }
     
     return timeZoneChanged;
 }

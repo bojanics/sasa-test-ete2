@@ -252,10 +252,12 @@ function generateForm(formReadyCallback)
                             {
                                 return function()
                                 {
-                                    if ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
-                                            && event.changed.component.properties["autocalc"] === "fieldchange")
-                                        || (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc"))
-                                            && appConfiguration && appConfiguration.autocalc === "fieldchange"))
+                                    if (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("calculate")
+                                        && event.changed.component.properties["calculate"] === "false")
+                                    && ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
+                                        && event.changed.component.properties["autocalc"] === "fieldchange") || (!(event.changed.component && event.changed.component.properties
+                                    && event.changed.component.properties.hasOwnProperty("autocalc"))
+                                        && appConfiguration && appConfiguration.autocalc === "fieldchange")))
                                     {
                                         TogFormViewer.calculate();
                                     }
@@ -269,7 +271,9 @@ function generateForm(formReadyCallback)
                         }
                     }
                     
-                    if (!skipCalculate && ((event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc")
+                    if (!skipCalculate && !(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("calculate")
+                            && event.changed.component.properties["calculate"] === "false")
+                        && ((event.changed.component && event.changed.component.properties&& event.changed.component.properties.hasOwnProperty("autocalc")
                             && event.changed.component.properties["autocalc"] === "fieldchange")
                         || (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("autocalc"))
                             && appConfiguration && appConfiguration.autocalc === "fieldchange")))
@@ -277,7 +281,11 @@ function generateForm(formReadyCallback)
                         TogFormViewer.calculate();
                     }
                     
-                    TogFormViewer.FormioPlugIn.setProperty("dirty", true);
+                    if (!(event.changed.component && event.changed.component.properties && event.changed.component.properties.hasOwnProperty("set dirty") && event.changed.component.properties["set dirty"] === "false"))
+                    {
+                        TogFormViewer.FormioPlugIn.setProperty("dirty", true);
+                    }
+                    
                     var now = new Date();
                     var myevent =
                     {
@@ -497,6 +505,27 @@ function generateForm(formReadyCallback)
 function execEventAction(component,myevent,propName,configName,log2console) {
     if (log2console) console.log(configName+' default = '+appConfiguration[configName]);
     var actionPerformed = false;
+    
+    var actionBeforeScript = null;
+    var actionSuccessScript = null;
+    var actionFailureScript = null;
+    if (propName==='action') {
+        actionBeforeScript = appConfiguration["actionBeforeScript"];
+        actionSuccessScript = appConfiguration["actionSuccessScript"];
+        actionFailureScript = appConfiguration["actionFailureScript"];
+        if (component && component.hasOwnProperty("properties") && component.properties !== null) {
+            if (component.properties.hasOwnProperty("action before script")) {
+                actionBeforeScript = component.properties["action before script"];
+            }
+            if (component.properties.hasOwnProperty("action success script")) {
+                actionSuccessScript = component.properties["action success script"];
+            }
+            if (component.properties.hasOwnProperty("action failure script")) {
+                actionFailureScript = component.properties["action failure script"];
+            }
+        }        
+    }
+    
     if (appConfiguration.home) {
         var actionHttpMethod = null;
         if (propName==='action' && component && component.hasOwnProperty("properties") && component.properties !== null && component.properties.hasOwnProperty(propName+'Method')) {
@@ -520,8 +549,7 @@ function execEventAction(component,myevent,propName,configName,log2console) {
         if (action) {
             var url = appConfiguration.home + "/" + action;
             if (log2console) console.log(configName+' '+action+' will be executed for '+myevent.controlId);
-            appFormDataObj = formioForm.submission.data;
-            performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod);
+            performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod,actionBeforeScript,actionSuccessScript,actionFailureScript);
             actionPerformed = true;
         }
     }
@@ -542,17 +570,29 @@ function execEventAction(component,myevent,propName,configName,log2console) {
 /**
  * Calls event action
  */
-function performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod)
+function performEventOrCustomAction(url,myevent,sendForm,actionHttpMethod,actionBeforeScript,actionSuccessScript,actionFailureScript)
 {
     if (!appConfiguration.disableActionSpinner) {
         showSpinner();
     }
+    if (actionBeforeScript) {
+        executeScript(myevent.controlId+"-actionBeforeScript",actionBeforeScript,myevent,true);
+    }
+    appFormDataObj = formioForm.submission.data;
+    
     url = handlePlaceholders(url,myevent);
+
 
     var payload = {"appInfo" : TogFormViewer.getAppInfo(myevent,sendForm)};
     var additionalConfig = {"event":myevent};
     if (actionHttpMethod) {
         additionalConfig['actionHttpMethod']= actionHttpMethod;
+    }
+    if (actionSuccessScript) {
+        additionalConfig['actionSuccessScript']=actionSuccessScript;
+    }
+    if (actionFailureScript) {
+        additionalConfig['actionFailureScript']=actionFailureScript;
     }
     console.log("executing event "+JSON.stringify(myevent)+" action for url "+url);
     if (typeof ADAL!== 'undefined' && ADAL) {
@@ -577,12 +617,18 @@ function onsuccess_eventorcustomaction(token,url,formdata,additionalConfiguratio
         TogFormViewer.FormioPlugIn.setProperty("dirty", false);
     }
     
-    handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
+    var actionSuccessScript = additionalConfiguration['actionSuccessScript'];
+    handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data,actionSuccessScript);    
 }
 
 function onfailure_eventorcustomaction(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown) {
-   onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
-   hideSpinner();
+    var actionFailureScript = additionalConfiguration['actionFailureScript'];
+    if (actionFailureScript) {
+        executeScript(additionalConfiguration.event.controlId+"-actionFailureScript",actionFailureScript,additionalConfiguration.event,true);
+    } else {
+        onfailure_generic(token,url,formdata,additionalConfiguration,err,textStatus,errorThrown);
+    }
+    hideSpinner();
 }
 /**
  * Display a form with unchanged data. 
@@ -1210,10 +1256,12 @@ function formBlurListener(comp)
     return function(event)
     {
         setDefaultHelpContent();
-        if ((comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("autocalc")
-                && comp.component.properties["autocalc"] === "focuschange")
-            || (!(comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("autocalc"))
-                && appConfiguration && appConfiguration.autocalc === "focuschange"))
+        if (!(comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("calculate")
+            && comp.component.properties["calculate"] === "false")
+        && ((comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("autocalc")
+            && comp.component.properties["autocalc"] === "focuschange")
+        || (!(comp.component && comp.component.properties && comp.component.properties.hasOwnProperty("autocalc"))
+            && appConfiguration && appConfiguration.autocalc === "focuschange")))
         {
             TogFormViewer.calculate();
         }
@@ -1276,6 +1324,9 @@ function setupLayout()
 
     // Check if we should show theme selection option in the settings menu
     showThemeSettings();
+    
+    // Check if we should show language and/or time zone selection option in the settings menu
+    showLTZSettings();
      
     // Check if we should show the PhraseApp settings
     showPhraseApp();
@@ -1741,6 +1792,45 @@ function showThemeSettings()
     else
     {
         $('#themeCardWrapper').hide();
+    }
+}
+
+/**
+ * Check if we should show lanugage and time zone selection option in the settings menu
+ */
+function showLTZSettings()
+{
+    if (appConfiguration.languageSettings && appConfiguration.timeZoneSettings)
+    {
+        $('#languageAndTimeZone').attr('lang-tran', 'Language and time zone').html('Language and time zone');
+        $('#LTZCard').show();
+        $('#timeZoneWrapper').show();
+        $('#Language').show();
+        $('#TimeZone').show();
+    }
+    else if (appConfiguration.timeZoneSettings)
+    {
+        $('#languageAndTimeZone').attr('lang-tran', 'Current time zone').html('Current time zone');
+        $('#LTZCard').show();
+        $('#languageWrapper').hide();
+        $('#Language').hide();
+        $('#TimeZone').hide();
+        $('#timeZoneWrapper').show();
+        $('#languageName1').html(timeZoneSelector.currentTimeZone);
+        $('#languageName2').html(timeZoneSelector.currentTimeZone);
+    }
+    else if (appConfiguration.languageSettings)
+    {
+        $('#languageAndTimeZone').attr('lang-tran', 'Language').html('Language');
+        $('#LTZCard').show();
+        $('#languageWrapper').show();
+        $('#Language').hide();
+        $('#TimeZone').hide();
+        $('#timeZoneWrapper').hide();
+    }
+    else
+    {
+        $('#LTZCard').hide();
     }
 }
 
@@ -2473,7 +2563,7 @@ function chooseTimeZone()
             if ($this.hasClass('extended-card'))
             {
                 $this.addClass('collapsed-card').removeClass('extended-card');
-                $this.find('.user-settings-card-value').addClass('user-settings-card-value').removeClass('user-settings-card-edit');
+                $this.find('.user-settings-card-edit').addClass('user-settings-card-value').removeClass('user-settings-card-edit');
                 $this.find('.user-settings-card-value-content').show();
                 $this.find('.user-settings-card-combo-wrapper').hide();
                 $this.find('.user-settings-card-expand-button').show();

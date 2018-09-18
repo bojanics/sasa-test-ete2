@@ -88,6 +88,8 @@ function resetAppConfiguration()
         help: true,
         account: true,
         themeSettings: false,
+        languageSettings: true,
+        timeZoneSettings: true,
         phraseApp: "false",
         phraseAppProjectId: "",
         phraseAppPrefix: "[[__",
@@ -106,6 +108,9 @@ function resetAppConfiguration()
         calcConfSetting: "",
         calcApiPath: "",
         action: "",
+        actionBeforeScript: "",
+        actionSuccessScript: "",
+        actionFailureScript: "",
         actionLocalScript: "",
         actionLoading: "",
         actionLoaded: "",
@@ -827,6 +832,12 @@ function setupHeaderConfiguration()
     
     // Check if we should show theme selection option in the settings menu
     resolveStringOrBooleanParameter(true,"theme settings","themeSettings",formObj,headerObj,null,true,appConfiguration.themeSettings); 
+    
+    // Check if we should show language selection option in the settings menu
+    resolveStringOrBooleanParameter(true,"language settings","languageSettings",formObj,headerObj,null,true,appConfiguration.languageSettings); 
+    
+    // Check if we should show time zone selection option in the settings menu
+    resolveStringOrBooleanParameter(true,"time zone settings","timeZoneSettings",formObj,headerObj,null,true,appConfiguration.timeZoneSettings); 
 
     // If the themes definition path has been specified
     resolveStringOrBooleanParameter(false,"themes","themes",formObj,headerObj,null,true,appConfiguration.themes); 
@@ -984,6 +995,15 @@ function setupHeaderConfiguration()
 
     // setup action local script
     resolveStringOrBooleanParameter(false,"action local script","actionLocalScript",formObj,headerObj,null,true,appConfiguration.actionLocalScript); 
+
+    // setup action before script
+    resolveStringOrBooleanParameter(false,"action before script","actionBeforeScript",formObj,headerObj,null,true,appConfiguration.actionBeforeScript); 
+
+    // setup action success script
+    resolveStringOrBooleanParameter(false,"action success script","actionSuccessScript",formObj,headerObj,null,true,appConfiguration.actionSuccessScript); 
+
+    // setup action failure script
+    resolveStringOrBooleanParameter(false,"action failure script","actionFailureScript",formObj,headerObj,null,true,appConfiguration.actionFailureScript); 
 
     // setup loading action
     resolveStringOrBooleanParameter(false,"action loading","actionLoading",formObj,headerObj,null,true,appConfiguration.actionLoading); 
@@ -1929,7 +1949,7 @@ function checkForAppSetup()
         }
     }
     
-    if (!additionalApiCallPerformed && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
+    if (isSignedInUser() && !additionalApiCallPerformed && typeof headerObj !== 'undefined' && headerObj != null && typeof formObj !== 'undefined' && formObj != null)
     {
         additionalApiCallPerformed = true;
         if (appConfiguration.additionalApiFunctionResource && appConfiguration.additionalApiFunctionUrl)
@@ -2016,62 +2036,90 @@ function setUserSettings(userSettingsSetCallback)
     // Check if exsist stored user settings (on Azure or Outlook)
     if (appConfiguration.useOutlookSettings && isSignedInUser())
     {
-        getSupportedTimeZones(function(timeZones)
+        if (appConfiguration.timeZoneSettings)
         {
-            TogFormViewer.setProperty("supportedTimeZones", timeZones);
-            var userTimeZonesRPO = checkForResolvedPropertyFromTheServer("userTimeZones");
-            if (userTimeZonesRPO)
+            getSupportedTimeZones(function(timeZones)
             {
-                TogFormViewer.setProperty("userTimeZones", userTimeZonesRPO);
-            }
-            else
+                TogFormViewer.setProperty("supportedTimeZones", timeZones);
+                var userTimeZonesRPO = checkForResolvedPropertyFromTheServer("userTimeZones");
+                if (userTimeZonesRPO)
+                {
+                    TogFormViewer.setProperty("userTimeZones", userTimeZonesRPO);
+                }
+                else
+                {
+                    TogFormViewer.setProperty("userTimeZones", timeZones);
+                }
+                
+                setSupportedTimeZones(TogFormViewer.getProperty("userTimeZones"));
+                
+                // Find out user's mailbox settings
+                getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
+                function(language, timeZone)
+                {
+                    outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
+                },
+                function()
+                {
+                    outlookSettingsErrorCallback(userSettingsSetCallback);
+                });
+            }, function()
             {
-                TogFormViewer.setProperty("userTimeZones", timeZones);
-            }
+                TogFormViewer.setProperty("supportedTimeZones", "");
+                var userTimeZonesRPO = checkForResolvedPropertyFromTheServer("userTimeZones");
+                if (userTimeZonesRPO)
+                {
+                    TogFormViewer.setProperty("userTimeZones", userTimeZonesRPO);
+                    setSupportedTimeZones(timeZones);
+                }
+                else
+                {
+                    setDefaultTimeZonesChoices();
+                }
+                
+                // Find out user's mailbox settings
+                getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
+                function(language, timeZone)
+                {
+                    outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
+                },
+                function()
+                {
+                    outlookSettingsErrorCallback(userSettingsSetCallback);
+                });            
+            });
+        }
+        else if (appConfiguration.languageSettings)
+        {
+            // We set the default time zone choices beacuse
+            // we don't read them from the mailbox settings
+            TogFormViewer.setProperty("supportedTimeZones", "");
+            setDefaultTimeZonesChoices();
             
-            setSupportedTimeZones(TogFormViewer.getProperty("userTimeZones"));
-            
-            console.log("GSTZ SUCCESS");
             // Find out user's mailbox settings
             getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
             function(language, timeZone)
             {
-                console.log("OSSUCCESS1");
                 outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
             },
             function()
             {
-                console.log("OSECB1");
                 outlookSettingsErrorCallback(userSettingsSetCallback);
             });
-        }, function()
+        }
+        else
         {
+            // We set the default time zone choices beacuse
+            // we don't read them from the mailbox settings
             TogFormViewer.setProperty("supportedTimeZones", "");
-            var userTimeZonesRPO = checkForResolvedPropertyFromTheServer("userTimeZones");
-            if (userTimeZonesRPO)
-            {
-                TogFormViewer.setProperty("userTimeZones", userTimeZonesRPO);
-                setSupportedTimeZones(timeZones);
-            }
-            else
-            {
-                setDefaultTimeZonesChoices();
-            }
-            console.log("GSTZ ERROR");
-            // Find out user's mailbox settings
-            //getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings', outlookSettingsSuccessCallback, outlookSettingsErrorCallback);
-            getmailboxsettingsdata('https://graph.microsoft.com/beta/me/mailboxSettings',
-            function(language, timeZone)
-            {
-                console.log("OSSUCCESS2");
-                outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback);
-            },
-            function()
-            {
-                console.log("OSECB2");
-                outlookSettingsErrorCallback(userSettingsSetCallback);
-            });            
-        });
+            setDefaultTimeZonesChoices();
+        
+            // Setup language, time zone and theme configuration
+            setupLanguageConfiguration();
+            setupTimeZoneConfiguration();
+            setupThemeConfiguration();
+            userSettingsSetCallback();
+        }
         
         if (appConfiguration.useUserPropertyExtensions && appConfiguration.themeSettings)
         {
@@ -2098,7 +2146,8 @@ function setUserSettings(userSettingsSetCallback)
             checkUserSettingsLoaded(userSettingsSetCallback);
         }
     }
-    else if (appConfiguration.useUserPropertyExtensions && isSignedInUser())
+    else if ((appConfiguration.themeSettings || appConfiguration.languageSettings || appConfiguration.timeZoneSettings)
+        && appConfiguration.useUserPropertyExtensions && isSignedInUser())
     {
         // We set the default time zone choices beacuse
         // we don't read them from the mailbox settings
@@ -2111,8 +2160,25 @@ function setUserSettings(userSettingsSetCallback)
         function(language, timeZone, theme)
         {
             // Setup language, time zone and theme configuration
-            setupLanguageConfiguration(language);
-            setupTimeZoneConfiguration(timeZone);
+            // We don't use stored language configuration when theme settings are switched off
+            if (appConfiguration.languageSettings)
+            {
+                setupLanguageConfiguration(language);
+            }
+            else
+            {
+                setupLanguageConfiguration();
+            }
+            
+            // We don't use stored time zone configuration when theme settings are switched off
+            if (appConfiguration.timeZoneSettings)
+            {
+                setupTimeZoneConfiguration(timeZone);
+            }
+            else
+            {
+                setupTimeZoneConfiguration();
+            }
             
             // We don't use stored theme configuration when theme settings are switched off
             if (appConfiguration.themeSettings)
@@ -2155,7 +2221,9 @@ function setUserSettings(userSettingsSetCallback)
 
 function checkUserSettingsLoaded(userSettingsLoadedCallback)
 {
-    if ((!appConfiguration.themeSettings || isThemeSettingsLoaded()) && isLanguageSettingsLoaded() && isTimeZoneSettingsLoaded())
+    if ((!appConfiguration.themeSettings || isThemeSettingsLoaded())
+        && (!appConfiguration.languageSettings || isLanguageSettingsLoaded())
+    && (!appConfiguration.timeZoneSettings || isTimeZoneSettingsLoaded()))
     {
         userSettingsLoadedCallback();
     }
@@ -2261,8 +2329,26 @@ function setupThemeConfiguration(storedTheme)
 
 function outlookSettingsSuccessCallback(language, timeZone, userSettingsSetCallback)
 {
-    setupLanguageConfiguration(language);
-    setupTimeZoneConfiguration(timeZone);    
+    // We don't use stored language configuration when theme settings are switched off
+    if (appConfiguration.languageSettings)
+    {
+        setupLanguageConfiguration(language);
+    }
+    else
+    {
+        setupLanguageConfiguration();
+    }
+    
+    // We don't use stored time zone configuration when theme settings are switched off
+    if (appConfiguration.timeZoneSettings)
+    {
+        setupTimeZoneConfiguration(timeZone);
+    }
+    else
+    {
+        setupTimeZoneConfiguration();
+    }
+        
     checkUserSettingsLoaded(userSettingsSetCallback);
 }
 
@@ -2275,7 +2361,7 @@ function outlookSettingsErrorCallback(userSettingsSetCallback)
 
 function checkAdditionalApiCallPerformed()
 {
-    if (userSettingsLoaded && additionalApiResponseReceived)
+    if (!isSignedInUser() || (userSettingsLoaded && additionalApiResponseReceived))
     {
         checkForLoadingCallback();
     }
@@ -2292,7 +2378,7 @@ function executeLoadingOrLoadedScript(isLoadingScript)
     if (formObj.hasOwnProperty("properties") && formObj.properties!=null && formObj.properties.hasOwnProperty(propertyName))
     {
         var lScript = formObj.properties[propertyName];
-        executeScript(lname,lScript,true);
+        executeScript(lname,lScript,null,true);
     }    
 }
 
@@ -2302,7 +2388,7 @@ function executeScript(scriptName,script,togFormViewerEvent,log2console)
     {
         if (log2console) console.log("Executing "+scriptName+" script:"+script);
         eval(script);
-        if (togFormViewerEvent.controlProperties && togFormViewerEvent.controlProperties["set clean"] === "true")
+        if (togFormViewerEvent && togFormViewerEvent.controlProperties && togFormViewerEvent.controlProperties["set clean"] === "true")
         {
             TogFormViewer.FormioPlugIn.setProperty("dirty", false);
         }
@@ -2396,7 +2482,18 @@ function handlePlaceholders(placeholderStr,event) {
             }
         }
     }
-    
+    // Add all simple properties from the form custom properties possible placeholders with prefix 'formproperties.'
+    if (formObj.hasOwnProperty("properties") && formObj.properties!=null) {
+        for (var p in formObj.properties) {
+            if (!placeholders.hasOwnProperty("formproperties."+p)) {
+                var val = formObj.properties[p];
+                if (typeof val !== "object" && val!=null) {
+                    placeholders["formproperties."+p]=val.toString();  
+                }
+            }
+        }
+    }
+
     for (let key in placeholders) {
         placeholderStr = placeholderStr.replace(/({([^}]+)})/g, function(i) {
             let key = i.replace(/{/, '').replace(/}/, '');
@@ -2455,7 +2552,7 @@ function onsuccess_loading(token,url,formdata,additionalConfiguration,data,textS
     handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data);
 }
 
-function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data) {   
+function handleServerResponseForLoadingAndOtherActions(url,additionalConfiguration,data,actionSuccessScript) {   
    appInfoObjFromServer = null;
    if (data) {
        appInfoObjFromServer = data.appInfo;
@@ -2485,7 +2582,7 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
        
        // keeping sub-object of appInfo object from the server that do not exist in the appInfo specification...to be in appInfo object every-time we call TogFormViewer.getAppInfo()
        for (var p in appInfoObjFromServer) {
-           if (p!='plugin' && p!='browserInfo' && p!='deviceInfo' && p!='currentUser' && p!='appUrl' && p!='currentUserSettings' && p!='runtimeProperties' && p!='auth' && p!='config' && p!='queries' && p!='dataObj' && p!='resolvedProperties' && p!='event' && p!='eventResponse') {
+           if (p!='plugin' && p!='browserInfo' && p!='deviceInfo' && p!='currentUser' && p!='appUrl' && p!='currentUserSettings' && p!='runtimeProperties' && p!='auth' && p!='config' && p!='queries' && p!='dataObj' && p!='resolvedProperties' && p!='event' && p!='eventResponse' && p!='additionalApiCallResult') {
               TogFormViewer.additionalAppInfoData[p] = appInfoObjFromServer[p];
            }
        }
@@ -2756,8 +2853,12 @@ function handleServerResponseForLoadingAndOtherActions(url,additionalConfigurati
    // we'll come to this point either if appInfoObjFromServer is null or there were no changes on the server that require re-configuration
    appInfoObjFromServer = null;
    if (!formDestroyed) {
-      formioForm.submission = {"data":appFormDataObj};
-      hideSpinner();
+      formioForm.setSubmission({"data":appFormDataObj}).then(function () {
+          if (actionSuccessScript) {
+              executeScript(additionalConfiguration.event.controlId +"-actionSuccessScript",actionSuccessScript,additionalConfiguration.event,true);
+          }
+          hideSpinner();
+      });
    } else {            
       setupApp();
    }
@@ -3077,6 +3178,16 @@ var TogFormViewer =
         {
             appConfiguration.themeSettings = propValue;
             showThemeSettings();
+        }
+        else if (_checkPropertyValue(propName, propValue, "languageSettings", "boolean"))
+        {
+            appConfiguration.languageSettings = propValue;
+            showLTZSettings();
+        }
+        else if (_checkPropertyValue(propName, propValue, "timeZoneSettings", "boolean"))
+        {
+            appConfiguration.timeZoneSettings = propValue;
+            showLTZSettings();
         }
         else if (_checkPropertyValue(propName, propValue, "phraseApp", "boolean")) 
         {
@@ -3480,6 +3591,17 @@ var TogFormViewer =
         window.open(filePath,target);
     },
     
+    openFileNewWindow: function(filePath, target)
+    {
+        if (!target)
+        {
+            target = "_blank";
+        }
+        
+        var whStr = "height=" + window.innerHeight + ",width=" + window.innerWidth;
+        window.open(filePath, target, whStr);
+    },
+    
     downloadFile: function(filePath,filename)
     {
         downloadURI(filePath,filename);
@@ -3540,8 +3662,6 @@ var TogFormViewer =
     // If the response changes some of the appInfo data, the re-evaluation of the properties will start (like with Loading action)
     executeCustomAction: function(url,sendForm,actionHttpMethod)
     {
-        appFormDataObj = formioForm.submission.data;
-        
         var now = new Date();
         var myevent = {
             "type": "customAction",
@@ -4047,12 +4167,14 @@ function executeAjaxRequest(token,url,formdata,additionalConfiguration,onsuccess
    var settings = {
      "crossDomain": true,     
      "url": url,
-     "timeout":30000,
+     "timeout":60000,
      "method": httpMethod,
      "headers": {
        "content-type": "application/json",
        "cache-control": "no-cache",
-       "x-ms-client-tracking-id": TogFormViewer.correlationId
+       "x-ms-client-tracking-id": TogFormViewer.correlationId,
+       "Mode-Test": TogFormViewer.testFlag,
+       "Mode-Debug": TogFormViewer.debugFlag
      },
      "data": JSON.stringify(formdata),
      "dataType": 'json',

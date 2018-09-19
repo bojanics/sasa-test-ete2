@@ -361,3 +361,22 @@ formioForm.submission.data['c']=-11;
 formioForm.submission=formioForm.submission;
 
 }
+
+// HERE WE START
+var newTabWindow = null;
+function handleBeforePDF(togFormViewerEvent){
+    newTabWindow = window.open('../html/waitting_for_pdf.html'); // opening new window with “waiting HTML” – can’t open it from the AJAX call, the pop-up would be blocked
+}
+
+function handleSuccessPDF(togFormViewerEvent) {
+    newTabWindow.location.replace('https://sasa-test-ete-fnc.azurewebsites.net/getPDF'); // Updating window location with my getPDF proxy hardcoded URL (you can get it from the response, e.g. form.submission.data['mypdfurl']…which always returns the same PDF
+}
+
+function handleFailurePDF(togFormViewerEvent) {
+    console.log("PDF REQUEST FAILED");
+    alert("PDF REQUEST FAILED");
+    newTabWindow.close();
+}
+
+
+

@@ -429,9 +429,12 @@ var formObj = {
         "aaction": "Form('{formname}/{formversion}/{formproperties.disableActionSpinner}/{formproperties.formtitle}/{formproperties.action change local script}')/Multiplication",
         "action": "Form('{formname}/{a}')/Multiplication",
         "aactionMethod":"PATCH",
-        "action before script" : "testBefore3(togFormViewerEvent);",
-        "action success script" : "testSuccess3(togFormViewerEvent);",
-        "action failure script" : "testFailure3(togFormViewerEvent);"
+        "aaction before script" : "testBefore3(togFormViewerEvent);",
+        "aaction success script" : "testSuccess3(togFormViewerEvent);",
+        "aaction failure script" : "testFailure3(togFormViewerEvent);",
+        "action before script" : "console.log('now executing before script for the button '+togFormViewerEvent.controlId);handleBeforePDF(togFormViewerEvent);",
+        "action success script" : "console.log('now executing success script for the button '+togFormViewerEvent.controlId);handleSuccessPDF(togFormViewerEvent);",
+        "action failure script" : "console.log('now executing failure script for the button '+togFormViewerEvent.controlId);handleFailurePDF(togFormViewerEvent);"        
       },
       "event": "Multiply",
       "lockKey": true,

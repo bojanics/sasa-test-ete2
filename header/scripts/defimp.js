@@ -233,7 +233,6 @@ function initAfterADALSetup()
     
     if (ADAL!=null) {
         var signeduser = ADAL!=null ? ADAL.getCachedUser() : null;
-        console.log("SIU="+JSON.stringify(signeduser));
         if (signeduser) {
             if (signeduser.profile.upn) {
                 // For work or school accounts (tenant members)
